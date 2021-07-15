@@ -19,7 +19,7 @@ jobs:
 
     - name: "Update Draft Name"
       run: |
-        if [ -z $(ls draft-* rfc* | grep -v draft-todo-yourname-protocol.md) ]; then
+        if [ -z "$(ls draft-* rfc* 2>/dev/null | grep -v draft-todo-yourname-protocol.md)" ]; then
           echo
           echo "============================================================="
           echo
@@ -40,7 +40,7 @@ jobs:
           sed -i -e "s/draft-todo-yourname-protocol-latest/${i%.md}-latest/g" "$i"
           git add "$i"
         done
-        if [ -n $(git status --porcelain draft-*) ]; then
+        if [ -n "$(git status --porcelain draft-*)" ]; then
           git commit -am "Update draft labels" draft-*
         fi
 
@@ -60,7 +60,7 @@ jobs:
 
     - name: "Push Changes"
       run: |
-        git push origin:setup
+        git push origin @:setup
         echo
         echo "============================================================="
         echo
