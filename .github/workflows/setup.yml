@@ -55,7 +55,7 @@ jobs:
     - name: "Run i-d-template Setup"
       uses: martinthomson/i-d-template@v1
       with:
-        make: ["-f", "lib/setup.mk"]
+        make: -flib/setup.mk
 
     - name: "Push Changes"
       run: |
