@@ -60,4 +60,14 @@ jobs:
 
     - name: "Push Changes"
       run: |
-        git push
+        git push origin:setup
+        echo
+        echo "============================================================="
+        echo
+        echo "Setup is nearly complete."
+        echo
+        echo "Create a pull request and merge it from here:"
+        echo "    https://github.com/${{github.repository}}/compare/setup"
+        echo
+        echo "============================================================="
+        echo
