@@ -41,13 +41,13 @@ jobs:
           git add "$i"
         done
         if [ -n "$(git status --porcelain draft-*)" ]; then
-          git commit -am "Update draft labels" draft-*
+          git commit -m "Update draft labels" draft-*
         fi
 
     - name: "Cleanup"
       run: |
         git rm -rf .github README.md
-        git commit -am "Remove setup files"
+        git commit -m "Remove setup files"
 
     - name: "Clone the i-d-template Repo"
       run: |
@@ -56,18 +56,8 @@ jobs:
     - name: "Run i-d-template Setup"
       uses: martinthomson/i-d-template@v1
       with:
-        make: -flib/setup.mk
+        make: setup
 
     - name: "Push Changes"
       run: |
-        git push origin @:setup
-        echo
-        echo "============================================================="
-        echo
-        echo "Setup is nearly complete."
-        echo
-        echo "Create a pull request and merge it from here:"
-        echo "    https://github.com/${{github.repository}}/compare/setup"
-        echo
-        echo "============================================================="
-        echo
+        git push
