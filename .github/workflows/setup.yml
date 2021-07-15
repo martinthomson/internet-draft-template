@@ -18,8 +18,19 @@ jobs:
     - name: "Update Draft Name"
       run: |
         if [ -z $(ls draft-* rfc* | grep -v draft-todo-yourname-protocol.md) ]; then
-          echo "It is OK for the first build to fail."
-          echo "Start working by renaming your draft."
+          echo
+          echo "============================================================="
+          echo
+          echo "It is OK for this first build to fail."
+          echo "It will succeed when you rename your draft."
+          echo "The file can be renamed at:"
+          echo
+          echo "    https://github.com/${{github.repository}}/edit/main/draft-todo-yourname-protocol.md"
+          echo
+          echo "Change the name of the file and its title to start the build."
+          echo
+          echo "============================================================="
+          echo
           exit 1
         fi
         for i in draft-*; do
