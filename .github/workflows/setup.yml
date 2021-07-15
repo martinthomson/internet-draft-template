@@ -1,0 +1,47 @@
+name: "Perform Initial Repository Setup"
+
+on: push
+
+jobs:
+  setup:
+    name: "Setup Repository"
+    runs-on: ubuntu-latest
+    steps:
+    - name: "Checkout"
+      uses: actions/checkout@v2
+
+    - name: "Git Config"
+      run: |
+        git config user.email "idbot@example.com"
+        git config user.name "I-D Bot"
+
+    - name: "Update Draft Name"
+      run: |
+        if [ -z $(ls draft-* rfc* | grep -v draft-todo-yourname-protocol.md) ]; then
+          echo "Start working by renaming your draft"
+        fi
+        for i in draft-*; do
+          sed -i -e "s/draft-todo-yourname-protocol-latest/${i%.md}-latest/g" "$i"
+          git add "$i"
+        done
+        if [ -n $(git status --porcelain draft-*) ]; then
+          git commit -am "Update draft labels" draft-*
+        fi
+
+    - name: "Cleanup"
+      run: |
+        git rm -rf .github README.md
+        git commit -am "Remove setup files"
+
+    - name: "Clone the i-d-template Repo"
+      run: |
+        git clone https://github.com/martinthomson/i-d-template lib
+
+    - name: "Run i-d-template Setup"
+      uses: martinthomson/i-d-template@v1
+      with:
+        make: -f lib/setup.mk
+
+    - name: "Push Changes"
+      run: |
+        git push
