@@ -60,4 +60,8 @@ jobs:
 
     - name: "Push Changes"
       run: |
-        git push
+        if ! git push; then
+          echo "If this failed due to 'refusing to allow a GitHub App to create or update workflow'."
+          echo "Please open a ticket: https://github.com/martinthomson/internet-draft-template/issues/new"
+          exit 1
+        fi
