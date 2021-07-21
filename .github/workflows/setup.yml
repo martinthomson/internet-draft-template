@@ -61,9 +61,3 @@ jobs:
     - name: "Push Changes"
       run: |
         git push
-
-    - name: "Initialize Editor's Copy"
-      uses: martinthomson/i-d-template@v1
-      with:
-        make: gh-pages
-        token: ${{ github.token }}
