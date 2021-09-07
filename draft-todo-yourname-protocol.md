@@ -11,9 +11,10 @@
 # Initial setup only needs the filename and title.
 # If you change title or name later, you can run the "Rewrite README" action.
 #
-# Do not include "-latest" in the file name.  That is a convention used
-# inside the draft only; the tools use that to know where to put draft numbers.
-# The "docname" field below can be left alone: it will be updated automatically.
+# Do not include "-latest" in the file name.
+# The tools use "draft-<name>-latest" to find the draft name *inside* the draft,
+# such as the "docname" field below, and replace it with a draft number.
+# The "docname" field below can be left alone: it will be updated for you.
 #
 # This template uses kramdown-rfc2629: https://github.com/cabo/kramdown-rfc2629
 # You can replace the entire file if you prefer a different format.
