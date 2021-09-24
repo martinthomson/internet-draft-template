@@ -1,4 +1,4 @@
-name: "Update automatically generated files"
+name: "Update generated files"
 # This rule is not run automatically.
 # It can be run manually to update all of the files that are part
 # of the template, specifically:
@@ -26,7 +26,7 @@ jobs:
     - name: "Checkout"
       uses: actions/checkout@v2
 
-    - name: "Update automatically generated files"
+    - name: "Update generated files"
       uses: martinthomson/i-d-template@v1
       with:
         make: update-files
