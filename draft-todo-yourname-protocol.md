@@ -34,9 +34,9 @@ keyword: Internet-Draft
 venue:
   group: TODO
   type: Working Group
-  mail: TODO
-  arch: TODO
-  github: TODO
+  mail: TODO@example.com
+  arch: https://example.com/TODO
+  github: TODO/TODO
 
 stand_alone: yes
 smart_quotes: no
