@@ -3,19 +3,16 @@
 # Internet-Draft Markdown Template
 #
 # Rename this file from draft-todo-yourname-protocol.md to get started.
-# Draft name format is draft-<yourname>-<workgroup>-<name>.md
+# Draft name format is "draft-<yourname>-<workgroup>-<name>.md".
 #
-# Set the "title" field below at the same time.  The "abbrev" field should be
-# updated too.  "abbrev" can be deleted if your title is short.
+# For initial setup, you only need to edit the first block of fields.
+# Only "title" needs to be changed; delete "abbrev" if your title is short.
+# Other content can be edited, but some fields will be set automatically if
+# you leave them unchanged.
 #
-# You can edit the contents of the document as the same time.
-# Initial setup only needs the filename and title.
-# If you change title or name later, you can run the "Rewrite README" action.
-#
-# Do not include "-latest" in the file name.
-# The tools use "draft-<name>-latest" to find the draft name *inside* the draft,
-# such as the "docname" field below, and replace it with a draft number.
-# The "docname" field below can be left alone: it will be updated for you.
+# Don't include "-00" or "-latest" in the filename.
+# Labels in the form draft-<yourname>-<workgroup>-<name>-latest are used by
+# the tools to refer to the current version; see "docname" for example.
 #
 # This template uses kramdown-rfc2629: https://github.com/cabo/kramdown-rfc2629
 # You can replace the entire file if you prefer a different format.
@@ -24,9 +21,9 @@
 ###
 title: "TODO - Your title"
 abbrev: "TODO - Abbreviation"
-docname: draft-todo-yourname-protocol-latest
 category: info
 
+docname: draft-todo-yourname-protocol-latest
 ipr: trust200902
 area: TODO
 workgroup: TODO Working Group

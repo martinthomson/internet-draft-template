@@ -39,6 +39,7 @@ jobs:
         for i in draft-*; do
           if [ "$(head -1 "$i")" = "---" ]; then
             sed -i -e '2,/^---/{/^###/,/^###/d
+              s|^docname: .*|docname: '"${i%.md}"'|
               s|^    name: Your Name Here|    name: "'"$(git show -q --format='format:%aN' @)"'"|
               s|^    email: your\.email@example\.com|    email: "'"$(git show -q --format='format:%aE' @)"'"|
             }' "$i"
