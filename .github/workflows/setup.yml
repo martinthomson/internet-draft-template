@@ -51,12 +51,17 @@ jobs:
 
     - name: "Clone the i-d-template Repo"
       run: |
-        git clone https://github.com/martinthomson/i-d-template lib
+        git clone --depth=1 https://github.com/martinthomson/i-d-template lib
 
     - name: "Run i-d-template Setup"
       uses: martinthomson/i-d-template@v1
       with:
         make: setup
+
+    - name: "Update Venue Information"
+      uses: martinthomson/i-d-template@v1
+      with:
+        make: update-venue
 
     - name: "Push Changes"
       run: |

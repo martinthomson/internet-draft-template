@@ -31,6 +31,12 @@ ipr: trust200902
 area: TODO
 workgroup: TODO Working Group
 keyword: Internet-Draft
+venue:
+  group: TODO
+  type: Working Group
+  mail: TODO
+  arch: TODO
+  github: TODO
 
 stand_alone: yes
 smart_quotes: no
