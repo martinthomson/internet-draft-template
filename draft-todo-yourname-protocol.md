@@ -1,4 +1,5 @@
 ---
+###
 # Internet-Draft Markdown Template
 #
 # Rename this file from draft-todo-yourname-protocol.md to get started.
@@ -20,8 +21,7 @@
 # You can replace the entire file if you prefer a different format.
 # Change the file extension to match the format (.xml for XML, etc...)
 #
-# Delete this comment when you are done.
-#
+###
 title: "TODO - Your title"
 abbrev: "TODO - Abbreviation"
 docname: draft-todo-yourname-protocol-latest

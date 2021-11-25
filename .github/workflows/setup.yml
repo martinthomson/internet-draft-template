@@ -37,6 +37,9 @@ jobs:
           exit 1
         fi
         for i in draft-*; do
+          if [ "$(head -1 "$i")" = "---" ]; then
+            sed -i -e '2,/^---/{/^###/,/^###/d;}' "$i"
+          fi
           sed -i -e "s/draft-todo-yourname-protocol-latest/${i%.md}-latest/g" "$i"
           git add "$i"
         done
