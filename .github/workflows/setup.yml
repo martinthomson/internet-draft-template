@@ -16,18 +16,18 @@ jobs:
       id: first
       run: |
         if [ -n "$(git show --max-parents=0 -q --format='format:%h' HEAD)" ]; then
-           echo "Skipping build on first submission of a draft"
+           echo "Skipping build for the first commit"
            echo "::set-output name=first::true"
         fi
 
     - name: "Git Config"
-      if: ${{ steps.first.output.first != 'true' }}
+      if: ${{ steps.first.outputs.first != 'true' }}
       run: |
         git config user.email "idbot@example.com"
         git config user.name "I-D Bot"
 
     - name: "Update Draft Name"
-      if: ${{ steps.first.output.first != 'true' }}
+      if: ${{ steps.first.outputs.first != 'true' }}
       run: |
         if [ -z "$(ls draft-* rfc* 2>/dev/null | grep -v draft-todo-yourname-protocol.md)" ]; then
           echo
@@ -61,35 +61,35 @@ jobs:
         fi
 
     - name: "Cleanup"
-      if: ${{ ! steps.first.output.first }}
+      if: ${{ steps.first.outputs.first != 'true' }}
       run: |
         git rm -rf .github/workflows/setup.yml README.md
         git commit -m "Remove setup files"
 
     - name: "Clone the i-d-template Repo"
-      if: ${{ ! steps.first.output.first }}
+      if: ${{ steps.first.outputs.first != 'true' }}
       run: |
         git clone --depth=1 https://github.com/martinthomson/i-d-template lib
 
     - name: "Run i-d-template Setup"
-      if: ${{ ! steps.first.output.first }}
+      if: ${{ steps.first.outputs.first != 'true' }}
       uses: martinthomson/i-d-template@v1
       with:
         make: setup
 
     - name: "Update Venue Information"
-      if: ${{ ! steps.first.output.first }}
+      if: ${{ steps.first.outputs.first != 'true' }}
       uses: martinthomson/i-d-template@v1
       with:
         make: update-venue
 
     - name: "Update GitHub Pages"
-      if: ${{ ! steps.first.output.first }}
+      if: ${{ steps.first.outputs.first != 'true' }}
       uses: martinthomson/i-d-template@v1
       with:
         make: gh-pages
 
     - name: "Push Changes"
-      if: ${{ ! steps.first.output.first }}
+      if: ${{ steps.first.outputs.first != 'true' }}
       run: |
         git push
