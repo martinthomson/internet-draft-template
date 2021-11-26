@@ -21,13 +21,13 @@ jobs:
         fi
 
     - name: "Git Config"
-      if: ${{ ! steps.first.output.first }}
+      if: ${{ steps.first.output.first != 'true' }}
       run: |
         git config user.email "idbot@example.com"
         git config user.name "I-D Bot"
 
     - name: "Update Draft Name"
-      if: ${{ ! steps.first.output.first }}
+      if: ${{ steps.first.output.first != 'true' }}
       run: |
         if [ -z "$(ls draft-* rfc* 2>/dev/null | grep -v draft-todo-yourname-protocol.md)" ]; then
           echo
