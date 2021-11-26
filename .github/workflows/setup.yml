@@ -12,24 +12,32 @@ jobs:
     - name: "Checkout"
       uses: actions/checkout@v2
 
+    - name: "Check For Initial Commit"
+      id: first
+      run: |
+        if [ -n "$(git show --max-parents=0 -q --format='format:%h' HEAD)" ]; then
+           echo "::set-output name=first::true"
+        fi
+
     - name: "Git Config"
+      if: ! steps.first.output.first
       run: |
         git config user.email "idbot@example.com"
         git config user.name "I-D Bot"
 
     - name: "Update Draft Name"
+      if: ! steps.first.output.first
       run: |
         if [ -z "$(ls draft-* rfc* 2>/dev/null | grep -v draft-todo-yourname-protocol.md)" ]; then
           echo
           echo "============================================================="
           echo
-          echo "It is OK for this first build to fail."
-          echo "It will succeed when you rename your draft."
+          echo "Please rename the draft file."
           echo "The file can be renamed at:"
           echo
           echo "    https://github.com/${{github.repository}}/edit/main/draft-todo-yourname-protocol.md"
           echo
-          echo "Change the name of the file and its title to start the build."
+          echo "Change the name of the file and its title."
           echo "Commit the changes to the 'main' branch."
           echo
           echo "============================================================="
@@ -52,29 +60,35 @@ jobs:
         fi
 
     - name: "Cleanup"
+      if: ! steps.first.output.first
       run: |
         git rm -rf .github/workflows/setup.yml README.md
         git commit -m "Remove setup files"
 
     - name: "Clone the i-d-template Repo"
+      if: ! steps.first.output.first
       run: |
         git clone --depth=1 https://github.com/martinthomson/i-d-template lib
 
     - name: "Run i-d-template Setup"
+      if: ! steps.first.output.first
       uses: martinthomson/i-d-template@v1
       with:
         make: setup
 
     - name: "Update Venue Information"
+      if: ! steps.first.output.first
       uses: martinthomson/i-d-template@v1
       with:
         make: update-venue
 
     - name: "Update GitHub Pages"
+      if: ! steps.first.output.first
       uses: martinthomson/i-d-template@v1
       with:
         make: gh-pages
 
     - name: "Push Changes"
+      if: ! steps.first.output.first
       run: |
         git push
