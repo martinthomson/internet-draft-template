@@ -16,6 +16,7 @@ jobs:
       id: first
       run: |
         if [ -n "$(git show --max-parents=0 -q --format='format:%h' HEAD)" ]; then
+           echo "Skipping build on first submission of a draft"
            echo "::set-output name=first::true"
         fi
 
