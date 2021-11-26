@@ -7,8 +7,8 @@
 #
 # For initial setup, you only need to edit the first block of fields.
 # Only "title" needs to be changed; delete "abbrev" if your title is short.
-# Other content can be edited, but some fields will be set automatically if
-# you leave them unchanged.
+# Any other content can be edited, but be careful not to introduce errors.
+# Some fields will be set automatically during setup if they are unchanged.
 #
 # Don't include "-00" or "-latest" in the filename.
 # Labels in the form draft-<yourname>-<workgroup>-<name>-latest are used by
