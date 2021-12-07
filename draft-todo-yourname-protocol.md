@@ -25,15 +25,16 @@ category: info
 
 docname: draft-todo-yourname-protocol-latest
 ipr: trust200902
-area: TODO
-workgroup: TODO Working Group
+area: AREA
+workgroup: WG Working Group
 keyword: Internet-Draft
 venue:
-  group: TODO
+  group: WG
   type: Working Group
-  mail: TODO@example.com
-  arch: https://example.com/TODO
-  github: TODO/TODO
+  mail: WG@example.com
+  arch: https://example.com/WG
+  github: USER/REPO
+  latest: https://example.com/LATEST
 
 stand_alone: yes
 smart_quotes: no
