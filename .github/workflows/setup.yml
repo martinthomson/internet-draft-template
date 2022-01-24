@@ -15,8 +15,9 @@ jobs:
     - name: "Check For Initial Commit"
       id: first
       run: |
-        if [ -n "$(git show --max-parents=0 -q --format='format:%h' HEAD)" ]; then
-           echo "Skipping build for the first commit"
+        if [ -f draft-todo-yourname-protocol ]; then
+           echo "Skipping build for the first commit."
+           echo "Rename draft-todo-yourname-protocol.md to start using this repository."
            echo "::set-output name=first::true"
         fi
 
