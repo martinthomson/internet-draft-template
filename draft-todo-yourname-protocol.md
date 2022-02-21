@@ -36,11 +36,9 @@ venue:
   github: USER/REPO
   latest: https://example.com/LATEST
 
-smart_quotes: no
-
 author:
  -
-    name: Your Name Here
+    fullname: Your Name Here
     organization: Your Organization Here
     email: your.email@example.com
 
