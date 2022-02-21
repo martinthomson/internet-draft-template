@@ -24,7 +24,7 @@ abbrev: "TODO - Abbreviation"
 category: info
 
 docname: draft-todo-yourname-protocol-latest
-ipr: trust200902
+v: 3
 area: AREA
 workgroup: WG Working Group
 keyword: Internet-Draft
@@ -36,9 +36,7 @@ venue:
   github: USER/REPO
   latest: https://example.com/LATEST
 
-stand_alone: yes
 smart_quotes: no
-pi: [toc, sortrefs, symrefs]
 
 author:
  -
