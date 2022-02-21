@@ -14,7 +14,7 @@
 # Labels in the form draft-<yourname>-<workgroup>-<name>-latest are used by
 # the tools to refer to the current version; see "docname" for example.
 #
-# This template uses kramdown-rfc2629: https://github.com/cabo/kramdown-rfc2629
+# This template uses kramdown-rfc: https://github.com/cabo/kramdown-rfc
 # You can replace the entire file if you prefer a different format.
 # Change the file extension to match the format (.xml for XML, etc...)
 #
