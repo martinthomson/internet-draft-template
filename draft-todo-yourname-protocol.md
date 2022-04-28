@@ -25,16 +25,15 @@ category: info
 
 docname: draft-todo-yourname-protocol-latest
 submissiontype: IETF
-stand_alone: yes
-ipr: trust200902
-pi: [toc, sortrefs, symrefs]
 number:
 date:
-consensus:
+consensus: true
 v: 3
 area: AREA
 workgroup: WG Working Group
-keyword: Internet-Draft
+keyword:
+ - TODO1
+ - TODO2
 venue:
   group: WG
   type: Working Group
@@ -42,9 +41,6 @@ venue:
   arch: https://example.com/WG
   github: USER/REPO
   latest: https://example.com/LATEST
-keyword:
- - TODO1
- - TODO2
 
 author:
  -
