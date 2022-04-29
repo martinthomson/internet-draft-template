@@ -24,7 +24,7 @@ abbrev: "TODO - Abbreviation"
 category: info
 
 docname: draft-todo-yourname-protocol-latest
-submissiontype: IETF
+submissiontype: IETF  # also: "independent", "IAB", or "IRTF"
 number:
 date:
 consensus: true
@@ -32,8 +32,9 @@ v: 3
 area: AREA
 workgroup: WG Working Group
 keyword:
- - TODO1
- - TODO2
+ - next generation
+ - unicorn
+ - sparkling distributed ledger
 venue:
   group: WG
   type: Working Group
