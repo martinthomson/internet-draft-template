@@ -28,7 +28,7 @@ jobs:
           echo
           echo "============================================================="
           echo "::set-output name=skip::true"
-        elif [ ! -f draft-todo-yourname-protocol.md ]; then
+        elif [ ! -f draft-todo-yourname-protocol.md -a -f Makefile ]; then
           echo "============================================================="
           echo "Skipping setup for an already-configured repository."
           echo
