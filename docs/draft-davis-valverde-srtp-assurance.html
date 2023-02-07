@@ -1,0 +1,1789 @@
+<!DOCTYPE html>
+<html lang="en" class="Internet-Draft">
+<head>
+<meta charset="utf-8">
+<meta content="Common,Latin" name="scripts">
+<meta content="initial-scale=1.0" name="viewport">
+<title>SDP Security Assurance for Secure Real-time Transport Protocol (SRTP)</title>
+<meta content="Kyzer R. Davis" name="author">
+<meta content="Esteban Valverde" name="author">
+<meta content="
+       This document specifies new methods for signaling additional Secure Real-time Transport Protocol (SRTP) cryptographic context information via the Session Description Protocol (SDP)
+in alongside those defined by  . 
+       The methods defined in this document address situations where the receiver needs to quickly and robustly synchronize with a given sender.. 
+The mechanism also enhances SRTP operation in cases where there is a risk of losing sender-receiver synchronization. 
+    " name="description">
+<meta content="xml2rfc 3.16.0" name="generator">
+<meta content="draft-davis-valverde-srtp-assurance" name="ietf.draft">
+<!-- Generator version information:
+  xml2rfc 3.16.0
+    Python 3.10.6
+    appdirs 1.4.4
+    ConfigArgParse 1.5.3
+    google-i18n-address 2.5.2
+    html5lib 1.1
+    intervaltree 3.1.0
+    Jinja2 3.1.2
+    lxml 4.9.2
+    MarkupSafe 2.1.2
+    pycountry 22.3.5
+    PyYAML 6.0
+    requests 2.28.2
+    setuptools 59.6.0
+    six 1.16.0
+    wcwidth 0.2.6
+    weasyprint 57.2
+-->
+<link href="/usr/src/app/tmp/58156f95-4b26-4f68-aef5-20dd86fa2b68/draft-davis-valverde-srtp-assurance.xml" rel="alternate" type="application/rfc+xml">
+<link href="#copyright" rel="license">
+<style type="text/css">/*
+
+  NOTE: Changes at the bottom of this file overrides some earlier settings.
+
+  Once the style has stabilized and has been adopted as an official RFC style,
+  this can be consolidated so that style settings occur only in one place, but
+  for now the contents of this file consists first of the initial CSS work as
+  provided to the RFC Formatter (xml2rfc) work, followed by itemized and
+  commented changes found necessary during the development of the v3
+  formatters.
+
+*/
+
+/* fonts */
+@import url('https://fonts.googleapis.com/css?family=Noto+Sans'); /* Sans-serif */
+@import url('https://fonts.googleapis.com/css?family=Noto+Serif'); /* Serif (print) */
+@import url('https://fonts.googleapis.com/css?family=Roboto+Mono'); /* Monospace */
+
+:root {
+  --font-sans: 'Noto Sans', Arial, Helvetica, sans-serif;
+  --font-serif: 'Noto Serif', 'Times', 'Times New Roman', serif;
+  --font-mono: 'Roboto Mono', Courier, 'Courier New', monospace;
+}
+
+@viewport {
+  zoom: 1.0;
+  width: extend-to-zoom;
+}
+@-ms-viewport {
+  width: extend-to-zoom;
+  zoom: 1.0;
+}
+/* general and mobile first */
+html {
+}
+body {
+  max-width: 90%;
+  margin: 1.5em auto;
+  color: #222;
+  background-color: #fff;
+  font-size: 14px;
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  scroll-behavior: smooth;
+}
+.ears {
+  display: none;
+}
+
+/* headings */
+#title, h1, h2, h3, h4, h5, h6 {
+  margin: 1em 0 0.5em;
+  font-weight: bold;
+  line-height: 1.3;
+}
+#title {
+  clear: both;
+  border-bottom: 1px solid #ddd;
+  margin: 0 0 0.5em 0;
+  padding: 1em 0 0.5em;
+}
+.author {
+  padding-bottom: 4px;
+}
+h1 {
+  font-size: 26px;
+  margin: 1em 0;
+}
+h2 {
+  font-size: 22px;
+  margin-top: -20px;  /* provide offset for in-page anchors */
+  padding-top: 33px;
+}
+h3 {
+  font-size: 18px;
+  margin-top: -36px;  /* provide offset for in-page anchors */
+  padding-top: 42px;
+}
+h4 {
+  font-size: 16px;
+  margin-top: -36px;  /* provide offset for in-page anchors */
+  padding-top: 42px;
+}
+h5, h6 {
+  font-size: 14px;
+}
+#n-copyright-notice {
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 1em;
+  margin-bottom: 1em;
+}
+/* general structure */
+p {
+  padding: 0;
+  margin: 0 0 1em 0;
+  text-align: left;
+}
+div, span {
+  position: relative;
+}
+div {
+  margin: 0;
+}
+.alignRight.art-text {
+  background-color: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 3px;
+  padding: 1em 1em 0;
+  margin-bottom: 1.5em;
+}
+.alignRight.art-text pre {
+  padding: 0;
+}
+.alignRight {
+  margin: 1em 0;
+}
+.alignRight > *:first-child {
+  border: none;
+  margin: 0;
+  float: right;
+  clear: both;
+}
+.alignRight > *:nth-child(2) {
+  clear: both;
+  display: block;
+  border: none;
+}
+svg {
+  display: block;
+}
+svg[font-family~="serif" i], svg [font-family~="serif" i] {
+  font-family: var(--font-serif);
+}
+svg[font-family~="sans-serif" i], svg [font-family~="sans-serif" i] {
+  font-family: var(--font-sans);
+}
+svg[font-family~="monospace" i], svg [font-family~="monospace" i] {
+  font-family: var(--font-mono);
+}
+.alignCenter.art-text {
+  background-color: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 3px;
+  padding: 1em 1em 0;
+  margin-bottom: 1.5em;
+}
+.alignCenter.art-text pre {
+  padding: 0;
+}
+.alignCenter {
+  margin: 1em 0;
+}
+.alignCenter > *:first-child {
+  display: table;
+  border: none;
+  margin: 0 auto;
+}
+
+/* lists */
+ol, ul {
+  padding: 0;
+  margin: 0 0 1em 2em;
+}
+ol ol, ul ul, ol ul, ul ol {
+  margin-left: 1em;
+}
+li {
+  margin: 0 0 0.25em 0;
+}
+.ulCompact li {
+  margin: 0;
+}
+ul.empty, .ulEmpty {
+  list-style-type: none;
+}
+ul.empty li, .ulEmpty li {
+  margin-top: 0.5em;
+}
+ul.ulBare, li.ulBare {
+  margin-left: 0em !important;
+}
+ul.compact, .ulCompact,
+ol.compact, .olCompact {
+  line-height: 100%;
+  margin: 0 0 0 2em;
+}
+
+/* definition lists */
+dl {
+}
+dl > dt {
+  float: left;
+  margin-right: 1em;
+}
+/* 
+dl.nohang > dt {
+  float: none;
+}
+*/
+dl > dd {
+  margin-bottom: .8em;
+  min-height: 1.3em;
+}
+dl.compact > dd, .dlCompact > dd {
+  margin-bottom: 0em;
+}
+dl > dd > dl {
+  margin-top: 0.5em;
+  margin-bottom: 0em;
+}
+
+/* links */
+a {
+  text-decoration: none;
+}
+a[href] {
+  color: #22e; /* Arlen: WCAG 2019 */
+}
+a[href]:hover {
+  background-color: #f2f2f2;
+}
+figcaption a[href],
+a[href].selfRef {
+  color: #222;
+}
+/* XXX probably not this:
+a.selfRef:hover {
+  background-color: transparent;
+  cursor: default;
+} */
+
+/* Figures */
+tt, code, pre {
+  background-color: #f9f9f9;
+  font-family: var(--font-mono);
+}
+pre {
+  border: 1px solid #eee;
+  margin: 0;
+  padding: 1em;
+}
+img {
+  max-width: 100%;
+}
+figure {
+  margin: 0;
+}
+figure blockquote {
+  margin: 0.8em 0.4em 0.4em;
+}
+figcaption {
+  font-style: italic;
+  margin: 0 0 1em 0;
+}
+@media screen {
+  pre {
+    overflow-x: auto;
+    max-width: 100%;
+    max-width: calc(100% - 22px);
+  }
+}
+
+/* aside, blockquote */
+aside, blockquote {
+  margin-left: 0;
+  padding: 1.2em 2em;
+}
+blockquote {
+  background-color: #f9f9f9;
+  color: #111; /* Arlen: WCAG 2019 */
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  margin: 1em 0;
+}
+cite {
+  display: block;
+  text-align: right;
+  font-style: italic;
+}
+
+/* tables */
+table {
+  width: 100%;
+  margin: 0 0 1em;
+  border-collapse: collapse;
+  border: 1px solid #eee;
+}
+th, td {
+  text-align: left;
+  vertical-align: top;
+  padding: 0.5em 0.75em;
+}
+th {
+  text-align: left;
+  background-color: #e9e9e9;
+}
+tr:nth-child(2n+1) > td {
+  background-color: #f5f5f5;
+}
+table caption {
+  font-style: italic;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+table p {
+  /* XXX to avoid bottom margin on table row signifiers. If paragraphs should
+     be allowed within tables more generally, it would be far better to select on a class. */
+  margin: 0;
+}
+
+/* pilcrow */
+a.pilcrow {
+  color: #666; /* Arlen: AHDJ 2019 */
+  text-decoration: none;
+  visibility: hidden;
+  user-select: none;
+  -ms-user-select: none;
+  -o-user-select:none;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+@media screen {
+  aside:hover > a.pilcrow,
+  p:hover > a.pilcrow,
+  blockquote:hover > a.pilcrow,
+  div:hover > a.pilcrow,
+  li:hover > a.pilcrow,
+  pre:hover > a.pilcrow {
+    visibility: visible;
+  }
+  a.pilcrow:hover {
+    background-color: transparent;
+  }
+}
+
+/* misc */
+hr {
+  border: 0;
+  border-top: 1px solid #eee;
+}
+.bcp14 {
+  font-variant: small-caps;
+}
+
+.role {
+  font-variant: all-small-caps;
+}
+
+/* info block */
+#identifiers {
+  margin: 0;
+  font-size: 0.9em;
+}
+#identifiers dt {
+  width: 3em;
+  clear: left;
+}
+#identifiers dd {
+  float: left;
+  margin-bottom: 0;
+}
+/* Fix PDF info block run off issue */
+@media print {
+  #identifiers dd {
+    float: none;
+  }
+}
+#identifiers .authors .author {
+  display: inline-block;
+  margin-right: 1.5em;
+}
+#identifiers .authors .org {
+  font-style: italic;
+}
+
+/* The prepared/rendered info at the very bottom of the page */
+.docInfo {
+  color: #666; /* Arlen: WCAG 2019 */
+  font-size: 0.9em;
+  font-style: italic;
+  margin-top: 2em;
+}
+.docInfo .prepared {
+  float: left;
+}
+.docInfo .prepared {
+  float: right;
+}
+
+/* table of contents */
+#toc  {
+  padding: 0.75em 0 2em 0;
+  margin-bottom: 1em;
+}
+nav.toc ul {
+  margin: 0 0.5em 0 0;
+  padding: 0;
+  list-style: none;
+}
+nav.toc li {
+  line-height: 1.3em;
+  margin: 0.75em 0;
+  padding-left: 1.2em;
+  text-indent: -1.2em;
+}
+/* references */
+.references dt {
+  text-align: right;
+  font-weight: bold;
+  min-width: 7em;
+}
+.references dd {
+  margin-left: 8em;
+  overflow: auto;
+}
+
+.refInstance {
+  margin-bottom: 1.25em;
+}
+
+.references .ascii {
+  margin-bottom: 0.25em;
+}
+
+/* index */
+.index ul {
+  margin: 0 0 0 1em;
+  padding: 0;
+  list-style: none;
+}
+.index ul ul {
+  margin: 0;
+}
+.index li {
+  margin: 0;
+  text-indent: -2em;
+  padding-left: 2em;
+  padding-bottom: 5px;
+}
+.indexIndex {
+  margin: 0.5em 0 1em;
+}
+.index a {
+  font-weight: 700;
+}
+/* make the index two-column on all but the smallest screens */
+@media (min-width: 600px) {
+  .index ul {
+    -moz-column-count: 2;
+    -moz-column-gap: 20px;
+  }
+  .index ul ul {
+    -moz-column-count: 1;
+    -moz-column-gap: 0;
+  }
+}
+
+/* authors */
+address.vcard {
+  font-style: normal;
+  margin: 1em 0;
+}
+
+address.vcard .nameRole {
+  font-weight: 700;
+  margin-left: 0;
+}
+address.vcard .label {
+  font-family: var(--font-sans);
+  margin: 0.5em 0;
+}
+address.vcard .type {
+  display: none;
+}
+.alternative-contact {
+  margin: 1.5em 0 1em;
+}
+hr.addr {
+  border-top: 1px dashed;
+  margin: 0;
+  color: #ddd;
+  max-width: calc(100% - 16px);
+}
+
+/* temporary notes */
+.rfcEditorRemove::before {
+  position: absolute;
+  top: 0.2em;
+  right: 0.2em;
+  padding: 0.2em;
+  content: "The RFC Editor will remove this note";
+  color: #9e2a00; /* Arlen: WCAG 2019 */
+  background-color: #ffd; /* Arlen: WCAG 2019 */
+}
+.rfcEditorRemove {
+  position: relative;
+  padding-top: 1.8em;
+  background-color: #ffd; /* Arlen: WCAG 2019 */
+  border-radius: 3px;
+}
+.cref {
+  background-color: #ffd; /* Arlen: WCAG 2019 */
+  padding: 2px 4px;
+}
+.crefSource {
+  font-style: italic;
+}
+/* alternative layout for smaller screens */
+@media screen and (max-width: 1023px) {
+  body {
+    padding-top: 2em;
+  }
+  #title {
+    padding: 1em 0;
+  }
+  h1 {
+    font-size: 24px;
+  }
+  h2 {
+    font-size: 20px;
+    margin-top: -18px;  /* provide offset for in-page anchors */
+    padding-top: 38px;
+  }
+  #identifiers dd {
+    max-width: 60%;
+  }
+  #toc {
+    position: fixed;
+    z-index: 2;
+    top: 0;
+    right: 0;
+    padding: 0;
+    margin: 0;
+    background-color: inherit;
+    border-bottom: 1px solid #ccc;
+  }
+  #toc h2 {
+    margin: -1px 0 0 0;
+    padding: 4px 0 4px 6px;
+    padding-right: 1em;
+    min-width: 190px;
+    font-size: 1.1em;
+    text-align: right;
+    background-color: #444;
+    color: white;
+    cursor: pointer;
+  }
+  #toc h2::before { /* css hamburger */
+    float: right;
+    position: relative;
+    width: 1em;
+    height: 1px;
+    left: -164px;
+    margin: 6px 0 0 0;
+    background: white none repeat scroll 0 0;
+    box-shadow: 0 4px 0 0 white, 0 8px 0 0 white;
+    content: "";
+  }
+  #toc nav {
+    display: none;
+    padding: 0.5em 1em 1em;
+    overflow: auto;
+    height: calc(100vh - 48px);
+    border-left: 1px solid #ddd;
+  }
+}
+
+/* alternative layout for wide screens */
+@media screen and (min-width: 1024px) {
+  body {
+    max-width: 724px;
+    margin: 42px auto;
+    padding-left: 1.5em;
+    padding-right: 29em;
+  }
+  #toc {
+    position: fixed;
+    top: 42px;
+    right: 42px;
+    width: 25%;
+    margin: 0;
+    padding: 0 1em;
+    z-index: 1;
+  }
+  #toc h2 {
+    border-top: none;
+    border-bottom: 1px solid #ddd;
+    font-size: 1em;
+    font-weight: normal;
+    margin: 0;
+    padding: 0.25em 1em 1em 0;
+  }
+  #toc nav {
+    display: block;
+    height: calc(90vh - 84px);
+    bottom: 0;
+    padding: 0.5em 0 0;
+    overflow: auto;
+  }
+  img { /* future proofing */
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* pagination */
+@media print {
+  body {
+
+    width: 100%;
+  }
+  p {
+    orphans: 3;
+    widows: 3;
+  }
+  #n-copyright-notice {
+    border-bottom: none;
+  }
+  #toc, #n-introduction {
+    page-break-before: always;
+  }
+  #toc {
+    border-top: none;
+    padding-top: 0;
+  }
+  figure, pre {
+    page-break-inside: avoid;
+  }
+  figure {
+    overflow: scroll;
+  }
+  .breakable pre {
+    break-inside: auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+  }
+  h2+*, h3+*, h4+*, h5+*, h6+* {
+    page-break-before: avoid;
+  }
+  pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 10pt;
+  }
+  table {
+    border: 1px solid #ddd;
+  }
+  td {
+    border-top: 1px solid #ddd;
+  }
+}
+
+/* This is commented out here, as the string-set: doesn't
+   pass W3C validation currently */
+/*
+.ears thead .left {
+  string-set: ears-top-left content();
+}
+
+.ears thead .center {
+  string-set: ears-top-center content();
+}
+
+.ears thead .right {
+  string-set: ears-top-right content();
+}
+
+.ears tfoot .left {
+  string-set: ears-bottom-left content();
+}
+
+.ears tfoot .center {
+  string-set: ears-bottom-center content();
+}
+
+.ears tfoot .right {
+  string-set: ears-bottom-right content();
+}
+*/
+
+@page :first {
+  padding-top: 0;
+  @top-left {
+    content: normal;
+    border: none;
+  }
+  @top-center {
+    content: normal;
+    border: none;
+  }
+  @top-right {
+    content: normal;
+    border: none;
+  }
+}
+
+@page {
+  size: A4;
+  margin-bottom: 45mm;
+  padding-top: 20px;
+  /* The following is commented out here, but set appropriately by in code, as
+     the content depends on the document */
+  /*
+  @top-left {
+    content: 'Internet-Draft';
+    vertical-align: bottom;
+    border-bottom: solid 1px #ccc;
+  }
+  @top-left {
+    content: string(ears-top-left);
+    vertical-align: bottom;
+    border-bottom: solid 1px #ccc;
+  }
+  @top-center {
+    content: string(ears-top-center);
+    vertical-align: bottom;
+    border-bottom: solid 1px #ccc;
+  }
+  @top-right {
+    content: string(ears-top-right);
+    vertical-align: bottom;
+    border-bottom: solid 1px #ccc;
+  }
+  @bottom-left {
+    content: string(ears-bottom-left);
+    vertical-align: top;
+    border-top: solid 1px #ccc;
+  }
+  @bottom-center {
+    content: string(ears-bottom-center);
+    vertical-align: top;
+    border-top: solid 1px #ccc;
+  }
+  @bottom-right {
+      content: '[Page ' counter(page) ']';
+      vertical-align: top;
+      border-top: solid 1px #ccc;
+  }
+  */
+
+}
+
+/* Changes introduced to fix issues found during implementation */
+/* Make sure links are clickable even if overlapped by following H* */
+a {
+  z-index: 2;
+}
+/* Separate body from document info even without intervening H1 */
+section {
+  clear: both;
+}
+
+
+/* Top align author divs, to avoid names without organization dropping level with org names */
+.author {
+  vertical-align: top;
+}
+
+/* Leave room in document info to show Internet-Draft on one line */
+#identifiers dt {
+  width: 8em;
+}
+
+/* Don't waste quite as much whitespace between label and value in doc info */
+#identifiers dd {
+  margin-left: 1em;
+}
+
+/* Give floating toc a background color (needed when it's a div inside section */
+#toc {
+  background-color: white;
+}
+
+/* Make the collapsed ToC header render white on gray also when it's a link */
+@media screen and (max-width: 1023px) {
+  #toc h2 a,
+  #toc h2 a:link,
+  #toc h2 a:focus,
+  #toc h2 a:hover,
+  #toc a.toplink,
+  #toc a.toplink:hover {
+    color: white;
+    background-color: #444;
+    text-decoration: none;
+  }
+}
+
+/* Give the bottom of the ToC some whitespace */
+@media screen and (min-width: 1024px) {
+  #toc {
+    padding: 0 0 1em 1em;
+  }
+}
+
+/* Style section numbers with more space between number and title */
+.section-number {
+  padding-right: 0.5em;
+}
+
+/* prevent monospace from becoming overly large */
+tt, code, pre {
+  font-size: 95%;
+}
+
+/* Fix the height/width aspect for ascii art*/
+.sourcecode pre,
+.art-text pre {
+  line-height: 1.12;
+}
+
+
+/* Add styling for a link in the ToC that points to the top of the document */
+a.toplink {
+  float: right;
+  margin-right: 0.5em;
+}
+
+/* Fix the dl styling to match the RFC 7992 attributes */
+dl > dt,
+dl.dlParallel > dt {
+  float: left;
+  margin-right: 1em;
+}
+dl.dlNewline > dt {
+  float: none;
+}
+
+/* Provide styling for table cell text alignment */
+table td.text-left,
+table th.text-left {
+  text-align: left;
+}
+table td.text-center,
+table th.text-center {
+  text-align: center;
+}
+table td.text-right,
+table th.text-right {
+  text-align: right;
+}
+
+/* Make the alternative author contact information look less like just another
+   author, and group it closer with the primary author contact information */
+.alternative-contact {
+  margin: 0.5em 0 0.25em 0;
+}
+address .non-ascii {
+  margin: 0 0 0 2em;
+}
+
+/* With it being possible to set tables with alignment
+  left, center, and right, { width: 100%; } does not make sense */
+table {
+  width: auto;
+}
+
+/* Avoid reference text that sits in a block with very wide left margin,
+   because of a long floating dt label.*/
+.references dd {
+  overflow: visible;
+}
+
+/* Control caption placement */
+caption {
+  caption-side: bottom;
+}
+
+/* Limit the width of the author address vcard, so names in right-to-left
+   script don't end up on the other side of the page. */
+
+address.vcard {
+  max-width: 30em;
+  margin-right: auto;
+}
+
+/* For address alignment dependent on LTR or RTL scripts */
+address div.left {
+  text-align: left;
+}
+address div.right {
+  text-align: right;
+}
+
+/* Provide table alignment support.  We can't use the alignX classes above
+   since they do unwanted things with caption and other styling. */
+table.right {
+ margin-left: auto;
+ margin-right: 0;
+}
+table.center {
+ margin-left: auto;
+ margin-right: auto;
+}
+table.left {
+ margin-left: 0;
+ margin-right: auto;
+}
+
+/* Give the table caption label the same styling as the figcaption */
+caption a[href] {
+  color: #222;
+}
+
+@media print {
+  .toplink {
+    display: none;
+  }
+
+  /* avoid overwriting the top border line with the ToC header */
+  #toc {
+    padding-top: 1px;
+  }
+
+  /* Avoid page breaks inside dl and author address entries */
+  .vcard {
+    page-break-inside: avoid;
+  }
+
+}
+/* Tweak the bcp14 keyword presentation */
+.bcp14 {
+  font-variant: small-caps;
+  font-weight: bold;
+  font-size: 0.9em;
+}
+/* Tweak the invisible space above H* in order not to overlay links in text above */
+ h2 {
+  margin-top: -18px;  /* provide offset for in-page anchors */
+  padding-top: 31px;
+ }
+ h3 {
+  margin-top: -18px;  /* provide offset for in-page anchors */
+  padding-top: 24px;
+ }
+ h4 {
+  margin-top: -18px;  /* provide offset for in-page anchors */
+  padding-top: 24px;
+ }
+/* Float artwork pilcrow to the right */
+@media screen {
+  .artwork a.pilcrow {
+    display: block;
+    line-height: 0.7;
+    margin-top: 0.15em;
+  }
+}
+/* Make pilcrows on dd visible */
+@media screen {
+  dd:hover > a.pilcrow {
+    visibility: visible;
+  }
+}
+/* Make the placement of figcaption match that of a table's caption
+   by removing the figure's added bottom margin */
+.alignLeft.art-text,
+.alignCenter.art-text,
+.alignRight.art-text {
+   margin-bottom: 0;
+}
+.alignLeft,
+.alignCenter,
+.alignRight {
+  margin: 1em 0 0 0;
+}
+/* In print, the pilcrow won't show on hover, so prevent it from taking up space,
+   possibly even requiring a new line */
+@media print {
+  a.pilcrow {
+    display: none;
+  }
+}
+/* Styling for the external metadata */
+div#external-metadata {
+  background-color: #eee;
+  padding: 0.5em;
+  margin-bottom: 0.5em;
+  display: none;
+}
+div#internal-metadata {
+  padding: 0.5em;                       /* to match the external-metadata padding */
+}
+/* Styling for title RFC Number */
+h1#rfcnum {
+  clear: both;
+  margin: 0 0 -1em;
+  padding: 1em 0 0 0;
+}
+/* Make .olPercent look the same as <ol><li> */
+dl.olPercent > dd {
+  margin-bottom: 0.25em;
+  min-height: initial;
+}
+/* Give aside some styling to set it apart */
+aside {
+  border-left: 1px solid #ddd;
+  margin: 1em 0 1em 2em;
+  padding: 0.2em 2em;
+}
+aside > dl,
+aside > ol,
+aside > ul,
+aside > table,
+aside > p {
+  margin-bottom: 0.5em;
+}
+/* Additional page break settings */
+@media print {
+  figcaption, table caption {
+    page-break-before: avoid;
+  }
+}
+/* Font size adjustments for print */
+@media print {
+  body  { font-size: 10pt;      line-height: normal; max-width: 96%; }
+  h1    { font-size: 1.72em;    padding-top: 1.5em; } /* 1*1.2*1.2*1.2 */
+  h2    { font-size: 1.44em;    padding-top: 1.5em; } /* 1*1.2*1.2 */
+  h3    { font-size: 1.2em;     padding-top: 1.5em; } /* 1*1.2 */
+  h4    { font-size: 1em;       padding-top: 1.5em; }
+  h5, h6 { font-size: 1em;      margin: initial; padding: 0.5em 0 0.3em; }
+}
+/* Sourcecode margin in print, when there's no pilcrow */
+@media print {
+  .artwork,
+  .artwork > pre,
+  .sourcecode {
+    margin-bottom: 1em;
+  }
+}
+/* Avoid narrow tables forcing too narrow table captions, which may render badly */
+table {
+  min-width: 20em;
+}
+/* ol type a */
+ol.type-a { list-style-type: lower-alpha; }
+ol.type-A { list-style-type: upper-alpha; }
+ol.type-i { list-style-type: lower-roman; }
+ol.type-I { list-style-type: lower-roman; }
+/* Apply the print table and row borders in general, on request from the RPC,
+and increase the contrast between border and odd row background slightly */
+table {
+  border: 1px solid #ddd;
+}
+td {
+  border-top: 1px solid #ddd;
+}
+tr {
+  break-inside: avoid;
+}
+tr:nth-child(2n+1) > td {
+  background-color: #f8f8f8;
+}
+/* Use style rules to govern display of the TOC. */
+@media screen and (max-width: 1023px) {
+  #toc nav { display: none; }
+  #toc.active nav { display: block; }
+}
+/* Add support for keepWithNext */
+.keepWithNext {
+  break-after: avoid-page;
+  break-after: avoid-page;
+}
+/* Add support for keepWithPrevious */
+.keepWithPrevious {
+  break-before: avoid-page;
+}
+/* Change the approach to avoiding breaks inside artwork etc. */
+figure, pre, table, .artwork, .sourcecode  {
+  break-before: auto;
+  break-after: auto;
+}
+/* Avoid breaks between <dt> and <dd> */
+dl {
+  break-before: auto;
+  break-inside: auto;
+}
+dt {
+  break-before: auto;
+  break-after: avoid-page;
+}
+dd {
+  break-before: avoid-page;
+  break-after: auto;
+  orphans: 3;
+  widows: 3
+}
+span.break, dd.break {
+  margin-bottom: 0;
+  min-height: 0;
+  break-before: auto;
+  break-inside: auto;
+  break-after: auto;
+}
+/* Undo break-before ToC */
+@media print {
+  #toc {
+    break-before: auto;
+  }
+}
+/* Text in compact lists should not get extra bottom margin space,
+   since that would makes the list not compact */
+ul.compact p, .ulCompact p,
+ol.compact p, .olCompact p {
+ margin: 0;
+}
+/* But the list as a whole needs the extra space at the end */
+section ul.compact,
+section .ulCompact,
+section ol.compact,
+section .olCompact {
+  margin-bottom: 1em;                    /* same as p not within ul.compact etc. */
+}
+/* The tt and code background above interferes with for instance table cell
+   backgrounds.  Changed to something a bit more selective. */
+tt, code {
+  background-color: transparent;
+}
+p tt, p code, li tt, li code {
+  background-color: #f8f8f8;
+}
+/* Tweak the pre margin -- 0px doesn't come out well */
+pre {
+   margin-top: 0.5px;
+}
+/* Tweak the compact list text */
+ul.compact, .ulCompact,
+ol.compact, .olCompact,
+dl.compact, .dlCompact {
+  line-height: normal;
+}
+/* Don't add top margin for nested lists */
+li > ul, li > ol, li > dl,
+dd > ul, dd > ol, dd > dl,
+dl > dd > dl {
+  margin-top: initial;
+}
+/* Elements that should not be rendered on the same line as a <dt> */
+/* This should match the element list in writer.text.TextWriter.render_dl() */
+dd > div.artwork:first-child,
+dd > aside:first-child,
+dd > figure:first-child,
+dd > ol:first-child,
+dd > div.sourcecode:first-child,
+dd > table:first-child,
+dd > ul:first-child {
+  clear: left;
+}
+/* fix for weird browser behaviour when <dd/> is empty */
+dt+dd:empty::before{
+  content: "\00a0";
+}
+/* Make paragraph spacing inside <li> smaller than in body text, to fit better within the list */
+li > p {
+  margin-bottom: 0.5em
+}
+/* Don't let p margin spill out from inside list items */
+li > p:last-of-type:only-child {
+  margin-bottom: 0;
+}
+</style>
+<link href="rfc-local.css" rel="stylesheet" type="text/css">
+<script type="application/javascript">async function addMetadata(){try{const e=document.styleSheets[0].cssRules;for(let t=0;t<e.length;t++)if(/#identifiers/.exec(e[t].selectorText)){const a=e[t].cssText.replace("#identifiers","#external-updates");document.styleSheets[0].insertRule(a,document.styleSheets[0].cssRules.length)}}catch(e){console.log(e)}const e=document.getElementById("external-metadata");if(e)try{var t,a="",o=function(e){const t=document.getElementsByTagName("meta");for(let a=0;a<t.length;a++)if(t[a].getAttribute("name")===e)return t[a].getAttribute("content");return""}("rfc.number");if(o){t="https://www.rfc-editor.org/rfc/rfc"+o+".json";try{const e=await fetch(t);a=await e.json()}catch(e){t=document.URL.indexOf("html")>=0?document.URL.replace(/html$/,"json"):document.URL+".json";const o=await fetch(t);a=await o.json()}}if(!a)return;e.style.display="block";const s="",d="https://datatracker.ietf.org/doc",n="https://datatracker.ietf.org/ipr/search",c="https://www.rfc-editor.org/info",l=a.doc_id.toLowerCase(),i=a.doc_id.slice(0,3).toLowerCase(),f=a.doc_id.slice(3).replace(/^0+/,""),u={status:"Status",obsoletes:"Obsoletes",obsoleted_by:"Obsoleted By",updates:"Updates",updated_by:"Updated By",see_also:"See Also",errata_url:"Errata"};let h="<dl style='overflow:hidden' id='external-updates'>";["status","obsoletes","obsoleted_by","updates","updated_by","see_also","errata_url"].forEach(e=>{if("status"==e){a[e]=a[e].toLowerCase();var t=a[e].split(" "),o=t.length,w="",p=1;for(let e=0;e<o;e++)p<o?w=w+r(t[e])+" ":w+=r(t[e]),p++;a[e]=w}else if("obsoletes"==e||"obsoleted_by"==e||"updates"==e||"updated_by"==e){var g,m="",b=1;g=a[e].length;for(let t=0;t<g;t++)a[e][t]&&(a[e][t]=String(a[e][t]).toLowerCase(),m=b<g?m+"<a href='"+s+"/rfc/".concat(a[e][t])+"'>"+a[e][t].slice(3)+"</a>, ":m+"<a href='"+s+"/rfc/".concat(a[e][t])+"'>"+a[e][t].slice(3)+"</a>",b++);a[e]=m}else if("see_also"==e){var y,L="",C=1;y=a[e].length;for(let t=0;t<y;t++)if(a[e][t]){a[e][t]=String(a[e][t]);var _=a[e][t].slice(0,3),v=a[e][t].slice(3).replace(/^0+/,"");L=C<y?"RFC"!=_?L+"<a href='"+s+"/info/"+_.toLowerCase().concat(v.toLowerCase())+"'>"+_+" "+v+"</a>, ":L+"<a href='"+s+"/info/"+_.toLowerCase().concat(v.toLowerCase())+"'>"+v+"</a>, ":"RFC"!=_?L+"<a href='"+s+"/info/"+_.toLowerCase().concat(v.toLowerCase())+"'>"+_+" "+v+"</a>":L+"<a href='"+s+"/info/"+_.toLowerCase().concat(v.toLowerCase())+"'>"+v+"</a>",C++}a[e]=L}else if("errata_url"==e){var R="";R=a[e]?R+"<a href='"+a[e]+"'>Errata exist</a> | <a href='"+d+"/"+l+"'>Datatracker</a>| <a href='"+n+"/?"+i+"="+f+"&submit="+i+"'>IPR</a> | <a href='"+c+"/"+l+"'>Info page</a>":"<a href='"+d+"/"+l+"'>Datatracker</a> | <a href='"+n+"/?"+i+"="+f+"&submit="+i+"'>IPR</a> | <a href='"+c+"/"+l+"'>Info page</a>",a[e]=R}""!=a[e]?"Errata"==u[e]?h+=`<dt>More info:</dt><dd>${a[e]}</dd>`:h+=`<dt>${u[e]}:</dt><dd>${a[e]}</dd>`:"Errata"==u[e]&&(h+=`<dt>More info:</dt><dd>${a[e]}</dd>`)}),h+="</dl>",e.innerHTML=h}catch(e){console.log(e)}else console.log("Could not locate metadata <div> element");function r(e){return e.charAt(0).toUpperCase()+e.slice(1)}}window.removeEventListener("load",addMetadata),window.addEventListener("load",addMetadata);</script>
+</head>
+<body class="xml2rfc">
+<script src="metadata.min.js"></script>
+<table class="ears">
+<thead><tr>
+<td class="left">Internet-Draft</td>
+<td class="center">SRTP Assurance</td>
+<td class="right">February 2023</td>
+</tr></thead>
+<tfoot><tr>
+<td class="left">Davis &amp; Valverde</td>
+<td class="center">Expires 11 August 2023</td>
+<td class="right">[Page]</td>
+</tr></tfoot>
+</table>
+<div id="external-metadata" class="document-information"></div>
+<div id="internal-metadata" class="document-information">
+<dl id="identifiers">
+<dt class="label-workgroup">Workgroup:</dt>
+<dd class="workgroup">Network Working Group</dd>
+<dt class="label-internet-draft">Internet-Draft:</dt>
+<dd class="internet-draft">draft-davis-valverde-srtp-assurance</dd>
+<dt class="label-updates">Updates:</dt>
+<dd class="updates">
+<a href="https://www.rfc-editor.org/rfc/rfc4568" class="eref">4568</a> (if approved)</dd>
+<dt class="label-published">Published:</dt>
+<dd class="published">
+<time datetime="2023-02-07" class="published">7 February 2023</time>
+    </dd>
+<dt class="label-intended-status">Intended Status:</dt>
+<dd class="intended-status">Standards Track</dd>
+<dt class="label-expires">Expires:</dt>
+<dd class="expires"><time datetime="2023-08-11">11 August 2023</time></dd>
+<dt class="label-authors">Authors:</dt>
+<dd class="authors">
+<div class="author">
+      <div class="author-name">K. R. Davis</div>
+<div class="org">Cisco Systems</div>
+</div>
+<div class="author">
+      <div class="author-name">E. Valverde</div>
+<div class="org">Cisco Systems</div>
+</div>
+</dd>
+</dl>
+</div>
+<h1 id="title">SDP Security Assurance for Secure Real-time Transport Protocol (SRTP)</h1>
+<section id="section-abstract">
+      <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
+<p id="section-abstract-1">This document specifies new methods for signaling additional Secure Real-time Transport Protocol (SRTP) cryptographic context information via the Session Description Protocol (SDP)
+in alongside those defined by <span>[<a href="#RFC4568" class="cite xref">RFC4568</a>]</span>.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+<p id="section-abstract-2">The methods defined in this document address situations where the receiver needs to quickly and robustly synchronize with a given sender.. 
+The mechanism also enhances SRTP operation in cases where there is a risk of losing sender-receiver synchronization.<a href="#section-abstract-2" class="pilcrow">¶</a></p>
+</section>
+<div id="status-of-memo">
+<section id="section-boilerplate.1">
+        <h2 id="name-status-of-this-memo">
+<a href="#name-status-of-this-memo" class="section-name selfRef">Status of This Memo</a>
+        </h2>
+<p id="section-boilerplate.1-1">
+        This Internet-Draft is submitted in full conformance with the
+        provisions of BCP 78 and BCP 79.<a href="#section-boilerplate.1-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-2">
+        Internet-Drafts are working documents of the Internet Engineering Task
+        Force (IETF). Note that other groups may also distribute working
+        documents as Internet-Drafts. The list of current Internet-Drafts is
+        at <span><a href="https://datatracker.ietf.org/drafts/current/">https://datatracker.ietf.org/drafts/current/</a></span>.<a href="#section-boilerplate.1-2" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-3">
+        Internet-Drafts are draft documents valid for a maximum of six months
+        and may be updated, replaced, or obsoleted by other documents at any
+        time. It is inappropriate to use Internet-Drafts as reference
+        material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-4">
+        This Internet-Draft will expire on 11 August 2023.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="copyright">
+<section id="section-boilerplate.2">
+        <h2 id="name-copyright-notice">
+<a href="#name-copyright-notice" class="section-name selfRef">Copyright Notice</a>
+        </h2>
+<p id="section-boilerplate.2-1">
+            Copyright (c) 2023 IETF Trust and the persons identified as the
+            document authors. All rights reserved.<a href="#section-boilerplate.2-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.2-2">
+            This document is subject to BCP 78 and the IETF Trust's Legal
+            Provisions Relating to IETF Documents
+            (<span><a href="https://trustee.ietf.org/license-info">https://trustee.ietf.org/license-info</a></span>) in effect on the date of
+            publication of this document. Please review these documents
+            carefully, as they describe your rights and restrictions with
+            respect to this document. Code Components extracted from this
+            document must include Revised BSD License text as described in
+            Section 4.e of the Trust Legal Provisions and are provided without
+            warranty as described in the Revised BSD License.<a href="#section-boilerplate.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="toc">
+<section id="section-toc.1">
+        <a href="#" onclick="scroll(0,0)" class="toplink">▲</a><h2 id="name-table-of-contents">
+<a href="#name-table-of-contents" class="section-name selfRef">Table of Contents</a>
+        </h2>
+<nav class="toc"><ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1">
+            <p id="section-toc.1-1.1.1" class="keepWithNext"><a href="#section-1" class="auto internal xref">1</a>.  <a href="#name-introduction" class="internal xref">Introduction</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.1">
+                <p id="section-toc.1-1.1.2.1.1" class="keepWithNext"><a href="#section-1.1" class="auto internal xref">1.1</a>.  <a href="#name-problem-statement" class="internal xref">Problem Statement</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.2">
+                <p id="section-toc.1-1.1.2.2.1" class="keepWithNext"><a href="#section-1.2" class="auto internal xref">1.2</a>.  <a href="#name-previous-solutions" class="internal xref">Previous Solutions</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
+            <p id="section-toc.1-1.2.1"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-conventions-and-definitions" class="internal xref">Conventions and Definitions</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
+            <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-protocol-design" class="internal xref">Protocol Design</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1">
+                <p id="section-toc.1-1.3.2.1.1"><a href="#section-3.1" class="auto internal xref">3.1</a>.  <a href="#name-sdp-considerations" class="internal xref">SDP Considerations</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.2">
+                <p id="section-toc.1-1.3.2.2.1"><a href="#section-3.2" class="auto internal xref">3.2</a>.  <a href="#name-sender-behavior" class="internal xref">Sender Behavior</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.3">
+                <p id="section-toc.1-1.3.2.3.1"><a href="#section-3.3" class="auto internal xref">3.3</a>.  <a href="#name-receiver-behavior" class="internal xref">Receiver Behavior</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.4">
+                <p id="section-toc.1-1.3.2.4.1"><a href="#section-3.4" class="auto internal xref">3.4</a>.  <a href="#name-update-frequency" class="internal xref">Update Frequency</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
+            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
+            <p id="section-toc.1-1.7.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
+</li>
+        </ul>
+</nav>
+</section>
+</div>
+<div id="introduction">
+<section id="section-1">
+      <h2 id="name-introduction">
+<a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
+      </h2>
+<div id="Problem">
+<section id="section-1.1">
+        <h3 id="name-problem-statement">
+<a href="#section-1.1" class="section-number selfRef">1.1. </a><a href="#name-problem-statement" class="section-name selfRef">Problem Statement</a>
+        </h3>
+<p id="section-1.1-1">While <span>[<a href="#RFC4568" class="cite xref">RFC4568</a>]</span> provides most of the information required to instantiate an SRTP cryptographic context for RTP Packets, 
+the state of a few crucial items in the SRTP cryptographic context are missing.
+One such item is the Rollover Counter (ROC) defined by Section 3.2.1 <span>[<a href="#RFC3711" class="cite xref">RFC3711</a>]</span>
+which is not signaled in any packet across the wire and shared between applications.<a href="#section-1.1-1" class="pilcrow">¶</a></p>
+<p id="section-1.1-2">The ROC is one item that makes up the greater SRTP Packet Index along with the the <span>[<a href="#RFC3550" class="cite xref">RFC3550</a>]</span> transmitted sequence numbers for a given synchronization sources (SSRC).
+The Packet index is integral to the encryption, decryption and authentication process of SRTP key streams.
+Failure to instantiate the value properly at any point in the SRTP media exchange leads to encryption or decryption failures, degraded user experience 
+and at cross-vendor interoperability issues with many hours of engineering time spent debugging a value that is never negotiated on the wire 
+(and oftentimes not even logged in application logs.)<a href="#section-1.1-2" class="pilcrow">¶</a></p>
+<p id="section-1.1-3">The current method of ROC handling is to instantiate a new media stream's cryptographic context at 0 as per Section 3.3.1 of <span>[<a href="#RFC3711" class="cite xref">RFC3711</a>]</span>. 
+Then track the state ROC for a given cryptographic context as the time continues on and the stream progresses.<a href="#section-1.1-3" class="pilcrow">¶</a></p>
+<p id="section-1.1-4">When joining ongoing streams, resuming held/transferred streams, or devices without embedded application logic for clustering/high availability where a given cryptographic context is resumed; 
+without any explicit signaling about the ROC state, devices must make an educated guess as defined by Section 3.3.1 of <span>[<a href="#RFC3711" class="cite xref">RFC3711</a>]</span>.
+The method specially estimates the received ROC by calculating ROC-1, ROC, ROC+1 to see which performs a successful decrypt.
+While this may work on paper, this process usually only done at the initial instantiation of a cryptographic context rather than at later points later during the session.
+Instead many applications take the easy route and set the value at 0 as if this is a new stream.
+While technically true from that receivers perspective, the sender of this stream may be encrypting packets with a ROC greater than 0.
+Further this does not cover scenarios where the ROC is greater than +1.<a href="#section-1.1-4" class="pilcrow">¶</a></p>
+<p id="section-1.1-5">Where possible the ROC state (and the rest of the cryptographic context) is usually synced across clustered devices or high availability pairs via proprietary methods rather than open standards.<a href="#section-1.1-5" class="pilcrow">¶</a></p>
+<p id="section-1.1-6">These problems detailed technically above lead to a few very common scenarios where the ROC may become out of sync. 
+These are are briefly detailed below with the focus on the ROC Value.<a href="#section-1.1-6" class="pilcrow">¶</a></p>
+<p id="section-1.1-7">Joining an ongoing session:<a href="#section-1.1-7" class="pilcrow">¶</a></p>
+<ul class="compact">
+<li class="compact" id="section-1.1-8.1">When a receiver joins an ongoing session, such as a conference, there is no signaling method which can quickly allow the new participant to know the state of the ROC assuming the state of the stream is shared across all participants.<a href="#section-1.1-8.1" class="pilcrow">¶</a>
+</li>
+        </ul>
+<p id="section-1.1-9">Hold/Resume, Transfer Scenarios:<a href="#section-1.1-9" class="pilcrow">¶</a></p>
+<ul class="compact">
+<li class="compact" id="section-1.1-10.1">A session is created between sender A and receiver B. ROC is instantiated at 0 normally and continues as expected.<a href="#section-1.1-10.1" class="pilcrow">¶</a>
+</li>
+          <li class="compact" id="section-1.1-10.2">At some point the receiver is put on hold while the sender is connected to some other location such as music on hold or another party altogether.<a href="#section-1.1-10.2" class="pilcrow">¶</a>
+</li>
+          <li class="compact" id="section-1.1-10.3">At some future point the receiver is reconnected to the sender and the original session is resumed.<a href="#section-1.1-10.3" class="pilcrow">¶</a>
+</li>
+          <li class="compact" id="section-1.1-10.4">The sender may re-assume the original cryptographic context rather rather than create one net new.<a href="#section-1.1-10.4" class="pilcrow">¶</a>
+</li>
+          <li class="compact" id="section-1.1-10.5">Here if the sender starts the stream from the last observed sequence number the receiver observed the ROC will be in sync.<a href="#section-1.1-10.5" class="pilcrow">¶</a>
+</li>
+          <li class="compact" id="section-1.1-10.6">However there are scenarios where the sender may have been transmitting packets on the previous cryptographic context and if a ROC increment occurred; the receiver would never know. This can lead to problems when the streams are reconnected as the ROC is now out of sync between both parties.<a href="#section-1.1-10.6" class="pilcrow">¶</a>
+</li>
+          <li class="compact" id="section-1.1-10.7">A similar scenario was brought up in Appendix A of <span>[<a href="#RFC4568" class="cite xref">RFC4568</a>]</span> "Scenario B" and "Problem 3" of the summary within this section.<a href="#section-1.1-10.7" class="pilcrow">¶</a>
+</li>
+          <li class="compact" id="section-1.1-10.8">Further, a sender may be transferred to some upstream device transparently to them. If the sender does not reset their cryptographic context that new receiver will now be out of sync with possible ROC values.<a href="#section-1.1-10.8" class="pilcrow">¶</a>
+</li>
+        </ul>
+<p id="section-1.1-11">Application Failover (without stateful syncs):<a href="#section-1.1-11" class="pilcrow">¶</a></p>
+<ul class="compact">
+<li class="compact" id="section-1.1-12.1">In this scenario a cryptographic context was was created with Device A and B of a high availability pair.<a href="#section-1.1-12.1" class="pilcrow">¶</a>
+</li>
+          <li class="compact" id="section-1.1-12.2">An SRTP stream was created and ROC of 0 was created and media streamed from the source towards Device A.<a href="#section-1.1-12.2" class="pilcrow">¶</a>
+</li>
+          <li class="compact" id="section-1.1-12.3">Time continues and the sequence wraps from 65535 to 0 and the ROC is incremented to 1.<a href="#section-1.1-12.3" class="pilcrow">¶</a>
+</li>
+          <li class="compact" id="section-1.1-12.4">Both the sender and device A are tracking this locally and the encrypt/decrypt process proceeds normally.<a href="#section-1.1-12.4" class="pilcrow">¶</a>
+</li>
+          <li class="compact" id="section-1.1-12.5">Unfortunate network conditions arise and Device B must assume sessions of Device A transparently.<a href="#section-1.1-12.5" class="pilcrow">¶</a>
+</li>
+          <li class="compact" id="section-1.1-12.6">Without any proprietary syncing logic between Device A and B which disclose the state of the ROC, Device B will likely instantiate the ROC at 0.<a href="#section-1.1-12.6" class="pilcrow">¶</a>
+</li>
+          <li class="compact" id="section-1.1-12.7">Alternatively Device B may try to renegotiate the stream over the desired signaling protocol however this does not ensure the remote sender will change their cryptographic context and reset the ROC to 0.<a href="#section-1.1-12.7" class="pilcrow">¶</a>
+</li>
+          <li class="compact" id="section-1.1-12.8">The transparent nature of the upstream failover means the local application will likely proceed using ROC 1 while upstream receiver has no method of knowing ROC 1 is the current value.<a href="#section-1.1-12.8" class="pilcrow">¶</a>
+</li>
+        </ul>
+<p id="section-1.1-13">Improper SRTP context resets:<a href="#section-1.1-13" class="pilcrow">¶</a></p>
+<ul class="compact">
+<li class="compact" id="section-1.1-14.1">As defined by Section 3.3.1 of <span>[<a href="#RFC3711" class="cite xref">RFC3711</a>]</span> an SRTP re-key <span class="bcp14">MUST NOT</span> reset the ROC within SRTP Cryptographic context.<a href="#section-1.1-14.1" class="pilcrow">¶</a>
+</li>
+          <li class="compact" id="section-1.1-14.2">However, some applications may incorrectly use the re-key event as a trigger to reset the ROC leading to out-of-sync encrypt/decrypt operations.<a href="#section-1.1-14.2" class="pilcrow">¶</a>
+</li>
+        </ul>
+</section>
+</div>
+<div id="prevWork">
+<section id="section-1.2">
+        <h3 id="name-previous-solutions">
+<a href="#section-1.2" class="section-number selfRef">1.2. </a><a href="#name-previous-solutions" class="section-name selfRef">Previous Solutions</a>
+        </h3>
+<p id="section-1.2-1">As per RFC3711, "Receivers joining an on-going session <span class="bcp14">MUST</span> be given the current ROC value using out-of-band signaling such as key-management signaling."
+<span>[<a href="#RFC4771" class="cite xref">RFC4771</a>]</span> aimed to solve the problem however this solution has a few technical shortcomings detailed below.<a href="#section-1.2-1" class="pilcrow">¶</a></p>
+<p id="section-1.2-2">First, this specifies the use of Multimedia Internet KEYing (MIKEY) defined by <span>[<a href="#RFC3830" class="cite xref">RFC3830</a>]</span> as the out-of-band signaling method. 
+A proper MIKEY implementation requires more overhead than is needed to convey and solve this problem.
+By selecting MIKEY as the out-of-band signaling method the authors may have inadvertently inhibited significant adoption by the industry.<a href="#section-1.2-2" class="pilcrow">¶</a></p>
+<p id="section-1.2-3">Second, <span>[<a href="#RFC4771" class="cite xref">RFC4771</a>]</span> also transforms the SRTP Packet to include the four byte value after the encrypted payload and before an optional authentication tag. 
+This data about the SRTP context is unencrypted on the wire and not covered by newer SRTP encryption protocols such as <span>[<a href="#RFC6904" class="cite xref">RFC6904</a>]</span> and <span>[<a href="#RFC9335" class="cite xref">RFC9335</a>]</span>.<a href="#section-1.2-3" class="pilcrow">¶</a></p>
+<p id="section-1.2-4">Third, this is not in line with the standard method of RTP Packet modifications. 
+At the protocol would have benefited greatly from being an RTP Header Extension rather than a value appended after payload. 
+But even an RTP header extension proves problematic in where modern SRTP encryption such as Cryptex defined by <span>[<a href="#RFC9335" class="cite xref">RFC9335</a>]</span> are applied. 
+That is, the ROC is a required input to decrypt the RTP packet contents. It does not make sense to convey this data as an RTP Header Extension 
+obfuscated by the very encryption it is required to decrypt.<a href="#section-1.2-4" class="pilcrow">¶</a></p>
+<p id="section-1.2-5">Lastly, there is no defined method for applications defined for applications to advertise the usage of this protocol via any signaling methods.<a href="#section-1.2-5" class="pilcrow">¶</a></p>
+<p id="section-1.2-6"><span>[<a href="#RFC5159" class="cite xref">RFC5159</a>]</span> also defined some SDP attributes namely the "a=SRTPROCTxRate" attribute however this does not cover other important values in the SRTP Cryptographic context and has not seen widespread implementation.<a href="#section-1.2-6" class="pilcrow">¶</a></p>
+<p id="section-1.2-7"><span>[<a href="#RFC8870" class="cite xref">RFC8870</a>]</span> solves the problem for DTLS-SRTP <span>[<a href="#RFC5763" class="cite xref">RFC5763</a>]</span>/<span>[<a href="#RFC5764" class="cite xref">RFC5764</a>]</span> implementations.<a href="#section-1.2-7" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="conventions-and-definitions">
+<section id="section-2">
+      <h2 id="name-conventions-and-definitions">
+<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-conventions-and-definitions" class="section-name selfRef">Conventions and Definitions</a>
+      </h2>
+<p id="section-2-1">The key words "<span class="bcp14">MUST</span>", "<span class="bcp14">MUST NOT</span>", "<span class="bcp14">REQUIRED</span>", "<span class="bcp14">SHALL</span>", "<span class="bcp14">SHALL NOT</span>", "<span class="bcp14">SHOULD</span>", "<span class="bcp14">SHOULD NOT</span>", "<span class="bcp14">RECOMMENDED</span>", "<span class="bcp14">NOT RECOMMENDED</span>",
+"<span class="bcp14">MAY</span>", and "<span class="bcp14">OPTIONAL</span>" in this document are to be interpreted as
+described in BCP 14 <span>[<a href="#RFC2119" class="cite xref">RFC2119</a>]</span> <span>[<a href="#RFC8174" class="cite xref">RFC8174</a>]</span> when, and only when, they
+appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="design">
+<section id="section-3">
+      <h2 id="name-protocol-design">
+<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-protocol-design" class="section-name selfRef">Protocol Design</a>
+      </h2>
+<p id="section-3-1">This specification adds to what is defined in SDP Security Framework <span>[<a href="#RFC4568" class="cite xref">RFC4568</a>]</span> by allowing applications
+to explicitly negotiate additional items from the cryptographic context such as the packet index ingredients: ROC, SSRC and Sequence Number via SDP.<a href="#section-3-1" class="pilcrow">¶</a></p>
+<p id="section-3-2">By coupling this information with the applicable "a=crypto" offers; a receiving application can properly instantiate 
+an SRTP cryptographic context at the start of a session, later in a session, after session modification or when joining an ongoing session.<a href="#section-3-2" class="pilcrow">¶</a></p>
+<p id="section-3-3">It should be noted that:<a href="#section-3-3" class="pilcrow">¶</a></p>
+<ul class="compact">
+<li class="compact" id="section-3-4.1">This specifications makes no attempt to be compatible with the Key Management Extension for SDP "a=key-mgmt" defined by <span>[<a href="#RFC4567" class="cite xref">RFC4567</a>]</span>.<a href="#section-3-4.1" class="pilcrow">¶</a>
+</li>
+        <li class="compact" id="section-3-4.2">This specifications makes no attempt to be compatible with the Key Management via SDP for ZRTP "a=zrtp-hash" defined by <span>[<a href="#RFC6189" class="cite xref">RFC6189</a>]</span>.<a href="#section-3-4.2" class="pilcrow">¶</a>
+</li>
+        <li class="compact" id="section-3-4.3">All DTLS-SRTP items including Privacy Enhanced Conferencing items (PERC) are out of scope for the purposes of this specification <span>[<a href="#RFC8723" class="cite xref">RFC8723</a>]</span> <span>[<a href="#RFC8871" class="cite xref">RFC8871</a>]</span>.<a href="#section-3-4.3" class="pilcrow">¶</a>
+</li>
+        <li class="compact" id="section-3-4.4">Is not required by SRTCP since the packet index is carried within the SRTCP packet and does not need an out-of-band equivalent.<a href="#section-3-4.4" class="pilcrow">¶</a>
+</li>
+      </ul>
+<div id="syntax">
+<section id="section-3.1">
+        <h3 id="name-sdp-considerations">
+<a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-sdp-considerations" class="section-name selfRef">SDP Considerations</a>
+        </h3>
+<p id="section-3.1-1">This specification introduces a new SRTP Assurance attribute defined as "a=srtpass".<a href="#section-3.1-1" class="pilcrow">¶</a></p>
+<p id="section-3.1-2">The presence of the "a=srtpass" attribute in the SDP (in either an offer or an answer) indicates that the endpoint is 
+signaling explicit cryptographic context information and this data <span class="bcp14">SHOULD</span> be used in place of derived values such as those obtained from late binding or some other mechanism.<a href="#section-3.1-2" class="pilcrow">¶</a></p>
+<p id="section-3.1-3">The SRTP Assurance value syntax is as follows:<a href="#section-3.1-3" class="pilcrow">¶</a></p>
+<span id="name-example-srtp-assurance-synt"></span><div id="sampleSyntax">
+<figure id="figure-1">
+          <div class="alignLeft art-text artwork" id="section-3.1-4.1">
+<pre>
+a=srtpass:&lt;a-crypto-tag&gt; index:&lt;ssrc_value_hex&gt;|&lt;roc_value_hex&gt;|&lt;last_known_tx_seq_hex&gt;
+</pre>
+</div>
+<figcaption><a href="#figure-1" class="selfRef">Figure 1</a>:
+<a href="#name-example-srtp-assurance-synt" class="selfRef">Example SRTP assurance Syntax</a>
+          </figcaption></figure>
+</div>
+<p id="section-3.1-5">The formal definition of the UUID string representation is provided by the following ABNF <span>[<a href="#RFC5234" class="cite xref">RFC5234</a>]</span>:<a href="#section-3.1-5" class="pilcrow">¶</a></p>
+<div class="lang-abnf sourcecode" id="section-3.1-6">
+<pre>
+srtp-assurance = srtp-attr
+                 srtp-tag
+                 srtp-index
+                 srtp-ssrc"|"
+                 srtp-roc"|"
+                 srtp-seq CRLF
+srtp-attr      = "a=srtpass:"
+srtp-tag       = 1*9DIGIT 1WSP
+srtp-index     = "index:"
+srtp-ssrc      = "0x"1*8HEXDIG / "unknown"
+srtp-seq       = "0x"1*4HEXDIG / "unknown"
+srtp-roc       = "0x"1*4HEXDIG / "unknown"
+DIGIT          = %x30-39
+HEXDIG         = DIGIT / "A" / "B" / "C" / "D" / "E" / "F"
+</pre><a href="#section-3.1-6" class="pilcrow">¶</a>
+</div>
+<p id="section-3.1-7">Leading 0s may be omitted and the alphanumeric hex may be upper or lowercase but at least one 0 must be present. 
+Additionally the "0x" provided additional context that these values are hex and not integers.
+Thus as per <a href="#sampleCompare" class="auto internal xref">Figure 2</a> these two lines are functionally identical:<a href="#section-3.1-7" class="pilcrow">¶</a></p>
+<span id="name-comparison-with-and-without"></span><div id="sampleCompare">
+<figure id="figure-2">
+          <div class="alignLeft art-text artwork" id="section-3.1-8.1">
+<pre>
+a=srtpass:1 index:0x00845FED|0x00000000|0x005D
+a=srtpass:1 index:0x845fed|0x0|0x05d
+</pre>
+</div>
+<figcaption><a href="#figure-2" class="selfRef">Figure 2</a>:
+<a href="#name-comparison-with-and-without" class="selfRef">Comparison with and without Leading 0s</a>
+          </figcaption></figure>
+</div>
+<p id="section-3.1-9">When SSRC, ROC, or Sequence information needs to be conveyed about a given stream, the a=srtpass attribute is coupled with the relevant a=crypto attribute in the SDP.<a href="#section-3.1-9" class="pilcrow">¶</a></p>
+<p id="section-3.1-10">In <a href="#sampleAttribute" class="auto internal xref">Figure 3</a> the sender has shares the usual cryptographic information as per a=crypto but has included 
+other information such as the 32 bit SSRC, 32 bit ROC, and 16 bit Last Known Sequence number as Hex values within the a=srtpass attribute.
+Together these two attributes provide better insights as to the state of the SRTP cryptographic context from the senders perspective.<a href="#section-3.1-10" class="pilcrow">¶</a></p>
+<span id="name-example-srtp-assurance-attr"></span><div id="sampleAttribute">
+<figure id="figure-3">
+          <div class="alignLeft art-text artwork" id="section-3.1-11.1">
+<pre>
+a=crypto:1 AEAD_AES_256_GCM inline:3/sxOxrbg3CVDrxeaNs91Vle+wW1RvT/zJWTCUNP1i6L45S9qcstjBv+eo0=|2^20|1:32
+a=srtpass:1 index:0x00845FED|0x0000|0x0150
+</pre>
+</div>
+<figcaption><a href="#figure-3" class="selfRef">Figure 3</a>:
+<a href="#name-example-srtp-assurance-attr" class="selfRef">Example SRTP assurance attribute</a>
+          </figcaption></figure>
+</div>
+<p id="section-3.1-12">The value of "unknown" may be used in place of any of the fields to indicate default behavior 
+by the receiving application (usually falling back to late binding or locally derived/stored cryptographic contact information for the packet index.)
+The example shown in <a href="#sampleUnknown" class="auto internal xref">Figure 4</a> indicates that only the SSRC of the stream is unknown to the sender at the time of the SDP exchange but 
+values for ROC and Last Known Sequence are present. 
+This <span class="bcp14">MAY</span> be updated via signaling at any later time but applications <span class="bcp14">SHOULD</span> ensure any offer/answer has the appropriate SRTP assurance attribute.<a href="#section-3.1-12" class="pilcrow">¶</a></p>
+<p id="section-3.1-13">Applications <span class="bcp14">SHOULD NOT</span> include SRTP Assurance attribute if all three values are unknown. 
+For example, starting a new sending session instantiation or for advertising potential cryptographic attributes that are part of a new offer. 
+<a href="#sampleUnknown" class="auto internal xref">Figure 4</a> shows that tag 1 does not have any SRTP Assurance parameters rather than rather an SRTP Assurance attribute with all three values set to "unknown".<a href="#section-3.1-13" class="pilcrow">¶</a></p>
+<span id="name-example-srtp-assurance-with"></span><div id="sampleUnknown">
+<figure id="figure-4">
+          <div class="alignLeft art-text artwork" id="section-3.1-14.1">
+<pre>
+a=crypto:1 AES_CM_128_HMAC_SHA1_32 inline:k4x3YXkTD1TWlNL3BZpESzOFuxkBZmTo0vGa1omW
+a=crypto:2 AES_CM_128_HMAC_SHA1_80 inline:PS1uQCVeeCFCanVmcjkpPywjNWhcYD0mXXtxaVBR
+a=srtpass:2 index:unknown|0x0001|0x3039
+</pre>
+</div>
+<figcaption><a href="#figure-4" class="selfRef">Figure 4</a>:
+<a href="#name-example-srtp-assurance-with" class="selfRef">Example SRTP assurance with unknown mappings</a>
+          </figcaption></figure>
+</div>
+<p id="section-3.1-15">The tag for an SRTP assurance attribute <span class="bcp14">MUST</span> follow the peer SDP Security a=crypto tag for a given media stream (m=).
+The example in shown in <a href="#sampleTag" class="auto internal xref">Figure 5</a> the sender is advertising an explicit packet index mapping for a=crypto tag 2 for the audio stream and tag 1 for the video media stream. 
+Note that some SDP values have been truncated for the sake of simplicity.<a href="#section-3.1-15" class="pilcrow">¶</a></p>
+<span id="name-example-crypto-and-srtp-ass"></span><div id="sampleTag">
+<figure id="figure-5">
+          <div class="alignLeft art-text artwork" id="section-3.1-16.1">
+<pre>
+c=IN IP4 168.2.17.12
+m=audio 49170 RTP/SAVP 0
+a=crypto:1 AES_CM_128_HMAC_SHA1_80 inline:d0RmdmcmVCspeEc3QGZiNWpVLFJhQX1cfHAwJSoj|2^20|1:32
+a=crypto:2 AEAD_AES_256_GCM inline:HGAPy4Cedy/qumbZvpuCZSVT7rNDk8vG4TdUXp5hkyWqJCqiLRGab0KJy1g=
+a=srtpass:2 index:0xBFBDD|0x0001|0x3039
+m=video 49172 RTP/SAVP 126
+a=crypto:1 AEAD_AES_128_GCM inline:bQJXGzEPXJPClrd78xwALdaZDs/dLttBLfLE5Q==
+a=srtpass:1 index:0xDD147C14|0x0001|0x3039
+</pre>
+</div>
+<figcaption><a href="#figure-5" class="selfRef">Figure 5</a>:
+<a href="#name-example-crypto-and-srtp-ass" class="selfRef">Example crypto and SRTP assurance tag mapping</a>
+          </figcaption></figure>
+</div>
+<p id="section-3.1-17">SRTP Assurance is compatible with <span>[<a href="#RFC9335" class="cite xref">RFC9335</a>]</span> "a=cryptex" media and session level attribute.<a href="#section-3.1-17" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="sender">
+<section id="section-3.2">
+        <h3 id="name-sender-behavior">
+<a href="#section-3.2" class="section-number selfRef">3.2. </a><a href="#name-sender-behavior" class="section-name selfRef">Sender Behavior</a>
+        </h3>
+<p id="section-3.2-1">Senders utilizing SDP Security via "a=crypto" <span class="bcp14">MUST</span> make an attempt to signal any known packet index values to the peer receiver.
+The exception being when all values are unknown, such as at the very start of medias stream negotiation.<a href="#section-3.2-1" class="pilcrow">¶</a></p>
+<p id="section-3.2-2">For best results all sending parties of a given session stream <span class="bcp14">SHOULD</span> advertise known packet index values for all media streams.
+This should continue throughout the life of the session to ensure any errors or out of sync errors can be quickly corrected via new signaling methods. 
+See <a href="#frequency" class="auto internal xref">Section 3.4</a> for update frequency recommendations.<a href="#section-3.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="receiver">
+<section id="section-3.3">
+        <h3 id="name-receiver-behavior">
+<a href="#section-3.3" class="section-number selfRef">3.3. </a><a href="#name-receiver-behavior" class="section-name selfRef">Receiver Behavior</a>
+        </h3>
+<p id="section-3.3-1">Receivers <span class="bcp14">SHOULD</span> utilize the signaled information in application logic to instantiate the SRTP cryptographic context.
+In the even there is no SRTP assurance attributes present in SDP receivers <span class="bcp14">MUST</span> fallback to <span>[<a href="#RFC3711" class="cite xref">RFC3711</a>]</span> for guesting 
+the ROC and <span>[<a href="#RFC4568" class="cite xref">RFC4568</a>]</span> logic for late binding to gleam the SSRC and sequence numbers.<a href="#section-3.3-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="frequency">
+<section id="section-3.4">
+        <h3 id="name-update-frequency">
+<a href="#section-3.4" class="section-number selfRef">3.4. </a><a href="#name-update-frequency" class="section-name selfRef">Update Frequency</a>
+        </h3>
+<p id="section-3.4-1">Senders <span class="bcp14">SHOULD</span> provide SRTP assurance SDP when SDP Crypto attributes are negotiated.
+There is no explicit time or total number of packets in which a new update is required from sender to receiver.
+By following natural session updates,  session changes and session liveliness checks this specification will not cause 
+overcrowding on the session establishment protocol's signaling channel.<a href="#section-3.4-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="security-considerations">
+<section id="section-4">
+      <h2 id="name-security-considerations">
+<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+      </h2>
+<p id="section-4-1">When SDP carries SRTP Assurance attributes additional insights are present about the SRTP Cryptographic context.
+Care <span class="bcp14">MUST</span> be taken as per the <span>[<a href="#RFC8866" class="cite xref">RFC8866</a>]</span> that keying material must not be sent over unsecure channels unless the SDP can be both private (encrypted) and authenticated.<a href="#section-4-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="iana-considerations">
+<section id="section-5">
+      <h2 id="name-iana-considerations">
+<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
+      </h2>
+<p id="section-5-1">This document updates the "attribute-name (formerly "att-field")" sub-registry of the "Session Description Protocol (SDP) Parameters" registry (see Section 8.2.4 of <span>[<a href="#RFC8866" class="cite xref">RFC8866</a>]</span>). 
+Specifically, it adds the SDP "a=srtpass" attribute for use at both the media level.<a href="#section-5-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5-2">
+<pre>
+Contact name: IETF AVT Working Group or IESG if the AVT Working Group is closed
+Contact email address: avt@ietf.org
+Attribute name: srtpass
+Attribute syntax: TODO
+Attribute semantics: TODO
+Attribute value: TODO
+Usage level: media
+Charset dependent: No
+Purpose: Provide additional insights about SRTP context information not conveyed required by a receiver to properly decrypt SRTP.
+O/A procedures: SDP O/A procedures are described in {{syntax}} of this document.
+Mux Category: TRANSPORT
+</pre><a href="#section-5-2" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<section id="section-6">
+      <h2 id="name-normative-references">
+<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+      </h2>
+<dl class="references">
+<dt id="RFC2119">[RFC2119]</dt>
+      <dd>
+<span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03" class="refDate">March 1997</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc2119">https://www.rfc-editor.org/rfc/rfc2119</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC3550">[RFC3550]</dt>
+      <dd>
+<span class="refAuthor">Schulzrinne, H.</span>, <span class="refAuthor">Casner, S.</span>, <span class="refAuthor">Frederick, R.</span>, and <span class="refAuthor">V. Jacobson</span>, <span class="refTitle">"RTP: A Transport Protocol for Real-Time Applications"</span>, <span class="seriesInfo">STD 64</span>, <span class="seriesInfo">RFC 3550</span>, <span class="seriesInfo">DOI 10.17487/RFC3550</span>, <time datetime="2003-07" class="refDate">July 2003</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc3550">https://www.rfc-editor.org/rfc/rfc3550</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC3711">[RFC3711]</dt>
+      <dd>
+<span class="refAuthor">Baugher, M.</span>, <span class="refAuthor">McGrew, D.</span>, <span class="refAuthor">Naslund, M.</span>, <span class="refAuthor">Carrara, E.</span>, and <span class="refAuthor">K. Norrman</span>, <span class="refTitle">"The Secure Real-time Transport Protocol (SRTP)"</span>, <span class="seriesInfo">RFC 3711</span>, <span class="seriesInfo">DOI 10.17487/RFC3711</span>, <time datetime="2004-03" class="refDate">March 2004</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc3711">https://www.rfc-editor.org/rfc/rfc3711</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC3830">[RFC3830]</dt>
+      <dd>
+<span class="refAuthor">Arkko, J.</span>, <span class="refAuthor">Carrara, E.</span>, <span class="refAuthor">Lindholm, F.</span>, <span class="refAuthor">Naslund, M.</span>, and <span class="refAuthor">K. Norrman</span>, <span class="refTitle">"MIKEY: Multimedia Internet KEYing"</span>, <span class="seriesInfo">RFC 3830</span>, <span class="seriesInfo">DOI 10.17487/RFC3830</span>, <time datetime="2004-08" class="refDate">August 2004</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc3830">https://www.rfc-editor.org/rfc/rfc3830</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC4567">[RFC4567]</dt>
+      <dd>
+<span class="refAuthor">Arkko, J.</span>, <span class="refAuthor">Lindholm, F.</span>, <span class="refAuthor">Naslund, M.</span>, <span class="refAuthor">Norrman, K.</span>, and <span class="refAuthor">E. Carrara</span>, <span class="refTitle">"Key Management Extensions for Session Description Protocol (SDP) and Real Time Streaming Protocol (RTSP)"</span>, <span class="seriesInfo">RFC 4567</span>, <span class="seriesInfo">DOI 10.17487/RFC4567</span>, <time datetime="2006-07" class="refDate">July 2006</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc4567">https://www.rfc-editor.org/rfc/rfc4567</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC4568">[RFC4568]</dt>
+      <dd>
+<span class="refAuthor">Andreasen, F.</span>, <span class="refAuthor">Baugher, M.</span>, and <span class="refAuthor">D. Wing</span>, <span class="refTitle">"Session Description Protocol (SDP) Security Descriptions for Media Streams"</span>, <span class="seriesInfo">RFC 4568</span>, <span class="seriesInfo">DOI 10.17487/RFC4568</span>, <time datetime="2006-07" class="refDate">July 2006</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc4568">https://www.rfc-editor.org/rfc/rfc4568</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC4771">[RFC4771]</dt>
+      <dd>
+<span class="refAuthor">Lehtovirta, V.</span>, <span class="refAuthor">Naslund, M.</span>, and <span class="refAuthor">K. Norrman</span>, <span class="refTitle">"Integrity Transform Carrying Roll-Over Counter for the Secure Real-time Transport Protocol (SRTP)"</span>, <span class="seriesInfo">RFC 4771</span>, <span class="seriesInfo">DOI 10.17487/RFC4771</span>, <time datetime="2007-01" class="refDate">January 2007</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc4771">https://www.rfc-editor.org/rfc/rfc4771</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC5159">[RFC5159]</dt>
+      <dd>
+<span class="refAuthor">Dondeti, L., Ed.</span> and <span class="refAuthor">A. Jerichow</span>, <span class="refTitle">"Session Description Protocol (SDP) Attributes for Open Mobile Alliance (OMA) Broadcast (BCAST) Service and Content Protection"</span>, <span class="seriesInfo">RFC 5159</span>, <span class="seriesInfo">DOI 10.17487/RFC5159</span>, <time datetime="2008-03" class="refDate">March 2008</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc5159">https://www.rfc-editor.org/rfc/rfc5159</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC5234">[RFC5234]</dt>
+      <dd>
+<span class="refAuthor">Crocker, D., Ed.</span> and <span class="refAuthor">P. Overell</span>, <span class="refTitle">"Augmented BNF for Syntax Specifications: ABNF"</span>, <span class="seriesInfo">STD 68</span>, <span class="seriesInfo">RFC 5234</span>, <span class="seriesInfo">DOI 10.17487/RFC5234</span>, <time datetime="2008-01" class="refDate">January 2008</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc5234">https://www.rfc-editor.org/rfc/rfc5234</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC5763">[RFC5763]</dt>
+      <dd>
+<span class="refAuthor">Fischl, J.</span>, <span class="refAuthor">Tschofenig, H.</span>, and <span class="refAuthor">E. Rescorla</span>, <span class="refTitle">"Framework for Establishing a Secure Real-time Transport Protocol (SRTP) Security Context Using Datagram Transport Layer Security (DTLS)"</span>, <span class="seriesInfo">RFC 5763</span>, <span class="seriesInfo">DOI 10.17487/RFC5763</span>, <time datetime="2010-05" class="refDate">May 2010</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc5763">https://www.rfc-editor.org/rfc/rfc5763</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC5764">[RFC5764]</dt>
+      <dd>
+<span class="refAuthor">McGrew, D.</span> and <span class="refAuthor">E. Rescorla</span>, <span class="refTitle">"Datagram Transport Layer Security (DTLS) Extension to Establish Keys for the Secure Real-time Transport Protocol (SRTP)"</span>, <span class="seriesInfo">RFC 5764</span>, <span class="seriesInfo">DOI 10.17487/RFC5764</span>, <time datetime="2010-05" class="refDate">May 2010</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc5764">https://www.rfc-editor.org/rfc/rfc5764</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC6189">[RFC6189]</dt>
+      <dd>
+<span class="refAuthor">Zimmermann, P.</span>, <span class="refAuthor">Johnston, A., Ed.</span>, and <span class="refAuthor">J. Callas</span>, <span class="refTitle">"ZRTP: Media Path Key Agreement for Unicast Secure RTP"</span>, <span class="seriesInfo">RFC 6189</span>, <span class="seriesInfo">DOI 10.17487/RFC6189</span>, <time datetime="2011-04" class="refDate">April 2011</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc6189">https://www.rfc-editor.org/rfc/rfc6189</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC6904">[RFC6904]</dt>
+      <dd>
+<span class="refAuthor">Lennox, J.</span>, <span class="refTitle">"Encryption of Header Extensions in the Secure Real-time Transport Protocol (SRTP)"</span>, <span class="seriesInfo">RFC 6904</span>, <span class="seriesInfo">DOI 10.17487/RFC6904</span>, <time datetime="2013-04" class="refDate">April 2013</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc6904">https://www.rfc-editor.org/rfc/rfc6904</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8174">[RFC8174]</dt>
+      <dd>
+<span class="refAuthor">Leiba, B.</span>, <span class="refTitle">"Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 8174</span>, <span class="seriesInfo">DOI 10.17487/RFC8174</span>, <time datetime="2017-05" class="refDate">May 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8174">https://www.rfc-editor.org/rfc/rfc8174</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8723">[RFC8723]</dt>
+      <dd>
+<span class="refAuthor">Jennings, C.</span>, <span class="refAuthor">Jones, P.</span>, <span class="refAuthor">Barnes, R.</span>, and <span class="refAuthor">A.B. Roach</span>, <span class="refTitle">"Double Encryption Procedures for the Secure Real-Time Transport Protocol (SRTP)"</span>, <span class="seriesInfo">RFC 8723</span>, <span class="seriesInfo">DOI 10.17487/RFC8723</span>, <time datetime="2020-04" class="refDate">April 2020</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8723">https://www.rfc-editor.org/rfc/rfc8723</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8866">[RFC8866]</dt>
+      <dd>
+<span class="refAuthor">Begen, A.</span>, <span class="refAuthor">Kyzivat, P.</span>, <span class="refAuthor">Perkins, C.</span>, and <span class="refAuthor">M. Handley</span>, <span class="refTitle">"SDP: Session Description Protocol"</span>, <span class="seriesInfo">RFC 8866</span>, <span class="seriesInfo">DOI 10.17487/RFC8866</span>, <time datetime="2021-01" class="refDate">January 2021</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8866">https://www.rfc-editor.org/rfc/rfc8866</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8870">[RFC8870]</dt>
+      <dd>
+<span class="refAuthor">Jennings, C.</span>, <span class="refAuthor">Mattsson, J.</span>, <span class="refAuthor">McGrew, D.</span>, <span class="refAuthor">Wing, D.</span>, and <span class="refAuthor">F. Andreasen</span>, <span class="refTitle">"Encrypted Key Transport for DTLS and Secure RTP"</span>, <span class="seriesInfo">RFC 8870</span>, <span class="seriesInfo">DOI 10.17487/RFC8870</span>, <time datetime="2021-01" class="refDate">January 2021</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8870">https://www.rfc-editor.org/rfc/rfc8870</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8871">[RFC8871]</dt>
+      <dd>
+<span class="refAuthor">Jones, P.</span>, <span class="refAuthor">Benham, D.</span>, and <span class="refAuthor">C. Groves</span>, <span class="refTitle">"A Solution Framework for Private Media in Privacy-Enhanced RTP Conferencing (PERC)"</span>, <span class="seriesInfo">RFC 8871</span>, <span class="seriesInfo">DOI 10.17487/RFC8871</span>, <time datetime="2021-01" class="refDate">January 2021</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8871">https://www.rfc-editor.org/rfc/rfc8871</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9335">[RFC9335]</dt>
+    <dd>
+<span class="refAuthor">Uberti, J.</span>, <span class="refAuthor">Jennings, C.</span>, and <span class="refAuthor">S. Murillo</span>, <span class="refTitle">"Completely Encrypting RTP Header Extensions and Contributing Sources"</span>, <span class="seriesInfo">RFC 9335</span>, <span class="seriesInfo">DOI 10.17487/RFC9335</span>, <time datetime="2023-01" class="refDate">January 2023</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9335">https://www.rfc-editor.org/rfc/rfc9335</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+<div id="authors-addresses">
+<section id="appendix-A">
+      <h2 id="name-authors-addresses">
+<a href="#name-authors-addresses" class="section-name selfRef">Authors' Addresses</a>
+      </h2>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Kyzer R. Davis</span></div>
+<div dir="auto" class="left"><span class="org">Cisco Systems</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:kydavis@cisco.com" class="email">kydavis@cisco.com</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Esteban Valverde</span></div>
+<div dir="auto" class="left"><span class="org">Cisco Systems</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:jovalver@cisco.com" class="email">jovalver@cisco.com</a>
+</div>
+</address>
+</section>
+</div>
+<script>const toc = document.getElementById("toc");
+toc.querySelector("h2").addEventListener("click", e => {
+  toc.classList.toggle("active");
+});
+toc.querySelector("nav").addEventListener("click", e => {
+  toc.classList.remove("active");
+});
+</script>
+</body>
+</html>
