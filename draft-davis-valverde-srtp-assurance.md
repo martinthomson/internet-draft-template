@@ -28,10 +28,14 @@ normative:
   RFC4771: RFC4771
   RFC5159: RFC5159
   RFC5234: RFC5234
+  RFC5479: RFC5479
+  RFC5576: RFC5576
   RFC5763: RFC5763
   RFC5764: RFC5764
   RFC6189: RFC6189
   RFC6904: RFC6904
+  RFC7201: RFC7201
+  RFC7714: RFC7714
   RFC8723: RFC8723
   RFC8866: RFC8866
   RFC8870: RFC8870
@@ -87,6 +91,7 @@ Joining an ongoing session:
 {: spacing="compact"}
 - When a receiver joins an ongoing session, such as a conference, there is no signaling method which can quickly allow the new participant to know the state of the ROC assuming the state of the stream is shared across all participants.
 
+
 Hold/Resume, Transfer Scenarios:
 
 {: spacing="compact"}
@@ -111,11 +116,20 @@ Application Failover (without stateful syncs):
 - Alternatively Device B may try to renegotiate the stream over the desired signaling protocol however this does not ensure the remote sender will change their cryptographic context and reset the ROC to 0.
 - The transparent nature of the upstream failover means the local application will likely proceed using ROC 1 while upstream receiver has no method of knowing ROC 1 is the current value.
 
+Secure SIPREC Recording:
+
+{: spacing="compact"}
+- If a SIPREC recorder is brought into recording an ongoing session through some form of transfer or on-demand recording solution the ROC may have incremented.
+- Without an SDP mechanism to share this information the SIPREC will be unaware of the full SRTP context required to ensure proper decrypt of media streams being monitored.
+
 Improper SRTP context resets:
 
 {: spacing="compact"}
 - As defined by Section 3.3.1 of {{RFC3711}} an SRTP re-key MUST NOT reset the ROC within SRTP Cryptographic context.
 - However, some applications may incorrectly use the re-key event as a trigger to reset the ROC leading to out-of-sync encrypt/decrypt operations.
+
+This is a problem that other SRTP Key Management protocols (MIKEY, DTLS-SRTP, EKT-SRTP) have solved but SDP Security has lagged behind in solution parity. 
+For a quick comparison of all SRTP Key Management negotiations refer to {{RFC7201}} and {{RFC5479}}.
 
 ## Previous Solutions {#prevWork}
 
@@ -128,9 +142,11 @@ By selecting MIKEY as the out-of-band signaling method the authors may have inad
 
 Second, {{RFC4771}} also transforms the SRTP Packet to include the four byte value after the encrypted payload and before an optional authentication tag. 
 This data about the SRTP context is unencrypted on the wire and not covered by newer SRTP encryption protocols such as {{RFC6904}} and {{RFC9335}}.
+Furthermore this makes the approach incompatible with AEAD SRTP Cipher Suites which state that trimming/truncating the authentication tag weakens the security of the protocol in Section 13.2 of {{RFC7714}}.
+
 
 Third, this is not in line with the standard method of RTP Packet modifications. 
-At the protocol would have benefited greatly from being an RTP Header Extension rather than a value appended after payload. 
+The proposal would have benefited greatly from being an RTP Header Extension rather than a value appended after payload. 
 But even an RTP header extension proves problematic in where modern SRTP encryption such as Cryptex defined by {{RFC9335}} are applied. 
 That is, the ROC is a required input to decrypt the RTP packet contents. It does not make sense to convey this data as an RTP Header Extension 
 obfuscated by the very encryption it is required to decrypt.
@@ -146,20 +162,37 @@ Lastly, there is no defined method for applications defined for applications to 
 {::boilerplate bcp14-tagged}
 
 # Protocol Design {#design}
-This specification adds to what is defined in SDP Security Framework {{RFC4568}} by allowing applications
-to explicitly negotiate additional items from the cryptographic context such as the packet index ingredients: ROC, SSRC and Sequence Number via SDP.
+A few points of note are below about this specifications relationship to other SRTP Key Management protocols or SRTP protocols as to leave no ambiguity.
 
-By coupling this information with the applicable "a=crypto" offers; a receiving application can properly instantiate 
-an SRTP cryptographic context at the start of a session, later in a session, after session modification or when joining an ongoing session.
+{: vspace='0'}
+Session Description Protocol (SDP) Security Descriptions for Media Streams:
+: The authors have chosen to avoid modifying RFC4568 a=crypto offers as to avoid backwards compatibility issues with a non-versioned protocol. 
+  Instead this specification adds to what is defined in SDP Security Framework {{RFC4568}} by allowing applications
+  to explicitly negotiate additional items from the cryptographic context such as the packet index ingredients: ROC, SSRC and Sequence Number via a new SDP Attribute.
+  By coupling this information with the applicable "a=crypto" offers; a receiving application can properly instantiate 
+  an SRTP cryptographic context at the start of a session, later in a session, after session modification or when joining an ongoing session.
 
+Key Management Extensions for Session Description Protocol (SDP) and Real Time Streaming Protocol (RTSP):
+: This specifications makes no attempt to be compatible with the Key Management Extension for SDP "a=key-mgmt" defined by {{RFC4567}}
 
-It should be noted that:
+ZRTP: Media Path Key Agreement for Unicast Secure RTP:
+: This specifications makes no attempt to be compatible with the Key Management via SDP for ZRTP "a=zrtp-hash" defined by {{RFC6189}}. 
 
-{: spacing="compact"}
-- This specifications makes no attempt to be compatible with the Key Management Extension for SDP "a=key-mgmt" defined by {{RFC4567}}. 
-- This specifications makes no attempt to be compatible with the Key Management via SDP for ZRTP "a=zrtp-hash" defined by {{RFC6189}}. 
-- All DTLS-SRTP items including Privacy Enhanced Conferencing items (PERC) are out of scope for the purposes of this specification {{RFC8723}} {{RFC8871}}.
-- Is not required by SRTCP since the packet index is carried within the SRTCP packet and does not need an out-of-band equivalent. 
+DTLS-SRTP, EKT-SRTP, Privacy Enhanced Conferencing items (PERC):
+: All DTLS-SRTP items including Privacy Enhanced Conferencing items (PERC) [{{RFC8723}} and {{RFC8871}}] are out of scope for the purposes of this specification.
+
+Secure Real Time Control Protocol (SRTCP):
+: This specification is  not required by SRTCP since the packet index is carried within the SRTCP packet and does not need an out-of-band equivalent.
+
+Source-Specific Media Attributes in the Session Description Protocol (SDP):
+: The authors of this specification vetted {{RFC5576}} SSRC Attribute "a=ssrc" but felt that it would require too much modification and additions to the SSRC Attribute
+  specification to allow unknown SSRC values and the other information which needs to be conveyed.
+  Further, requiring implementation of the core SSRC Attribute RFC could pose as a barrier entry and separating the two into different SDP Attributes is the better option.
+  An implementation SHOULD NOT send RFC5576 SSRC Attributes alongside SRTP Assurance SSRC Attributes. 
+  If both are present in SDP, a receiver SHOULD utilize prioritize the SRTP Assurance attributes over SSRC Attributes since these attributes will provide better SRTP cryptographic context initialization. 
+
+Completely Encrypting RTP Header Extensions and Contributing Sources:
+: SRTP Assurance is compatible with {{RFC9335}} "a=cryptex" media and session level attribute.
 
 ## SDP Considerations {#syntax}
 This specification introduces a new SRTP Assurance attribute defined as "a=srtpass".
@@ -248,7 +281,7 @@ a=srtpass:1 index:0xDD147C14|0x0001|0x3039
 ~~~~
 {: #sampleTag title='Example crypto and SRTP assurance tag mapping'}
 
-SRTP Assurance is compatible with {{RFC9335}} "a=cryptex" media and session level attribute.
+<TODO: BUNDLE BEHAVIOR AND HANDLING>
 
 ## Sender Behavior {#sender}
 Senders utilizing SDP Security via "a=crypto" MUST make an attempt to signal any known packet index values to the peer receiver.

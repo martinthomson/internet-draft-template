@@ -34,7 +34,7 @@ The mechanism also enhances SRTP operation in cases where there is a risk of los
     wcwidth 0.2.6
     weasyprint 57.2
 -->
-<link href="/usr/src/app/tmp/58156f95-4b26-4f68-aef5-20dd86fa2b68/draft-davis-valverde-srtp-assurance.xml" rel="alternate" type="application/rfc+xml">
+<link href="/usr/src/app/tmp/a88084fc-7bde-4b1a-ad7f-b9051640a423/draft-davis-valverde-srtp-assurance.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
 <style type="text/css">/*
 
@@ -1212,7 +1212,7 @@ li > p:last-of-type:only-child {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Davis &amp; Valverde</td>
-<td class="center">Expires 11 August 2023</td>
+<td class="center">Expires 18 August 2023</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1228,12 +1228,12 @@ li > p:last-of-type:only-child {
 <a href="https://www.rfc-editor.org/rfc/rfc4568" class="eref">4568</a> (if approved)</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2023-02-07" class="published">7 February 2023</time>
+<time datetime="2023-02-14" class="published">14 February 2023</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2023-08-11">11 August 2023</time></dd>
+<dd class="expires"><time datetime="2023-08-18">18 August 2023</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1274,7 +1274,7 @@ The mechanism also enhances SRTP operation in cases where there is a risk of los
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 11 August 2023.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 18 August 2023.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1424,13 +1424,22 @@ These are are briefly detailed below with the focus on the ROC Value.<a href="#s
           <li class="compact" id="section-1.1-12.8">The transparent nature of the upstream failover means the local application will likely proceed using ROC 1 while upstream receiver has no method of knowing ROC 1 is the current value.<a href="#section-1.1-12.8" class="pilcrow">¶</a>
 </li>
         </ul>
-<p id="section-1.1-13">Improper SRTP context resets:<a href="#section-1.1-13" class="pilcrow">¶</a></p>
+<p id="section-1.1-13">Secure SIPREC Recording:<a href="#section-1.1-13" class="pilcrow">¶</a></p>
 <ul class="compact">
-<li class="compact" id="section-1.1-14.1">As defined by Section 3.3.1 of <span>[<a href="#RFC3711" class="cite xref">RFC3711</a>]</span> an SRTP re-key <span class="bcp14">MUST NOT</span> reset the ROC within SRTP Cryptographic context.<a href="#section-1.1-14.1" class="pilcrow">¶</a>
+<li class="compact" id="section-1.1-14.1">If a SIPREC recorder is brought into recording an ongoing session through some form of transfer or on-demand recording solution the ROC may have incremented.<a href="#section-1.1-14.1" class="pilcrow">¶</a>
 </li>
-          <li class="compact" id="section-1.1-14.2">However, some applications may incorrectly use the re-key event as a trigger to reset the ROC leading to out-of-sync encrypt/decrypt operations.<a href="#section-1.1-14.2" class="pilcrow">¶</a>
+          <li class="compact" id="section-1.1-14.2">Without an SDP mechanism to share this information the SIPREC will be unaware of the full SRTP context required to ensure proper decrypt of media streams being monitored.<a href="#section-1.1-14.2" class="pilcrow">¶</a>
 </li>
         </ul>
+<p id="section-1.1-15">Improper SRTP context resets:<a href="#section-1.1-15" class="pilcrow">¶</a></p>
+<ul class="compact">
+<li class="compact" id="section-1.1-16.1">As defined by Section 3.3.1 of <span>[<a href="#RFC3711" class="cite xref">RFC3711</a>]</span> an SRTP re-key <span class="bcp14">MUST NOT</span> reset the ROC within SRTP Cryptographic context.<a href="#section-1.1-16.1" class="pilcrow">¶</a>
+</li>
+          <li class="compact" id="section-1.1-16.2">However, some applications may incorrectly use the re-key event as a trigger to reset the ROC leading to out-of-sync encrypt/decrypt operations.<a href="#section-1.1-16.2" class="pilcrow">¶</a>
+</li>
+        </ul>
+<p id="section-1.1-17">This is a problem that other SRTP Key Management protocols (MIKEY, DTLS-SRTP, EKT-SRTP) have solved but SDP Security has lagged behind in solution parity. 
+For a quick comparison of all SRTP Key Management negotiations refer to <span>[<a href="#RFC7201" class="cite xref">RFC7201</a>]</span> and <span>[<a href="#RFC5479" class="cite xref">RFC5479</a>]</span>.<a href="#section-1.1-17" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="prevWork">
@@ -1444,9 +1453,10 @@ These are are briefly detailed below with the focus on the ROC Value.<a href="#s
 A proper MIKEY implementation requires more overhead than is needed to convey and solve this problem.
 By selecting MIKEY as the out-of-band signaling method the authors may have inadvertently inhibited significant adoption by the industry.<a href="#section-1.2-2" class="pilcrow">¶</a></p>
 <p id="section-1.2-3">Second, <span>[<a href="#RFC4771" class="cite xref">RFC4771</a>]</span> also transforms the SRTP Packet to include the four byte value after the encrypted payload and before an optional authentication tag. 
-This data about the SRTP context is unencrypted on the wire and not covered by newer SRTP encryption protocols such as <span>[<a href="#RFC6904" class="cite xref">RFC6904</a>]</span> and <span>[<a href="#RFC9335" class="cite xref">RFC9335</a>]</span>.<a href="#section-1.2-3" class="pilcrow">¶</a></p>
+This data about the SRTP context is unencrypted on the wire and not covered by newer SRTP encryption protocols such as <span>[<a href="#RFC6904" class="cite xref">RFC6904</a>]</span> and <span>[<a href="#RFC9335" class="cite xref">RFC9335</a>]</span>.
+Furthermore this makes the approach incompatible with AEAD SRTP Cipher Suites which state that trimming/truncating the authentication tag weakens the security of the protocol in Section 13.2 of <span>[<a href="#RFC7714" class="cite xref">RFC7714</a>]</span>.<a href="#section-1.2-3" class="pilcrow">¶</a></p>
 <p id="section-1.2-4">Third, this is not in line with the standard method of RTP Packet modifications. 
-At the protocol would have benefited greatly from being an RTP Header Extension rather than a value appended after payload. 
+The proposal would have benefited greatly from being an RTP Header Extension rather than a value appended after payload. 
 But even an RTP header extension proves problematic in where modern SRTP encryption such as Cryptex defined by <span>[<a href="#RFC9335" class="cite xref">RFC9335</a>]</span> are applied. 
 That is, the ROC is a required input to decrypt the RTP packet contents. It does not make sense to convey this data as an RTP Header Extension 
 obfuscated by the very encryption it is required to decrypt.<a href="#section-1.2-4" class="pilcrow">¶</a></p>
@@ -1473,21 +1483,52 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
       <h2 id="name-protocol-design">
 <a href="#section-3" class="section-number selfRef">3. </a><a href="#name-protocol-design" class="section-name selfRef">Protocol Design</a>
       </h2>
-<p id="section-3-1">This specification adds to what is defined in SDP Security Framework <span>[<a href="#RFC4568" class="cite xref">RFC4568</a>]</span> by allowing applications
-to explicitly negotiate additional items from the cryptographic context such as the packet index ingredients: ROC, SSRC and Sequence Number via SDP.<a href="#section-3-1" class="pilcrow">¶</a></p>
-<p id="section-3-2">By coupling this information with the applicable "a=crypto" offers; a receiving application can properly instantiate 
-an SRTP cryptographic context at the start of a session, later in a session, after session modification or when joining an ongoing session.<a href="#section-3-2" class="pilcrow">¶</a></p>
-<p id="section-3-3">It should be noted that:<a href="#section-3-3" class="pilcrow">¶</a></p>
-<ul class="compact">
-<li class="compact" id="section-3-4.1">This specifications makes no attempt to be compatible with the Key Management Extension for SDP "a=key-mgmt" defined by <span>[<a href="#RFC4567" class="cite xref">RFC4567</a>]</span>.<a href="#section-3-4.1" class="pilcrow">¶</a>
-</li>
-        <li class="compact" id="section-3-4.2">This specifications makes no attempt to be compatible with the Key Management via SDP for ZRTP "a=zrtp-hash" defined by <span>[<a href="#RFC6189" class="cite xref">RFC6189</a>]</span>.<a href="#section-3-4.2" class="pilcrow">¶</a>
-</li>
-        <li class="compact" id="section-3-4.3">All DTLS-SRTP items including Privacy Enhanced Conferencing items (PERC) are out of scope for the purposes of this specification <span>[<a href="#RFC8723" class="cite xref">RFC8723</a>]</span> <span>[<a href="#RFC8871" class="cite xref">RFC8871</a>]</span>.<a href="#section-3-4.3" class="pilcrow">¶</a>
-</li>
-        <li class="compact" id="section-3-4.4">Is not required by SRTCP since the packet index is carried within the SRTCP packet and does not need an out-of-band equivalent.<a href="#section-3-4.4" class="pilcrow">¶</a>
-</li>
-      </ul>
+<p id="section-3-1">A few points of note are below about this specifications relationship to other SRTP Key Management protocols or SRTP protocols as to leave no ambiguity.<a href="#section-3-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlNewline" id="section-3-2">
+        <dt id="section-3-2.1">Session Description Protocol (SDP) Security Descriptions for Media Streams:</dt>
+        <dd style="margin-left: 1.5em" id="section-3-2.2">
+          <p id="section-3-2.2.1">The authors have chosen to avoid modifying RFC4568 a=crypto offers as to avoid backwards compatibility issues with a non-versioned protocol. 
+Instead this specification adds to what is defined in SDP Security Framework <span>[<a href="#RFC4568" class="cite xref">RFC4568</a>]</span> by allowing applications
+to explicitly negotiate additional items from the cryptographic context such as the packet index ingredients: ROC, SSRC and Sequence Number via a new SDP Attribute.
+By coupling this information with the applicable "a=crypto" offers; a receiving application can properly instantiate 
+an SRTP cryptographic context at the start of a session, later in a session, after session modification or when joining an ongoing session.<a href="#section-3-2.2.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-3-2.3">Key Management Extensions for Session Description Protocol (SDP) and Real Time Streaming Protocol (RTSP):</dt>
+        <dd style="margin-left: 1.5em" id="section-3-2.4">
+          <p id="section-3-2.4.1">This specifications makes no attempt to be compatible with the Key Management Extension for SDP "a=key-mgmt" defined by <span>[<a href="#RFC4567" class="cite xref">RFC4567</a>]</span><a href="#section-3-2.4.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-3-2.5">ZRTP: Media Path Key Agreement for Unicast Secure RTP:</dt>
+        <dd style="margin-left: 1.5em" id="section-3-2.6">
+          <p id="section-3-2.6.1">This specifications makes no attempt to be compatible with the Key Management via SDP for ZRTP "a=zrtp-hash" defined by <span>[<a href="#RFC6189" class="cite xref">RFC6189</a>]</span>.<a href="#section-3-2.6.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-3-2.7">DTLS-SRTP, EKT-SRTP, Privacy Enhanced Conferencing items (PERC):</dt>
+        <dd style="margin-left: 1.5em" id="section-3-2.8">
+          <p id="section-3-2.8.1">All DTLS-SRTP items including Privacy Enhanced Conferencing items (PERC) [<span>[<a href="#RFC8723" class="cite xref">RFC8723</a>]</span> and <span>[<a href="#RFC8871" class="cite xref">RFC8871</a>]</span>] are out of scope for the purposes of this specification.<a href="#section-3-2.8.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-3-2.9">Secure Real Time Control Protocol (SRTCP):</dt>
+        <dd style="margin-left: 1.5em" id="section-3-2.10">
+          <p id="section-3-2.10.1">This specification is  not required by SRTCP since the packet index is carried within the SRTCP packet and does not need an out-of-band equivalent.<a href="#section-3-2.10.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-3-2.11">Source-Specific Media Attributes in the Session Description Protocol (SDP):</dt>
+        <dd style="margin-left: 1.5em" id="section-3-2.12">
+          <p id="section-3-2.12.1">The authors of this specification vetted <span>[<a href="#RFC5576" class="cite xref">RFC5576</a>]</span> SSRC Attribute "a=ssrc" but felt that it would require too much modification and additions to the SSRC Attribute
+specification to allow unknown SSRC values and the other information which needs to be conveyed.
+Further, requiring implementation of the core SSRC Attribute RFC could pose as a barrier entry and separating the two into different SDP Attributes is the better option.
+An implementation <span class="bcp14">SHOULD NOT</span> send RFC5576 SSRC Attributes alongside SRTP Assurance SSRC Attributes. 
+If both are present in SDP, a receiver <span class="bcp14">SHOULD</span> utilize prioritize the SRTP Assurance attributes over SSRC Attributes since these attributes will provide better SRTP cryptographic context initialization.<a href="#section-3-2.12.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-3-2.13">Completely Encrypting RTP Header Extensions and Contributing Sources:</dt>
+        <dd style="margin-left: 1.5em" id="section-3-2.14">
+          <p id="section-3-2.14.1">SRTP Assurance is compatible with <span>[<a href="#RFC9335" class="cite xref">RFC9335</a>]</span> "a=cryptex" media and session level attribute.<a href="#section-3-2.14.1" class="pilcrow">¶</a></p>
+</dd>
+      <dd class="break"></dd>
+</dl>
 <div id="syntax">
 <section id="section-3.1">
         <h3 id="name-sdp-considerations">
@@ -1600,7 +1641,7 @@ a=srtpass:1 index:0xDD147C14|0x0001|0x3039
 <a href="#name-example-crypto-and-srtp-ass" class="selfRef">Example crypto and SRTP assurance tag mapping</a>
           </figcaption></figure>
 </div>
-<p id="section-3.1-17">SRTP Assurance is compatible with <span>[<a href="#RFC9335" class="cite xref">RFC9335</a>]</span> "a=cryptex" media and session level attribute.<a href="#section-3.1-17" class="pilcrow">¶</a></p>
+<p id="section-3.1-17">&lt;TODO: BUNDLE BEHAVIOR AND HANDLING&gt;<a href="#section-3.1-17" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sender">
@@ -1712,6 +1753,14 @@ Mux Category: TRANSPORT
       <dd>
 <span class="refAuthor">Crocker, D., Ed.</span> and <span class="refAuthor">P. Overell</span>, <span class="refTitle">"Augmented BNF for Syntax Specifications: ABNF"</span>, <span class="seriesInfo">STD 68</span>, <span class="seriesInfo">RFC 5234</span>, <span class="seriesInfo">DOI 10.17487/RFC5234</span>, <time datetime="2008-01" class="refDate">January 2008</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc5234">https://www.rfc-editor.org/rfc/rfc5234</a>&gt;</span>. </dd>
 <dd class="break"></dd>
+<dt id="RFC5479">[RFC5479]</dt>
+      <dd>
+<span class="refAuthor">Wing, D., Ed.</span>, <span class="refAuthor">Fries, S.</span>, <span class="refAuthor">Tschofenig, H.</span>, and <span class="refAuthor">F. Audet</span>, <span class="refTitle">"Requirements and Analysis of Media Security Management Protocols"</span>, <span class="seriesInfo">RFC 5479</span>, <span class="seriesInfo">DOI 10.17487/RFC5479</span>, <time datetime="2009-04" class="refDate">April 2009</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc5479">https://www.rfc-editor.org/rfc/rfc5479</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC5576">[RFC5576]</dt>
+      <dd>
+<span class="refAuthor">Lennox, J.</span>, <span class="refAuthor">Ott, J.</span>, and <span class="refAuthor">T. Schierl</span>, <span class="refTitle">"Source-Specific Media Attributes in the Session Description Protocol (SDP)"</span>, <span class="seriesInfo">RFC 5576</span>, <span class="seriesInfo">DOI 10.17487/RFC5576</span>, <time datetime="2009-06" class="refDate">June 2009</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc5576">https://www.rfc-editor.org/rfc/rfc5576</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 <dt id="RFC5763">[RFC5763]</dt>
       <dd>
 <span class="refAuthor">Fischl, J.</span>, <span class="refAuthor">Tschofenig, H.</span>, and <span class="refAuthor">E. Rescorla</span>, <span class="refTitle">"Framework for Establishing a Secure Real-time Transport Protocol (SRTP) Security Context Using Datagram Transport Layer Security (DTLS)"</span>, <span class="seriesInfo">RFC 5763</span>, <span class="seriesInfo">DOI 10.17487/RFC5763</span>, <time datetime="2010-05" class="refDate">May 2010</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc5763">https://www.rfc-editor.org/rfc/rfc5763</a>&gt;</span>. </dd>
@@ -1727,6 +1776,14 @@ Mux Category: TRANSPORT
 <dt id="RFC6904">[RFC6904]</dt>
       <dd>
 <span class="refAuthor">Lennox, J.</span>, <span class="refTitle">"Encryption of Header Extensions in the Secure Real-time Transport Protocol (SRTP)"</span>, <span class="seriesInfo">RFC 6904</span>, <span class="seriesInfo">DOI 10.17487/RFC6904</span>, <time datetime="2013-04" class="refDate">April 2013</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc6904">https://www.rfc-editor.org/rfc/rfc6904</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC7201">[RFC7201]</dt>
+      <dd>
+<span class="refAuthor">Westerlund, M.</span> and <span class="refAuthor">C. Perkins</span>, <span class="refTitle">"Options for Securing RTP Sessions"</span>, <span class="seriesInfo">RFC 7201</span>, <span class="seriesInfo">DOI 10.17487/RFC7201</span>, <time datetime="2014-04" class="refDate">April 2014</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7201">https://www.rfc-editor.org/rfc/rfc7201</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC7714">[RFC7714]</dt>
+      <dd>
+<span class="refAuthor">McGrew, D.</span> and <span class="refAuthor">K. Igoe</span>, <span class="refTitle">"AES-GCM Authenticated Encryption in the Secure Real-time Transport Protocol (SRTP)"</span>, <span class="seriesInfo">RFC 7714</span>, <span class="seriesInfo">DOI 10.17487/RFC7714</span>, <time datetime="2015-12" class="refDate">December 2015</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7714">https://www.rfc-editor.org/rfc/rfc7714</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC8174">[RFC8174]</dt>
       <dd>
