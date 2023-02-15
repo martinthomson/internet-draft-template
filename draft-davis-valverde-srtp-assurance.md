@@ -40,16 +40,17 @@ normative:
   RFC8866: RFC8866
   RFC8870: RFC8870
   RFC8871: RFC8871
+  RFC8872: RFC8872
   RFC9335: RFC9335
 
 informative:
 
 
 --- abstract
-This document specifies new methods for signaling additional Secure Real-time Transport Protocol (SRTP) cryptographic context information via the Session Description Protocol (SDP)
+This document specifies additional cryptographic attributes for signaling additional Secure Real-time Transport Protocol (SRTP) cryptographic context information via the Session Description Protocol (SDP)
 in alongside those defined by {{RFC4568}}.
 
-The methods defined in this document address situations where the receiver needs to quickly and robustly synchronize with a given sender.. 
+The SDP extension defined in this document address situations where the receiver needs to quickly and robustly synchronize with a given sender.
 The mechanism also enhances SRTP operation in cases where there is a risk of losing sender-receiver synchronization.
 
 --- middle
@@ -63,9 +64,9 @@ the state of a few crucial items in the SRTP cryptographic context are missing.
 One such item is the Rollover Counter (ROC) defined by Section 3.2.1 {{RFC3711}}
 which is not signaled in any packet across the wire and shared between applications.
 
-The ROC is one item that makes up the greater SRTP Packet Index along with the the {{RFC3550}} transmitted sequence numbers for a given synchronization sources (SSRC).
+The ROC is one item that is used to create the SRTP Packet Index along with the the {{RFC3550}} transmitted sequence numbers for a given synchronization sources (SSRC).
 The Packet index is integral to the encryption, decryption and authentication process of SRTP key streams.
-Failure to instantiate the value properly at any point in the SRTP media exchange leads to encryption or decryption failures, degraded user experience 
+Failure to synchronize the value properly at any point in the SRTP media exchange leads to encryption or decryption failures, degraded user experience 
 and at cross-vendor interoperability issues with many hours of engineering time spent debugging a value that is never negotiated on the wire 
 (and oftentimes not even logged in application logs.)
 
@@ -89,7 +90,7 @@ These are are briefly detailed below with the focus on the ROC Value.
 Joining an ongoing session:
 
 {: spacing="compact"}
-- When a receiver joins an ongoing session, such as a conference, there is no signaling method which can quickly allow the new participant to know the state of the ROC assuming the state of the stream is shared across all participants.
+- When a receiver joins an ongoing session, such as a broadcast conference, there is no signaling method which can quickly allow the new participant to know the state of the ROC assuming the state of the stream is shared across all participants.
 
 
 Hold/Resume, Transfer Scenarios:
@@ -188,42 +189,52 @@ Source-Specific Media Attributes in the Session Description Protocol (SDP):
 : The authors of this specification vetted {{RFC5576}} SSRC Attribute "a=ssrc" but felt that it would require too much modification and additions to the SSRC Attribute
   specification to allow unknown SSRC values and the other information which needs to be conveyed.
   Further, requiring implementation of the core SSRC Attribute RFC could pose as a barrier entry and separating the two into different SDP Attributes is the better option.
-  An implementation SHOULD NOT send RFC5576 SSRC Attributes alongside SRTP Assurance SSRC Attributes. 
-  If both are present in SDP, a receiver SHOULD utilize prioritize the SRTP Assurance attributes over SSRC Attributes since these attributes will provide better SRTP cryptographic context initialization. 
+  An implementation SHOULD NOT send RFC5576 SSRC Attributes alongside SRTP Context SSRC Attributes. 
+  If both are present in SDP, a receiver SHOULD utilize prioritize the SRTP Context attributes over SSRC Attributes since these attributes will provide better SRTP cryptographic context initialization. 
 
 Completely Encrypting RTP Header Extensions and Contributing Sources:
-: SRTP Assurance is compatible with {{RFC9335}} "a=cryptex" media and session level attribute.
+: SRTP Context is compatible with {{RFC9335}} "a=cryptex" media and session level attribute.
 
 ## SDP Considerations {#syntax}
-This specification introduces a new SRTP Assurance attribute defined as "a=srtpass".
+This specification introduces a new SRTP Context attribute defined as "a=srtpctx".
 
-The presence of the "a=srtpass" attribute in the SDP (in either an offer or an answer) indicates that the endpoint is 
+The presence of the "a=srtpctx" attribute in the SDP (in either an offer or an answer) indicates that the endpoint is 
 signaling explicit cryptographic context information and this data SHOULD be used in place of derived values such as those obtained from late binding or some other mechanism.
 
-The SRTP Assurance value syntax is as follows:
+The SRTP Context value syntax utilizes standard attribute field=value pairs separated by semi-colons as seen in {{sampleBase}}.
+The implementation's goal is extendable allowing for additional vendor specific field=value pairs alongside the ones defined in this document or room for future specifications to add additional field=value pairs.
 
 ~~~
-a=srtpass:<a-crypto-tag> index:<ssrc_value_hex>|<roc_value_hex>|<last_known_tx_seq_hex>
+a=srtpctx:<a-crypto-tag> <att_field_1>=<value_1>;<att_field_1>=<att_value_2>
 ~~~
-{: #sampleSyntax title='Example SRTP assurance Syntax'}
+{: #sampleBase title='Base SRTP Context Syntax'}
 
-The formal definition of the UUID string representation is provided by the following ABNF {{RFC5234}}:
+This specification specifically defines SRTP Context Attribute Fields of SSRC, ROC, and SEQ shown in {{sampleSyntax}}.
+
+~~~
+a=srtpctx:<a-crypto-tag> ssrc=<ssrc_value_hex>;roc=<roc_value_hex>;seq=<last_known_tx_seq_hex>
+~~~
+{: #sampleSyntax title='Example SRTP Context Syntax'}
+
+The formal definition of the SRTP Context Attribute, including custom extension field=value pairs is provided by the following ABNF {{RFC5234}}:
 
 ~~~~ abnf
 srtp-assurance = srtp-attr
                  srtp-tag
-                 srtp-index
-                 srtp-ssrc"|"
-                 srtp-roc"|"
-                 srtp-seq CRLF
-srtp-attr      = "a=srtpass:"
+                 [srtp-ssrc";"]
+                 [srtp-roc";"]
+                 [srtp-seq";"]
+                 [srtp-ext";"]
+srtp-attr      = "a=srtpctx:"
 srtp-tag       = 1*9DIGIT 1WSP 
-srtp-index     = "index:"
-srtp-ssrc      = "0x"1*8HEXDIG / "unknown"
-srtp-seq       = "0x"1*4HEXDIG / "unknown"
-srtp-roc       = "0x"1*4HEXDIG / "unknown"
+srtp-ssrc      = "ssrc=" ("0x"1*8HEXDIG / "unknown")
+srtp-roc       = "roc=" ("0x"1*4HEXDIG / "unknown")
+srtp-seq       = "seq=" ("0x"1*4HEXDIG / "unknown")
+srtp-ext       = 1*VCHAR "=" (1*VCHAR / "unknown")
+ALPHA          = %x41-5A / %x61-7A   ; A-Z / a-z
 DIGIT          = %x30-39
 HEXDIG         = DIGIT / "A" / "B" / "C" / "D" / "E" / "F"
+VCHAR          = %x21-7E
 ~~~~
 
 Leading 0s may be omitted and the alphanumeric hex may be upper or lowercase but at least one 0 must be present. 
@@ -231,41 +242,44 @@ Additionally the "0x" provided additional context that these values are hex and 
 Thus as per {{sampleCompare}} these two lines are functionally identical:
 
 ~~~~
-a=srtpass:1 index:0x00845FED|0x00000000|0x005D
-a=srtpass:1 index:0x845fed|0x0|0x05d
+a=srtpctx:1 ssrc=0x00845FED;roc=0x00000000;seq=0x005D
+a=srtpctx:1 ssrc=0x845fed;roc=0x0;seq=0x05d
 ~~~~
 {: #sampleCompare title='Comparison with and without Leading 0s'}
 
-When SSRC, ROC, or Sequence information needs to be conveyed about a given stream, the a=srtpass attribute is coupled with the relevant a=crypto attribute in the SDP.
+When SSRC, ROC, or Sequence information needs to be conveyed about a given stream, the a=srtpctx attribute is coupled with the relevant a=crypto attribute in the SDP.
 
 In {{sampleAttribute}} the sender has shares the usual cryptographic information as per a=crypto but has included 
-other information such as the 32 bit SSRC, 32 bit ROC, and 16 bit Last Known Sequence number as Hex values within the a=srtpass attribute.
+other information such as the 32 bit SSRC, 32 bit ROC, and 16 bit Last Known Sequence number as Hex values within the a=srtpctx attribute.
 Together these two attributes provide better insights as to the state of the SRTP cryptographic context from the senders perspective.
 
 ~~~~
 a=crypto:1 AEAD_AES_256_GCM inline:3/sxOxrbg3CVDrxeaNs91Vle+wW1RvT/zJWTCUNP1i6L45S9qcstjBv+eo0=|2^20|1:32
-a=srtpass:1 index:0x00845FED|0x0000|0x0150
+a=srtpctx:1 ssrc=0x00845FED;roc=0x0000;seq=0x0150
 ~~~~
-{: #sampleAttribute title='Example SRTP assurance attribute'}
+{: #sampleAttribute title='Example SRTP Context attribute'}
 
-The value of "unknown" may be used in place of any of the fields to indicate default behavior 
+The value of "unknown" MAY be used in place of any of the fields to indicate default behavior SHOULD be utilized
 by the receiving application (usually falling back to late binding or locally derived/stored cryptographic contact information for the packet index.)
 The example shown in {{sampleUnknown}} indicates that only the SSRC of the stream is unknown to the sender at the time of the SDP exchange but 
-values for ROC and Last Known Sequence are present. 
-This MAY be updated via signaling at any later time but applications SHOULD ensure any offer/answer has the appropriate SRTP assurance attribute.
+values for ROC and Last Known Sequence are present. Alternatively, the attribute key and value MAY be omitted entirely.
 
-Applications SHOULD NOT include SRTP Assurance attribute if all three values are unknown. 
+This MAY be updated via signaling at any later time but applications SHOULD ensure any offer/answer has the appropriate SRTP Context attribute.
+
+Applications SHOULD NOT include SRTP Context attribute if all three values are unknown or would be ommited.
 For example, starting a new sending session instantiation or for advertising potential cryptographic attributes that are part of a new offer. 
-{{sampleUnknown}} shows that tag 1 does not have any SRTP Assurance parameters rather than rather an SRTP Assurance attribute with all three values set to "unknown".
+
+{{sampleUnknown}} shows that tag 1 does not have any SRTP Context parameters rather than rather an SRTP Context attribute with all three values set to "unknown".
+This same example shows an unknown value carried with tag 2 and seq has been committed leaving only the ROC as a value shared with the second a=crypto tag.
 
 ~~~~
 a=crypto:1 AES_CM_128_HMAC_SHA1_32 inline:k4x3YXkTD1TWlNL3BZpESzOFuxkBZmTo0vGa1omW
 a=crypto:2 AES_CM_128_HMAC_SHA1_80 inline:PS1uQCVeeCFCanVmcjkpPywjNWhcYD0mXXtxaVBR
-a=srtpass:2 index:unknown|0x0001|0x3039
+a=srtpctx:2 ssrc=unknown;roc=0x0001
 ~~~~
-{: #sampleUnknown title='Example SRTP assurance with unknown mappings'}
+{: #sampleUnknown title='Example SRTP Context with unknown mappings'}
 
-The tag for an SRTP assurance attribute MUST follow the peer SDP Security a=crypto tag for a given media stream (m=).
+The tag for an SRTP Context attribute MUST follow the peer SDP Security a=crypto tag for a given media stream (m=).
 The example in shown in {{sampleTag}} the sender is advertising an explicit packet index mapping for a=crypto tag 2 for the audio stream and tag 1 for the video media stream. 
 Note that some SDP values have been truncated for the sake of simplicity.
 
@@ -274,12 +288,17 @@ c=IN IP4 168.2.17.12
 m=audio 49170 RTP/SAVP 0
 a=crypto:1 AES_CM_128_HMAC_SHA1_80 inline:d0RmdmcmVCspeEc3QGZiNWpVLFJhQX1cfHAwJSoj|2^20|1:32
 a=crypto:2 AEAD_AES_256_GCM inline:HGAPy4Cedy/qumbZvpuCZSVT7rNDk8vG4TdUXp5hkyWqJCqiLRGab0KJy1g=
-a=srtpass:2 index:0xBFBDD|0x0001|0x3039
+a=srtpctx:2 ssrc=0xBFBDD;roc=0x0001;seq=0x3039
 m=video 49172 RTP/SAVP 126
 a=crypto:1 AEAD_AES_128_GCM inline:bQJXGzEPXJPClrd78xwALdaZDs/dLttBLfLE5Q==
-a=srtpass:1 index:0xDD147C14|0x0001|0x3039
+a=srtpctx:1 ssrc=0xDD147C14;roc=0x0001;seq=0x3039
 ~~~~
-{: #sampleTag title='Example crypto and SRTP assurance tag mapping'}
+{: #sampleTag title='Example crypto and SRTP Context tag mapping'}
+
+It is unlikely a sender will send SRTP Context attributes for every crypto attribute since many will be fully unknown (such as the start of a session.)
+However it is theoretically possible for every a=crypto tag to have a similar a=srtpctx attribute for additional details. 
+
+For scenarios where RTP Multiplexing are concerned, EKT-SRTP ({{RFC8870}}) MUST be used in lieu of SDP Security as per {{RFC8872}} Section 4.3.2.
 
 <TODO: BUNDLE BEHAVIOR AND HANDLING>
 
@@ -293,28 +312,31 @@ See {{frequency}} for update frequency recommendations.
 
 ## Receiver Behavior {#receiver}
 Receivers SHOULD utilize the signaled information in application logic to instantiate the SRTP cryptographic context.
-In the even there is no SRTP assurance attributes present in SDP receivers MUST fallback to {{RFC3711}} for guesting 
+In the even there is no SRTP Context attributes present in SDP receivers MUST fallback to {{RFC3711}} for guesting 
 the ROC and {{RFC4568}} logic for late binding to gleam the SSRC and sequence numbers.
 
 ## Update Frequency {#frequency}
-Senders SHOULD provide SRTP assurance SDP when SDP Crypto attributes are negotiated.
+Senders SHOULD provide SRTP Context SDP when SDP Crypto attributes are negotiated.
 There is no explicit time or total number of packets in which a new update is required from sender to receiver.
 By following natural session updates,  session changes and session liveliness checks this specification will not cause 
 overcrowding on the session establishment protocol's signaling channel.
 
 # Security Considerations
-When SDP carries SRTP Assurance attributes additional insights are present about the SRTP Cryptographic context.
-Care MUST be taken as per the {{RFC8866}} that keying material must not be sent over unsecure channels unless the SDP can be both private (encrypted) and authenticated.
+When SDP carries SRTP Context attributes additional insights are present about the SRTP cryptographic context.
+Due to this an intermediary MAY be able to analyze how long a session has been active by the ROC value.
+
+Since the SRTP Context attribute is carried in plain-text (alongside existing values like the SRTP Master Key for a given session)
+care MUST be taken as per the {{RFC8866}} that keying material must not be sent over unsecure channels unless the SDP can be both private (encrypted) and authenticated.
 
 # IANA Considerations
 
 This document updates the "attribute-name (formerly "att-field")" sub-registry of the "Session Description Protocol (SDP) Parameters" registry (see Section 8.2.4 of [RFC8866]). 
-Specifically, it adds the SDP "a=srtpass" attribute for use at both the media level.
+Specifically, it adds the SDP "a=srtpctx" attribute for use at both the media level.
 
 ~~~~
 Contact name: IETF AVT Working Group or IESG if the AVT Working Group is closed
 Contact email address: avt@ietf.org
-Attribute name: srtpass
+Attribute name: srtpctx
 Attribute syntax: TODO
 Attribute semantics: TODO
 Attribute value: TODO
