@@ -2,8 +2,8 @@
 ###
 # Internet-Draft Markdown Template
 #
-# Rename this file from draft-todo-yourname-protocol.md to get started.
-# Draft name format is "draft-<yourname>-<workgroup>-<name>.md".
+# Rename this file from draft-todo-adilishaq-protocol.md to get started.
+# Draft name format is "draft-<yourname>-<workgroup>-<adilishaq>.md".
 #
 # For initial setup, you only need to edit the first block of fields.
 # Only "title" needs to be changed; delete "abbrev" if your title is short.
@@ -11,7 +11,7 @@
 # Some fields will be set automatically during setup if they are unchanged.
 #
 # Don't include "-00" or "-latest" in the filename.
-# Labels in the form draft-<yourname>-<workgroup>-<name>-latest are used by
+# Labels in the form draft-<yourname>-<workgroup>-<Adil Ishaq>-latest are used by
 # the tools to refer to the current version; see "docname" for example.
 #
 # This template uses kramdown-rfc: https://github.com/cabo/kramdown-rfc
@@ -19,7 +19,7 @@
 # Change the file extension to match the format (.xml for XML, etc...)
 #
 ###
-title: "TODO - Your title"
+title: "TODO - Adil Ishaq"
 abbrev: "TODO - Abbreviation"
 category: info
 
