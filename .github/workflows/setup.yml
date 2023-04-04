@@ -27,7 +27,7 @@ jobs:
           echo "Commit the changes to the 'main' branch."
           echo
           echo "============================================================="
-          echo "::set-output name=skip::true"
+          echo "skip=true" >>"$GITHUB_OUTPUT"
         elif [ ! -f draft-todo-yourname-protocol.md -a -f Makefile ]; then
           echo "============================================================="
           echo "Skipping setup for an already-configured repository."
@@ -37,7 +37,7 @@ jobs:
           echo "    https://github.com/${{github.repository}}/delete/main/.github/workflows/setup.yml"
           echo
           echo "============================================================="
-          echo "::set-output name=skip::true"
+          echo "skip=true" >>"$GITHUB_OUTPUT"
         fi
 
     - name: "Git Config"
