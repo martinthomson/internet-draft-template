@@ -4,7 +4,7 @@ abbrev: "SRTP Assurance"
 category: std
 updates: '4568'
 
-docname: draft-davis-valverde-srtp-assurance
+docname: draft-davis-valverde-srtp-assurance-00
 submissiontype: IETF
 date: 2023
 consensus: true
@@ -20,11 +20,15 @@ author:
   org: Cisco Systems
 
 normative:
-  RFC3550: RFC3550
   RFC3711: RFC3711
+  RFC4568: RFC4568
+  RFC8859: RFC8859
+  RFC8866: RFC8866
+
+informative:
+  RFC3550: RFC3550
   RFC3830: RFC3830
   RFC4567: RFC4567
-  RFC4568: RFC4568
   RFC4771: RFC4771
   RFC5159: RFC5159
   RFC5234: RFC5234
@@ -37,18 +41,15 @@ normative:
   RFC7201: RFC7201
   RFC7714: RFC7714
   RFC8723: RFC8723
-  RFC8866: RFC8866
+  RFC8792: RFC8792
   RFC8870: RFC8870
   RFC8871: RFC8871
   RFC8872: RFC8872
   RFC9335: RFC9335
 
-informative:
-
-
 --- abstract
 This document specifies additional cryptographic attributes for signaling additional Secure Real-time Transport Protocol (SRTP) cryptographic context information via the Session Description Protocol (SDP)
-in alongside those defined by {{RFC4568}}.
+in alongside those defined by RFC4568.
 
 The SDP extension defined in this document address situations where the receiver needs to quickly and robustly synchronize with a given sender.
 The mechanism also enhances SRTP operation in cases where there is a risk of losing sender-receiver synchronization.
@@ -180,7 +181,7 @@ ZRTP: Media Path Key Agreement for Unicast Secure RTP:
 : This specifications makes no attempt to be compatible with the Key Management via SDP for ZRTP "a=zrtp-hash" defined by {{RFC6189}}. 
 
 DTLS-SRTP, EKT-SRTP, Privacy Enhanced Conferencing items (PERC):
-: All DTLS-SRTP items including Privacy Enhanced Conferencing items (PERC) [{{RFC8723}} and {{RFC8871}}] are out of scope for the purposes of this specification.
+: All DTLS-SRTP items including Privacy Enhanced Conferencing items (PERC) [ {{RFC8723}} and {{RFC8871}} ] are out of scope for the purposes of this specification.
 
 Secure Real Time Control Protocol (SRTCP):
 : This specification is  not required by SRTCP since the packet index is carried within the SRTCP packet and does not need an out-of-band equivalent.
@@ -205,16 +206,19 @@ The SRTP Context value syntax utilizes standard attribute field=value pairs sepa
 The implementation's goal is extendable allowing for additional vendor specific field=value pairs alongside the ones defined in this document or room for future specifications to add additional field=value pairs.
 
 ~~~
-a=srtpctx:<a-crypto-tag> <att_field_1>=<value_1>;<att_field_1>=<att_value_2>
+a=srtpctx:<a-crypto-tag> \
+  <att_field_1>=<value_1>;<att_field_1>=<att_value_2>
 ~~~
 {: #sampleBase title='Base SRTP Context Syntax'}
 
 This specification specifically defines SRTP Context Attribute Fields of SSRC, ROC, and SEQ shown in {{sampleSyntax}}.
 
 ~~~
-a=srtpctx:<a-crypto-tag> ssrc=<ssrc_value_hex>;roc=<roc_value_hex>;seq=<last_known_tx_seq_hex>
+a=srtpctx:<a-crypto-tag> \
+  ssrc=<ssrc_value_hex>;roc=<roc_value_hex>;seq=<last_known_tx_seq_hex>
 ~~~
 {: #sampleSyntax title='Example SRTP Context Syntax'}
+Note that long lines in this document have been broken into multiple lines using the "The Single Backslash Strategy ('\')" defined by {{RFC8792}}.
 
 The formal definition of the SRTP Context Attribute, including custom extension field=value pairs is provided by the following ABNF {{RFC5234}}:
 
@@ -254,7 +258,9 @@ other information such as the 32 bit SSRC, 32 bit ROC, and 16 bit Last Known Seq
 Together these two attributes provide better insights as to the state of the SRTP cryptographic context from the senders perspective.
 
 ~~~~
-a=crypto:1 AEAD_AES_256_GCM inline:3/sxOxrbg3CVDrxeaNs91Vle+wW1RvT/zJWTCUNP1i6L45S9qcstjBv+eo0=|2^20|1:32
+a=crypto:1 AEAD_AES_256_GCM \
+  inline:3/sxOxrbg3CVDrxeaNs91Vle+wW1RvT/zJWTCUNP1i6L45S9qcstjBv+eo0=\
+  |2^20|1:32
 a=srtpctx:1 ssrc=0x00845FED;roc=0x0000;seq=0x0150
 ~~~~
 {: #sampleAttribute title='Example SRTP Context attribute'}
@@ -266,15 +272,17 @@ values for ROC and Last Known Sequence are present. Alternatively, the attribute
 
 This MAY be updated via signaling at any later time but applications SHOULD ensure any offer/answer has the appropriate SRTP Context attribute.
 
-Applications SHOULD NOT include SRTP Context attribute if all three values are unknown or would be ommited.
+Applications SHOULD NOT include SRTP Context attribute if all three values are unknown or would be omitted.
 For example, starting a new sending session instantiation or for advertising potential cryptographic attributes that are part of a new offer. 
 
 {{sampleUnknown}} shows that tag 1 does not have any SRTP Context parameters rather than rather an SRTP Context attribute with all three values set to "unknown".
 This same example shows an unknown value carried with tag 2 and seq has been committed leaving only the ROC as a value shared with the second a=crypto tag.
 
 ~~~~
-a=crypto:1 AES_CM_128_HMAC_SHA1_32 inline:k4x3YXkTD1TWlNL3BZpESzOFuxkBZmTo0vGa1omW
-a=crypto:2 AES_CM_128_HMAC_SHA1_80 inline:PS1uQCVeeCFCanVmcjkpPywjNWhcYD0mXXtxaVBR
+a=crypto:1 AES_CM_128_HMAC_SHA1_32 \
+  inline:k4x3YXkTD1TWlNL3BZpESzOFuxkBZmTo0vGa1omW
+a=crypto:2 AES_CM_128_HMAC_SHA1_80 \
+  inline:PS1uQCVeeCFCanVmcjkpPywjNWhcYD0mXXtxaVBR
 a=srtpctx:2 ssrc=unknown;roc=0x0001
 ~~~~
 {: #sampleUnknown title='Example SRTP Context with unknown mappings'}
@@ -284,13 +292,16 @@ The example in shown in {{sampleTag}} the sender is advertising an explicit pack
 Note that some SDP values have been truncated for the sake of simplicity.
 
 ~~~~
-c=IN IP4 168.2.17.12
+c=IN IP4 192.0.0.1
 m=audio 49170 RTP/SAVP 0
-a=crypto:1 AES_CM_128_HMAC_SHA1_80 inline:d0RmdmcmVCspeEc3QGZiNWpVLFJhQX1cfHAwJSoj|2^20|1:32
-a=crypto:2 AEAD_AES_256_GCM inline:HGAPy4Cedy/qumbZvpuCZSVT7rNDk8vG4TdUXp5hkyWqJCqiLRGab0KJy1g=
+a=crypto:1 AES_CM_128_HMAC_SHA1_80 \
+  inline:d0RmdmcmVCspeEc3QGZiNWpVLFJhQX1cfHAwJSoj|2^20|1:32
+a=crypto:2 AEAD_AES_256_GCM \
+  inline:HGAPy4Cedy/qumbZvpuCZSVT7rNDk8vG4TdUXp5hkyWqJCqiLRGab0KJy1g=
 a=srtpctx:2 ssrc=0xBFBDD;roc=0x0001;seq=0x3039
 m=video 49172 RTP/SAVP 126
-a=crypto:1 AEAD_AES_128_GCM inline:bQJXGzEPXJPClrd78xwALdaZDs/dLttBLfLE5Q==
+a=crypto:1 AEAD_AES_128_GCM \
+  inline:bQJXGzEPXJPClrd78xwALdaZDs/dLttBLfLE5Q==
 a=srtpctx:1 ssrc=0xDD147C14;roc=0x0001;seq=0x3039
 ~~~~
 {: #sampleTag title='Example crypto and SRTP Context tag mapping'}
@@ -300,7 +311,7 @@ However it is theoretically possible for every a=crypto tag to have a similar a=
 
 For scenarios where RTP Multiplexing are concerned, EKT-SRTP ({{RFC8870}}) MUST be used in lieu of SDP Security as per {{RFC8872}} Section 4.3.2.
 
-<TODO: BUNDLE BEHAVIOR AND HANDLING>
+For scenarios where SDP Bundling are concerned, SRTP Context attributes follow the same bundling guidelines defined by {{RFC8859}}, section 5.7 for SDP Securities a=crypto attribute.
 
 ## Sender Behavior {#sender}
 Senders utilizing SDP Security via "a=crypto" MUST make an attempt to signal any known packet index values to the peer receiver.
@@ -331,20 +342,21 @@ care MUST be taken as per the {{RFC8866}} that keying material must not be sent 
 # IANA Considerations
 
 This document updates the "attribute-name (formerly "att-field")" sub-registry of the "Session Description Protocol (SDP) Parameters" registry (see Section 8.2.4 of [RFC8866]). 
-Specifically, it adds the SDP "a=srtpctx" attribute for use at both the media level.
+Specifically, it adds the SDP "a=srtpctx" attribute for use at the media level.
 
-~~~~
-Contact name: IETF AVT Working Group or IESG if the AVT Working Group is closed
-Contact email address: avt@ietf.org
-Attribute name: srtpctx
-Attribute syntax: TODO
-Attribute semantics: TODO
-Attribute value: TODO
-Usage level: media
-Charset dependent: No
-Purpose: Provide additional insights about SRTP context information not conveyed required by a receiver to properly decrypt SRTP.
-O/A procedures: SDP O/A procedures are described in {{syntax}} of this document.
-Mux Category: TRANSPORT
-~~~~
+| Form                  | Value |
+| Contact name          | IESG |
+| Contact email address | kydavis@cisco.com |
+| Attribute name        | srtpctx |
+| Attribute value       | srtpctx |
+| Attribute syntax      | Provided by ABNF found in {{syntax}} |
+| Attribute semantics   | Provided by sub-sections of {{design}} |
+| Usage level           | media |
+| Charset dependent     | No |
+| Purpose               | Provide additional insights about SRTP context information not conveyed required by a receiver to properly decrypt SRTP. |
+| O/A procedures        | SDP O/A procedures are described in {{syntax}}, specifically sections {{sender}} and {{receiver}} of this document. |
+| Mux Category          | TRANSPORT |
+{: #ianaForm title='IANA SDP Registration Form'}
+
 
 --- back

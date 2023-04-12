@@ -5,19 +5,19 @@
 Network Working Group                                        K. R. Davis
 Internet-Draft                                               E. Valverde
 Updates: 4568 (if approved)                                Cisco Systems
-Intended status: Standards Track                        15 February 2023
-Expires: 19 August 2023
+Intended status: Standards Track                           12 April 2023
+Expires: 14 October 2023
 
 
  SDP Security Assurance for Secure Real-time Transport Protocol (SRTP)
-                  draft-davis-valverde-srtp-assurance
+                 draft-davis-valverde-srtp-assurance-00
 
 Abstract
 
    This document specifies additional cryptographic attributes for
    signaling additional Secure Real-time Transport Protocol (SRTP)
    cryptographic context information via the Session Description
-   Protocol (SDP) in alongside those defined by [RFC4568].
+   Protocol (SDP) in alongside those defined by RFC4568.
 
    The SDP extension defined in this document address situations where
    the receiver needs to quickly and robustly synchronize with a given
@@ -39,7 +39,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 19 August 2023.
+   This Internet-Draft will expire on 14 October 2023.
 
 Copyright Notice
 
@@ -53,9 +53,9 @@ Copyright Notice
 
 
 
-Davis & Valverde         Expires 19 August 2023                 [Page 1]
+Davis & Valverde         Expires 14 October 2023                [Page 1]
 
-Internet-Draft               SRTP Assurance                February 2023
+Internet-Draft               SRTP Assurance                   April 2023
 
 
    and restrictions with respect to this document.  Code Components
@@ -72,12 +72,14 @@ Table of Contents
    3.  Protocol Design . . . . . . . . . . . . . . . . . . . . . . .   6
      3.1.  SDP Considerations  . . . . . . . . . . . . . . . . . . .   7
      3.2.  Sender Behavior . . . . . . . . . . . . . . . . . . . . .  10
-     3.3.  Receiver Behavior . . . . . . . . . . . . . . . . . . . .  10
+     3.3.  Receiver Behavior . . . . . . . . . . . . . . . . . . . .  11
      3.4.  Update Frequency  . . . . . . . . . . . . . . . . . . . .  11
    4.  Security Considerations . . . . . . . . . . . . . . . . . . .  11
    5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  11
-   6.  Normative References  . . . . . . . . . . . . . . . . . . . .  11
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  14
+   6.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  12
+     6.1.  Normative References  . . . . . . . . . . . . . . . . . .  12
+     6.2.  Informative References  . . . . . . . . . . . . . . . . .  13
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  15
 
 1.  Introduction
 
@@ -101,18 +103,21 @@ Table of Contents
    never negotiated on the wire (and oftentimes not even logged in
    application logs.)
 
+
+
+
+
+
+
+Davis & Valverde         Expires 14 October 2023                [Page 2]
+
+Internet-Draft               SRTP Assurance                   April 2023
+
+
    The current method of ROC handling is to instantiate a new media
    stream's cryptographic context at 0 as per Section 3.3.1 of
    [RFC3711].  Then track the state ROC for a given cryptographic
    context as the time continues on and the stream progresses.
-
-
-
-
-Davis & Valverde         Expires 19 August 2023                 [Page 2]
-
-Internet-Draft               SRTP Assurance                February 2023
-
 
    When joining ongoing streams, resuming held/transferred streams, or
    devices without embedded application logic for clustering/high
@@ -156,20 +161,17 @@ Internet-Draft               SRTP Assurance                February 2023
       the original session is resumed.
    *  The sender may re-assume the original cryptographic context rather
       rather than create one net new.
+
+
+
+
+Davis & Valverde         Expires 14 October 2023                [Page 3]
+
+Internet-Draft               SRTP Assurance                   April 2023
+
+
    *  Here if the sender starts the stream from the last observed
       sequence number the receiver observed the ROC will be in sync.
-
-
-
-
-
-
-
-Davis & Valverde         Expires 19 August 2023                 [Page 3]
-
-Internet-Draft               SRTP Assurance                February 2023
-
-
    *  However there are scenarios where the sender may have been
       transmitting packets on the previous cryptographic context and if
       a ROC increment occurred; the receiver would never know.  This can
@@ -216,16 +218,16 @@ Internet-Draft               SRTP Assurance                February 2023
 
    Improper SRTP context resets:
 
+
+
+
+Davis & Valverde         Expires 14 October 2023                [Page 4]
+
+Internet-Draft               SRTP Assurance                   April 2023
+
+
    *  As defined by Section 3.3.1 of [RFC3711] an SRTP re-key MUST NOT
       reset the ROC within SRTP Cryptographic context.
-
-
-
-Davis & Valverde         Expires 19 August 2023                 [Page 4]
-
-Internet-Draft               SRTP Assurance                February 2023
-
-
    *  However, some applications may incorrectly use the re-key event as
       a trigger to reset the ROC leading to out-of-sync encrypt/decrypt
       operations.
@@ -275,11 +277,9 @@ Internet-Draft               SRTP Assurance                February 2023
 
 
 
-
-
-Davis & Valverde         Expires 19 August 2023                 [Page 5]
+Davis & Valverde         Expires 14 October 2023                [Page 5]
 
-Internet-Draft               SRTP Assurance                February 2023
+Internet-Draft               SRTP Assurance                   April 2023
 
 
    [RFC5159] also defined some SDP attributes namely the
@@ -333,14 +333,14 @@ Internet-Draft               SRTP Assurance                February 2023
 
 
 
-Davis & Valverde         Expires 19 August 2023                 [Page 6]
+Davis & Valverde         Expires 14 October 2023                [Page 6]
 
-Internet-Draft               SRTP Assurance                February 2023
+Internet-Draft               SRTP Assurance                   April 2023
 
 
       All DTLS-SRTP items including Privacy Enhanced Conferencing items
-      (PERC) [[RFC8723] and [RFC8871]] are out of scope for the purposes
-      of this specification.
+      (PERC) [ [RFC8723] and [RFC8871] ] are out of scope for the
+      purposes of this specification.
 
    Secure Real Time Control Protocol (SRTCP):
       This specification is not required by SRTCP since the packet index
@@ -385,23 +385,31 @@ Internet-Draft               SRTP Assurance                February 2023
    document or room for future specifications to add additional
    field=value pairs.
 
-a=srtpctx:<a-crypto-tag> <att_field_1>=<value_1>;<att_field_1>=<att_value_2>
 
 
 
-Davis & Valverde         Expires 19 August 2023                 [Page 7]
+
+Davis & Valverde         Expires 14 October 2023                [Page 7]
 
-Internet-Draft               SRTP Assurance                February 2023
+Internet-Draft               SRTP Assurance                   April 2023
 
 
-                  Figure 1: Base SRTP Context Syntax
+   a=srtpctx:<a-crypto-tag> \
+     <att_field_1>=<value_1>;<att_field_1>=<att_value_2>
+
+                     Figure 1: Base SRTP Context Syntax
 
    This specification specifically defines SRTP Context Attribute Fields
    of SSRC, ROC, and SEQ shown in Figure 2.
 
-a=srtpctx:<a-crypto-tag> ssrc=<ssrc_value_hex>;roc=<roc_value_hex>;seq=<last_known_tx_seq_hex>
+ a=srtpctx:<a-crypto-tag> \
+   ssrc=<ssrc_value_hex>;roc=<roc_value_hex>;seq=<last_known_tx_seq_hex>
 
-                Figure 2: Example SRTP Context Syntax
+                 Figure 2: Example SRTP Context Syntax
+
+   Note that long lines in this document have been broken into multiple
+   lines using the "The Single Backslash Strategy ('')" defined by
+   [RFC8792].
 
    The formal definition of the SRTP Context Attribute, including custom
    extension field=value pairs is provided by the following ABNF
@@ -435,6 +443,13 @@ a=srtpctx:<a-crypto-tag> ssrc=<ssrc_value_hex>;roc=<roc_value_hex>;seq=<last_kno
 
               Figure 3: Comparison with and without Leading 0s
 
+
+
+Davis & Valverde         Expires 14 October 2023                [Page 8]
+
+Internet-Draft               SRTP Assurance                   April 2023
+
+
    When SSRC, ROC, or Sequence information needs to be conveyed about a
    given stream, the a=srtpctx attribute is coupled with the relevant
    a=crypto attribute in the SDP.
@@ -442,22 +457,16 @@ a=srtpctx:<a-crypto-tag> ssrc=<ssrc_value_hex>;roc=<roc_value_hex>;seq=<last_kno
    In Figure 4 the sender has shares the usual cryptographic information
    as per a=crypto but has included other information such as the 32 bit
    SSRC, 32 bit ROC, and 16 bit Last Known Sequence number as Hex values
-
-
-
-Davis & Valverde         Expires 19 August 2023                 [Page 8]
-
-Internet-Draft               SRTP Assurance                February 2023
-
-
    within the a=srtpctx attribute.  Together these two attributes
    provide better insights as to the state of the SRTP cryptographic
    context from the senders perspective.
 
-a=crypto:1 AEAD_AES_256_GCM inline:3/sxOxrbg3CVDrxeaNs91Vle+wW1RvT/zJWTCUNP1i6L45S9qcstjBv+eo0=|2^20|1:32
-a=srtpctx:1 ssrc=0x00845FED;roc=0x0000;seq=0x0150
+  a=crypto:1 AEAD_AES_256_GCM \
+    inline:3/sxOxrbg3CVDrxeaNs91Vle+wW1RvT/zJWTCUNP1i6L45S9qcstjBv+eo0=\
+    |2^20|1:32
+  a=srtpctx:1 ssrc=0x00845FED;roc=0x0000;seq=0x0150
 
-               Figure 4: Example SRTP Context attribute
+                 Figure 4: Example SRTP Context attribute
 
    The value of "unknown" MAY be used in place of any of the fields to
    indicate default behavior SHOULD be utilized by the receiving
@@ -473,7 +482,7 @@ a=srtpctx:1 ssrc=0x00845FED;roc=0x0000;seq=0x0150
    attribute.
 
    Applications SHOULD NOT include SRTP Context attribute if all three
-   values are unknown or would be ommited.  For example, starting a new
+   values are unknown or would be omitted.  For example, starting a new
    sending session instantiation or for advertising potential
    cryptographic attributes that are part of a new offer.
 
@@ -483,11 +492,21 @@ a=srtpctx:1 ssrc=0x00845FED;roc=0x0000;seq=0x0150
    with tag 2 and seq has been committed leaving only the ROC as a value
    shared with the second a=crypto tag.
 
-a=crypto:1 AES_CM_128_HMAC_SHA1_32 inline:k4x3YXkTD1TWlNL3BZpESzOFuxkBZmTo0vGa1omW
-a=crypto:2 AES_CM_128_HMAC_SHA1_80 inline:PS1uQCVeeCFCanVmcjkpPywjNWhcYD0mXXtxaVBR
-a=srtpctx:2 ssrc=unknown;roc=0x0001
+   a=crypto:1 AES_CM_128_HMAC_SHA1_32 \
+     inline:k4x3YXkTD1TWlNL3BZpESzOFuxkBZmTo0vGa1omW
+   a=crypto:2 AES_CM_128_HMAC_SHA1_80 \
+     inline:PS1uQCVeeCFCanVmcjkpPywjNWhcYD0mXXtxaVBR
+   a=srtpctx:2 ssrc=unknown;roc=0x0001
 
-         Figure 5: Example SRTP Context with unknown mappings
+
+
+
+Davis & Valverde         Expires 14 October 2023                [Page 9]
+
+Internet-Draft               SRTP Assurance                   April 2023
+
+
+            Figure 5: Example SRTP Context with unknown mappings
 
    The tag for an SRTP Context attribute MUST follow the peer SDP
    Security a=crypto tag for a given media stream (m=).  The example in
@@ -496,26 +515,19 @@ a=srtpctx:2 ssrc=unknown;roc=0x0001
    video media stream.  Note that some SDP values have been truncated
    for the sake of simplicity.
 
+   c=IN IP4 192.0.0.1
+   m=audio 49170 RTP/SAVP 0
+   a=crypto:1 AES_CM_128_HMAC_SHA1_80 \
+     inline:d0RmdmcmVCspeEc3QGZiNWpVLFJhQX1cfHAwJSoj|2^20|1:32
+   a=crypto:2 AEAD_AES_256_GCM \
+     inline:HGAPy4Cedy/qumbZvpuCZSVT7rNDk8vG4TdUXp5hkyWqJCqiLRGab0KJy1g=
+   a=srtpctx:2 ssrc=0xBFBDD;roc=0x0001;seq=0x3039
+   m=video 49172 RTP/SAVP 126
+   a=crypto:1 AEAD_AES_128_GCM \
+     inline:bQJXGzEPXJPClrd78xwALdaZDs/dLttBLfLE5Q==
+   a=srtpctx:1 ssrc=0xDD147C14;roc=0x0001;seq=0x3039
 
-
-
-
-
-Davis & Valverde         Expires 19 August 2023                 [Page 9]
-
-Internet-Draft               SRTP Assurance                February 2023
-
-
-c=IN IP4 168.2.17.12
-m=audio 49170 RTP/SAVP 0
-a=crypto:1 AES_CM_128_HMAC_SHA1_80 inline:d0RmdmcmVCspeEc3QGZiNWpVLFJhQX1cfHAwJSoj|2^20|1:32
-a=crypto:2 AEAD_AES_256_GCM inline:HGAPy4Cedy/qumbZvpuCZSVT7rNDk8vG4TdUXp5hkyWqJCqiLRGab0KJy1g=
-a=srtpctx:2 ssrc=0xBFBDD;roc=0x0001;seq=0x3039
-m=video 49172 RTP/SAVP 126
-a=crypto:1 AEAD_AES_128_GCM inline:bQJXGzEPXJPClrd78xwALdaZDs/dLttBLfLE5Q==
-a=srtpctx:1 ssrc=0xDD147C14;roc=0x0001;seq=0x3039
-
-        Figure 6: Example crypto and SRTP Context tag mapping
+           Figure 6: Example crypto and SRTP Context tag mapping
 
    It is unlikely a sender will send SRTP Context attributes for every
    crypto attribute since many will be fully unknown (such as the start
@@ -527,7 +539,9 @@ a=srtpctx:1 ssrc=0xDD147C14;roc=0x0001;seq=0x3039
    ([RFC8870]) MUST be used in lieu of SDP Security as per [RFC8872]
    Section 4.3.2.
 
-   <TODO: BUNDLE BEHAVIOR AND HANDLING>
+   For scenarios where SDP Bundling are concerned, SRTP Context
+   attributes follow the same bundling guidelines defined by [RFC8859],
+   section 5.7 for SDP Securities a=crypto attribute.
 
 3.2.  Sender Behavior
 
@@ -535,6 +549,18 @@ a=srtpctx:1 ssrc=0xDD147C14;roc=0x0001;seq=0x3039
    signal any known packet index values to the peer receiver.  The
    exception being when all values are unknown, such as at the very
    start of medias stream negotiation.
+
+
+
+
+
+
+
+
+Davis & Valverde         Expires 14 October 2023               [Page 10]
+
+Internet-Draft               SRTP Assurance                   April 2023
+
 
    For best results all sending parties of a given session stream SHOULD
    advertise known packet index values for all media streams.  This
@@ -550,17 +576,6 @@ a=srtpctx:1 ssrc=0xDD147C14;roc=0x0001;seq=0x3039
    there is no SRTP Context attributes present in SDP receivers MUST
    fallback to [RFC3711] for guesting the ROC and [RFC4568] logic for
    late binding to gleam the SSRC and sequence numbers.
-
-
-
-
-
-
-
-Davis & Valverde         Expires 19 August 2023                [Page 10]
-
-Internet-Draft               SRTP Assurance                February 2023
-
 
 3.4.  Update Frequency
 
@@ -589,21 +604,61 @@ Internet-Draft               SRTP Assurance                February 2023
    This document updates the "attribute-name (formerly "att-field")"
    sub-registry of the "Session Description Protocol (SDP) Parameters"
    registry (see Section 8.2.4 of [RFC8866]).  Specifically, it adds the
-   SDP "a=srtpctx" attribute for use at both the media level.
+   SDP "a=srtpctx" attribute for use at the media level.
 
-Contact name: IETF AVT Working Group or IESG if the AVT Working Group is closed
-Contact email address: avt@ietf.org
-Attribute name: srtpctx
-Attribute syntax: TODO
-Attribute semantics: TODO
-Attribute value: TODO
-Usage level: media
-Charset dependent: No
-Purpose: Provide additional insights about SRTP context information not conveyed required by a receiver to properly decrypt SRTP.
-O/A procedures: SDP O/A procedures are described in {{syntax}} of this document.
-Mux Category: TRANSPORT
 
-6.  Normative References
+
+
+
+
+
+
+Davis & Valverde         Expires 14 October 2023               [Page 11]
+
+Internet-Draft               SRTP Assurance                   April 2023
+
+
+     +===============+===============================================+
+     | Form          | Value                                         |
+     +===============+===============================================+
+     | Contact name  | IESG                                          |
+     +---------------+-----------------------------------------------+
+     | Contact email | kydavis@cisco.com                             |
+     | address       |                                               |
+     +---------------+-----------------------------------------------+
+     | Attribute     | srtpctx                                       |
+     | name          |                                               |
+     +---------------+-----------------------------------------------+
+     | Attribute     | srtpctx                                       |
+     | value         |                                               |
+     +---------------+-----------------------------------------------+
+     | Attribute     | Provided by ABNF found in Section 3.1         |
+     | syntax        |                                               |
+     +---------------+-----------------------------------------------+
+     | Attribute     | Provided by sub-sections of Section 3         |
+     | semantics     |                                               |
+     +---------------+-----------------------------------------------+
+     | Usage level   | media                                         |
+     +---------------+-----------------------------------------------+
+     | Charset       | No                                            |
+     | dependent     |                                               |
+     +---------------+-----------------------------------------------+
+     | Purpose       | Provide additional insights about SRTP        |
+     |               | context information not conveyed required by  |
+     |               | a receiver to properly decrypt SRTP.          |
+     +---------------+-----------------------------------------------+
+     | O/A           | SDP O/A procedures are described in           |
+     | procedures    | Section 3.1, specifically sections            |
+     |               | Section 3.2 and Section 3.3 of this document. |
+     +---------------+-----------------------------------------------+
+     | Mux Category  | TRANSPORT                                     |
+     +---------------+-----------------------------------------------+
+
+                    Table 1: IANA SDP Registration Form
+
+6.  References
+
+6.1.  Normative References
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -613,20 +668,42 @@ Mux Category: TRANSPORT
 
 
 
-Davis & Valverde         Expires 19 August 2023                [Page 11]
+
+Davis & Valverde         Expires 14 October 2023               [Page 12]
 
-Internet-Draft               SRTP Assurance                February 2023
+Internet-Draft               SRTP Assurance                   April 2023
 
-
-   [RFC3550]  Schulzrinne, H., Casner, S., Frederick, R., and V.
-              Jacobson, "RTP: A Transport Protocol for Real-Time
-              Applications", STD 64, RFC 3550, DOI 10.17487/RFC3550,
-              July 2003, <https://www.rfc-editor.org/rfc/rfc3550>.
 
    [RFC3711]  Baugher, M., McGrew, D., Naslund, M., Carrara, E., and K.
               Norrman, "The Secure Real-time Transport Protocol (SRTP)",
               RFC 3711, DOI 10.17487/RFC3711, March 2004,
               <https://www.rfc-editor.org/rfc/rfc3711>.
+
+   [RFC4568]  Andreasen, F., Baugher, M., and D. Wing, "Session
+              Description Protocol (SDP) Security Descriptions for Media
+              Streams", RFC 4568, DOI 10.17487/RFC4568, July 2006,
+              <https://www.rfc-editor.org/rfc/rfc4568>.
+
+   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
+              May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
+
+   [RFC8859]  Nandakumar, S., "A Framework for Session Description
+              Protocol (SDP) Attributes When Multiplexing", RFC 8859,
+              DOI 10.17487/RFC8859, January 2021,
+              <https://www.rfc-editor.org/rfc/rfc8859>.
+
+   [RFC8866]  Begen, A., Kyzivat, P., Perkins, C., and M. Handley, "SDP:
+              Session Description Protocol", RFC 8866,
+              DOI 10.17487/RFC8866, January 2021,
+              <https://www.rfc-editor.org/rfc/rfc8866>.
+
+6.2.  Informative References
+
+   [RFC3550]  Schulzrinne, H., Casner, S., Frederick, R., and V.
+              Jacobson, "RTP: A Transport Protocol for Real-Time
+              Applications", STD 64, RFC 3550, DOI 10.17487/RFC3550,
+              July 2003, <https://www.rfc-editor.org/rfc/rfc3550>.
 
    [RFC3830]  Arkko, J., Carrara, E., Lindholm, F., Naslund, M., and K.
               Norrman, "MIKEY: Multimedia Internet KEYing", RFC 3830,
@@ -639,16 +716,19 @@ Internet-Draft               SRTP Assurance                February 2023
               Protocol (RTSP)", RFC 4567, DOI 10.17487/RFC4567, July
               2006, <https://www.rfc-editor.org/rfc/rfc4567>.
 
-   [RFC4568]  Andreasen, F., Baugher, M., and D. Wing, "Session
-              Description Protocol (SDP) Security Descriptions for Media
-              Streams", RFC 4568, DOI 10.17487/RFC4568, July 2006,
-              <https://www.rfc-editor.org/rfc/rfc4568>.
-
    [RFC4771]  Lehtovirta, V., Naslund, M., and K. Norrman, "Integrity
               Transform Carrying Roll-Over Counter for the Secure Real-
               time Transport Protocol (SRTP)", RFC 4771,
               DOI 10.17487/RFC4771, January 2007,
               <https://www.rfc-editor.org/rfc/rfc4771>.
+
+
+
+
+Davis & Valverde         Expires 14 October 2023               [Page 13]
+
+Internet-Draft               SRTP Assurance                   April 2023
+
 
    [RFC5159]  Dondeti, L., Ed. and A. Jerichow, "Session Description
               Protocol (SDP) Attributes for Open Mobile Alliance (OMA)
@@ -665,14 +745,6 @@ Internet-Draft               SRTP Assurance                February 2023
               "Requirements and Analysis of Media Security Management
               Protocols", RFC 5479, DOI 10.17487/RFC5479, April 2009,
               <https://www.rfc-editor.org/rfc/rfc5479>.
-
-
-
-
-Davis & Valverde         Expires 19 August 2023                [Page 12]
-
-Internet-Draft               SRTP Assurance                February 2023
-
 
    [RFC5576]  Lennox, J., Ott, J., and T. Schierl, "Source-Specific
               Media Attributes in the Session Description Protocol
@@ -705,14 +777,19 @@ Internet-Draft               SRTP Assurance                February 2023
               Sessions", RFC 7201, DOI 10.17487/RFC7201, April 2014,
               <https://www.rfc-editor.org/rfc/rfc7201>.
 
+
+
+
+
+Davis & Valverde         Expires 14 October 2023               [Page 14]
+
+Internet-Draft               SRTP Assurance                   April 2023
+
+
    [RFC7714]  McGrew, D. and K. Igoe, "AES-GCM Authenticated Encryption
               in the Secure Real-time Transport Protocol (SRTP)",
               RFC 7714, DOI 10.17487/RFC7714, December 2015,
               <https://www.rfc-editor.org/rfc/rfc7714>.
-
-   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
-              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
-              May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
 
    [RFC8723]  Jennings, C., Jones, P., Barnes, R., and A.B. Roach,
               "Double Encryption Procedures for the Secure Real-Time
@@ -720,20 +797,10 @@ Internet-Draft               SRTP Assurance                February 2023
               DOI 10.17487/RFC8723, April 2020,
               <https://www.rfc-editor.org/rfc/rfc8723>.
 
-
-
-
-
-
-Davis & Valverde         Expires 19 August 2023                [Page 13]
-
-Internet-Draft               SRTP Assurance                February 2023
-
-
-   [RFC8866]  Begen, A., Kyzivat, P., Perkins, C., and M. Handley, "SDP:
-              Session Description Protocol", RFC 8866,
-              DOI 10.17487/RFC8866, January 2021,
-              <https://www.rfc-editor.org/rfc/rfc8866>.
+   [RFC8792]  Watsen, K., Auerswald, E., Farrel, A., and Q. Wu,
+              "Handling Long Lines in Content of Internet-Drafts and
+              RFCs", RFC 8792, DOI 10.17487/RFC8792, June 2020,
+              <https://www.rfc-editor.org/rfc/rfc8792>.
 
    [RFC8870]  Jennings, C., Mattsson, J., McGrew, D., Wing, D., and F.
               Andreasen, "Encrypted Key Transport for DTLS and Secure
@@ -770,15 +837,4 @@ Authors' Addresses
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-Davis & Valverde         Expires 19 August 2023                [Page 14]
+Davis & Valverde         Expires 14 October 2023               [Page 15]
