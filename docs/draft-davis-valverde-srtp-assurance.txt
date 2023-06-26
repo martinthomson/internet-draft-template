@@ -4,9 +4,9 @@
 
 Network Working Group                                        K. R. Davis
 Internet-Draft                                               E. Valverde
-Updates: 4568 (if approved)                                Cisco Systems
-Intended status: Standards Track                           12 April 2023
-Expires: 14 October 2023
+Updates: 4568 (if approved)                                 G. Salgueiro
+Intended status: Standards Track                           Cisco Systems
+Expires: 28 December 2023                                   26 June 2023
 
 
  SDP Security Assurance for Secure Real-time Transport Protocol (SRTP)
@@ -39,7 +39,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 14 October 2023.
+   This Internet-Draft will expire on 28 December 2023.
 
 Copyright Notice
 
@@ -53,9 +53,9 @@ Copyright Notice
 
 
 
-Davis & Valverde         Expires 14 October 2023                [Page 1]
+Davis, et al.           Expires 28 December 2023                [Page 1]
 
-Internet-Draft               SRTP Assurance                   April 2023
+Internet-Draft               SRTP Assurance                    June 2023
 
 
    and restrictions with respect to this document.  Code Components
@@ -74,12 +74,14 @@ Table of Contents
      3.2.  Sender Behavior . . . . . . . . . . . . . . . . . . . . .  10
      3.3.  Receiver Behavior . . . . . . . . . . . . . . . . . . . .  11
      3.4.  Update Frequency  . . . . . . . . . . . . . . . . . . . .  11
-   4.  Security Considerations . . . . . . . . . . . . . . . . . . .  11
-   5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  11
-   6.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  12
-     6.1.  Normative References  . . . . . . . . . . . . . . . . . .  12
-     6.2.  Informative References  . . . . . . . . . . . . . . . . .  13
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  15
+     3.5.  Extendability . . . . . . . . . . . . . . . . . . . . . .  11
+   4.  Security Considerations . . . . . . . . . . . . . . . . . . .  12
+   5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  12
+   6.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  13
+   7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  13
+     7.1.  Normative References  . . . . . . . . . . . . . . . . . .  13
+     7.2.  Informative References  . . . . . . . . . . . . . . . . .  14
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  16
 
 1.  Introduction
 
@@ -107,11 +109,9 @@ Table of Contents
 
 
 
-
-
-Davis & Valverde         Expires 14 October 2023                [Page 2]
+Davis, et al.           Expires 28 December 2023                [Page 2]
 
-Internet-Draft               SRTP Assurance                   April 2023
+Internet-Draft               SRTP Assurance                    June 2023
 
 
    The current method of ROC handling is to instantiate a new media
@@ -165,9 +165,9 @@ Internet-Draft               SRTP Assurance                   April 2023
 
 
 
-Davis & Valverde         Expires 14 October 2023                [Page 3]
+Davis, et al.           Expires 28 December 2023                [Page 3]
 
-Internet-Draft               SRTP Assurance                   April 2023
+Internet-Draft               SRTP Assurance                    June 2023
 
 
    *  Here if the sender starts the stream from the last observed
@@ -221,9 +221,9 @@ Internet-Draft               SRTP Assurance                   April 2023
 
 
 
-Davis & Valverde         Expires 14 October 2023                [Page 4]
+Davis, et al.           Expires 28 December 2023                [Page 4]
 
-Internet-Draft               SRTP Assurance                   April 2023
+Internet-Draft               SRTP Assurance                    June 2023
 
 
    *  As defined by Section 3.3.1 of [RFC3711] an SRTP re-key MUST NOT
@@ -277,9 +277,9 @@ Internet-Draft               SRTP Assurance                   April 2023
 
 
 
-Davis & Valverde         Expires 14 October 2023                [Page 5]
+Davis, et al.           Expires 28 December 2023                [Page 5]
 
-Internet-Draft               SRTP Assurance                   April 2023
+Internet-Draft               SRTP Assurance                    June 2023
 
 
    [RFC5159] also defined some SDP attributes namely the
@@ -333,9 +333,9 @@ Internet-Draft               SRTP Assurance                   April 2023
 
 
 
-Davis & Valverde         Expires 14 October 2023                [Page 6]
+Davis, et al.           Expires 28 December 2023                [Page 6]
 
-Internet-Draft               SRTP Assurance                   April 2023
+Internet-Draft               SRTP Assurance                    June 2023
 
 
       All DTLS-SRTP items including Privacy Enhanced Conferencing items
@@ -389,9 +389,9 @@ Internet-Draft               SRTP Assurance                   April 2023
 
 
 
-Davis & Valverde         Expires 14 October 2023                [Page 7]
+Davis, et al.           Expires 28 December 2023                [Page 7]
 
-Internet-Draft               SRTP Assurance                   April 2023
+Internet-Draft               SRTP Assurance                    June 2023
 
 
    a=srtpctx:<a-crypto-tag> \
@@ -445,9 +445,9 @@ Internet-Draft               SRTP Assurance                   April 2023
 
 
 
-Davis & Valverde         Expires 14 October 2023                [Page 8]
+Davis, et al.           Expires 28 December 2023                [Page 8]
 
-Internet-Draft               SRTP Assurance                   April 2023
+Internet-Draft               SRTP Assurance                    June 2023
 
 
    When SSRC, ROC, or Sequence information needs to be conveyed about a
@@ -501,9 +501,9 @@ Internet-Draft               SRTP Assurance                   April 2023
 
 
 
-Davis & Valverde         Expires 14 October 2023                [Page 9]
+Davis, et al.           Expires 28 December 2023                [Page 9]
 
-Internet-Draft               SRTP Assurance                   April 2023
+Internet-Draft               SRTP Assurance                    June 2023
 
 
             Figure 5: Example SRTP Context with unknown mappings
@@ -557,9 +557,9 @@ Internet-Draft               SRTP Assurance                   April 2023
 
 
 
-Davis & Valverde         Expires 14 October 2023               [Page 10]
+Davis, et al.           Expires 28 December 2023               [Page 10]
 
-Internet-Draft               SRTP Assurance                   April 2023
+Internet-Draft               SRTP Assurance                    June 2023
 
 
    For best results all sending parties of a given session stream SHOULD
@@ -585,6 +585,43 @@ Internet-Draft               SRTP Assurance                   April 2023
    following natural session updates, session changes and session
    liveliness checks this specification will not cause overcrowding on
    the session establishment protocol's signaling channel.
+
+3.5.  Extendability
+
+   As stated in Section 3.1, The SRTP Context SDP implementation's goal
+   is extendable allowing for additional vendor specific field=value
+   pairs alongside the ones defined in this document or room for future
+   specifications to add additional field=value pairs.  This ensures
+   that SDES may remain compatible with future algorithms that need to
+   signal cryptographic contect information outside of what is currently
+   specified in [RFC4568].
+
+   To illustrate, imagine a new example SRTP algorithm and crypto suite
+   is created named "FOO_CHACHA20_POLY1305_SHA256" and the application
+   needs to signal "Foo, "Bar", and "Nonce" values to properly
+   instantiate the SRTP context.  Rather than modify SDES or create a
+   new unique SDP attribute, one can simply utilize SRTP Context SDP's
+   key=value pairs to convey the information.
+
+a=crypto:1 FOO_CHACHA20_POLY1305_SHA256 \
+  inline:1ef9a49f1f68f75f95feca6898921db8c73bfa53e71e33726c4c983069dd7d44
+a=srtpctx:1 foo=1;bar=abc123;nonce=8675309
+
+   With this extendable method, all that is now required in the
+   fictional RFC defining "FOO_CHACHA20_POLY1305_SHA256" is to include
+   an "SDP parameters" section which details the expected "a=srtpctx"
+
+
+
+Davis, et al.           Expires 28 December 2023               [Page 11]
+
+Internet-Draft               SRTP Assurance                    June 2023
+
+
+   values and their usages.  This approach is similar to how Media
+   Format Parameter Capability ("a=fmtp") is utilized in modern SDP.  An
+   example is [RFC6184], Section 8.2.1 for H.264 video Media Format
+   Parameters.
 
 4.  Security Considerations
 
@@ -613,9 +650,28 @@ Internet-Draft               SRTP Assurance                   April 2023
 
 
 
-Davis & Valverde         Expires 14 October 2023               [Page 11]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Davis, et al.           Expires 28 December 2023               [Page 12]
 
-Internet-Draft               SRTP Assurance                   April 2023
+Internet-Draft               SRTP Assurance                    June 2023
 
 
      +===============+===============================================+
@@ -656,23 +712,28 @@ Internet-Draft               SRTP Assurance                   April 2023
 
                     Table 1: IANA SDP Registration Form
 
-6.  References
+6.  Acknowledgements
 
-6.1.  Normative References
+   Thanks to Paul Jones for reviewing early draft material and providing
+   valueable feedback.
+
+7.  References
+
+7.1.  Normative References
+
+
+
+
+
+Davis, et al.           Expires 28 December 2023               [Page 13]
+
+Internet-Draft               SRTP Assurance                    June 2023
+
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
               DOI 10.17487/RFC2119, March 1997,
               <https://www.rfc-editor.org/rfc/rfc2119>.
-
-
-
-
-
-Davis & Valverde         Expires 14 October 2023               [Page 12]
-
-Internet-Draft               SRTP Assurance                   April 2023
-
 
    [RFC3711]  Baugher, M., McGrew, D., Naslund, M., Carrara, E., and K.
               Norrman, "The Secure Real-time Transport Protocol (SRTP)",
@@ -698,7 +759,7 @@ Internet-Draft               SRTP Assurance                   April 2023
               DOI 10.17487/RFC8866, January 2021,
               <https://www.rfc-editor.org/rfc/rfc8866>.
 
-6.2.  Informative References
+7.2.  Informative References
 
    [RFC3550]  Schulzrinne, H., Casner, S., Frederick, R., and V.
               Jacobson, "RTP: A Transport Protocol for Real-Time
@@ -716,19 +777,20 @@ Internet-Draft               SRTP Assurance                   April 2023
               Protocol (RTSP)", RFC 4567, DOI 10.17487/RFC4567, July
               2006, <https://www.rfc-editor.org/rfc/rfc4567>.
 
+
+
+
+
+Davis, et al.           Expires 28 December 2023               [Page 14]
+
+Internet-Draft               SRTP Assurance                    June 2023
+
+
    [RFC4771]  Lehtovirta, V., Naslund, M., and K. Norrman, "Integrity
               Transform Carrying Roll-Over Counter for the Secure Real-
               time Transport Protocol (SRTP)", RFC 4771,
               DOI 10.17487/RFC4771, January 2007,
               <https://www.rfc-editor.org/rfc/rfc4771>.
-
-
-
-
-Davis & Valverde         Expires 14 October 2023               [Page 13]
-
-Internet-Draft               SRTP Assurance                   April 2023
-
 
    [RFC5159]  Dondeti, L., Ed. and A. Jerichow, "Session Description
               Protocol (SDP) Attributes for Open Mobile Alliance (OMA)
@@ -763,10 +825,22 @@ Internet-Draft               SRTP Assurance                   April 2023
               DOI 10.17487/RFC5764, May 2010,
               <https://www.rfc-editor.org/rfc/rfc5764>.
 
+   [RFC6184]  Wang, Y.-K., Even, R., Kristensen, T., and R. Jesup, "RTP
+              Payload Format for H.264 Video", RFC 6184,
+              DOI 10.17487/RFC6184, May 2011,
+              <https://www.rfc-editor.org/rfc/rfc6184>.
+
    [RFC6189]  Zimmermann, P., Johnston, A., Ed., and J. Callas, "ZRTP:
               Media Path Key Agreement for Unicast Secure RTP",
               RFC 6189, DOI 10.17487/RFC6189, April 2011,
               <https://www.rfc-editor.org/rfc/rfc6189>.
+
+
+
+Davis, et al.           Expires 28 December 2023               [Page 15]
+
+Internet-Draft               SRTP Assurance                    June 2023
+
 
    [RFC6904]  Lennox, J., "Encryption of Header Extensions in the Secure
               Real-time Transport Protocol (SRTP)", RFC 6904,
@@ -776,15 +850,6 @@ Internet-Draft               SRTP Assurance                   April 2023
    [RFC7201]  Westerlund, M. and C. Perkins, "Options for Securing RTP
               Sessions", RFC 7201, DOI 10.17487/RFC7201, April 2014,
               <https://www.rfc-editor.org/rfc/rfc7201>.
-
-
-
-
-
-Davis & Valverde         Expires 14 October 2023               [Page 14]
-
-Internet-Draft               SRTP Assurance                   April 2023
-
 
    [RFC7714]  McGrew, D. and K. Igoe, "AES-GCM Authenticated Encryption
               in the Secure Real-time Transport Protocol (SRTP)",
@@ -825,6 +890,14 @@ Internet-Draft               SRTP Assurance                   April 2023
 
 Authors' Addresses
 
+
+
+
+Davis, et al.           Expires 28 December 2023               [Page 16]
+
+Internet-Draft               SRTP Assurance                    June 2023
+
+
    Kyzer R. Davis
    Cisco Systems
    Email: kydavis@cisco.com
@@ -835,6 +908,45 @@ Authors' Addresses
    Email: jovalver@cisco.com
 
 
+   Gonzalo Salgueiro
+   Cisco Systems
+   Email: gsalguei@cisco.com
 
 
-Davis & Valverde         Expires 14 October 2023               [Page 15]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Davis, et al.           Expires 28 December 2023               [Page 17]

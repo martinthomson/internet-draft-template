@@ -18,6 +18,9 @@ author:
 - name: Esteban Valverde
   email: jovalver@cisco.com
   org: Cisco Systems
+- name: Gonzalo Salgueiro
+  email: gsalguei@cisco.com
+  org: Cisco Systems
 
 normative:
   RFC3711: RFC3711
@@ -36,6 +39,7 @@ informative:
   RFC5576: RFC5576
   RFC5763: RFC5763
   RFC5764: RFC5764
+  RFC6184: RFC6184
   RFC6189: RFC6189
   RFC6904: RFC6904
   RFC7201: RFC7201
@@ -332,6 +336,22 @@ There is no explicit time or total number of packets in which a new update is re
 By following natural session updates,  session changes and session liveliness checks this specification will not cause 
 overcrowding on the session establishment protocol's signaling channel.
 
+## Extendability
+As stated in {{syntax}}, The SRTP Context SDP implementation's goal is extendable allowing for additional vendor specific field=value pairs alongside the ones defined in this document or room for future specifications to add additional field=value pairs.
+This ensures that SDES may remain compatible with future algorithms that need to signal cryptographic contect information outside of what is currently specified in {{RFC4568}}.
+
+To illustrate, imagine a new example SRTP algorithm and crypto suite is created named "FOO_CHACHA20_POLY1305_SHA256" and the application needs to signal "Foo, "Bar", and "Nonce" values to properly instantiate the SRTP context.
+Rather than modify SDES or create a new unique SDP attribute, one can simply utilize SRTP Context SDP's key=value pairs to convey the information.
+
+~~~~
+a=crypto:1 FOO_CHACHA20_POLY1305_SHA256 \
+  inline:1ef9a49f1f68f75f95feca6898921db8c73bfa53e71e33726c4c983069dd7d44
+a=srtpctx:1 foo=1;bar=abc123;nonce=8675309
+~~~~
+
+With this extendable method, all that is now required in the fictional RFC defining "FOO_CHACHA20_POLY1305_SHA256" is to include an "SDP parameters" section which details the expected "a=srtpctx" values and their usages.
+This approach is similar to how Media Format Parameter Capability ("a=fmtp") is utilized in modern SDP. An example is {{RFC6184}}, Section 8.2.1 for H.264 video Media Format Parameters.
+
 # Security Considerations
 When SDP carries SRTP Context attributes additional insights are present about the SRTP cryptographic context.
 Due to this an intermediary MAY be able to analyze how long a session has been active by the ROC value.
@@ -358,5 +378,7 @@ Specifically, it adds the SDP "a=srtpctx" attribute for use at the media level.
 | Mux Category          | TRANSPORT |
 {: #ianaForm title='IANA SDP Registration Form'}
 
+# Acknowledgements
+Thanks to Paul Jones for reviewing early draft material and providing valueable feedback.
 
 --- back
