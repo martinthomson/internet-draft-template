@@ -336,12 +336,12 @@ There is no explicit time or total number of packets in which a new update is re
 By following natural session updates,  session changes and session liveliness checks this specification will not cause 
 overcrowding on the session establishment protocol's signaling channel.
 
-## Extendability
-As stated in {{syntax}}, The SRTP Context SDP implementation's goal is extendable allowing for additional vendor specific field=value pairs alongside the ones defined in this document or room for future specifications to add additional field=value pairs.
-This ensures that SDES may remain compatible with future algorithms that need to signal cryptographic contect information outside of what is currently specified in {{RFC4568}}.
+## Extendability {#extendability}
+As stated in {{syntax}}, the SRTP Context SDP implementation's goal is extendability allowing for additional vendor specific field=value pairs alongside the ones defined in this document.
+This ensures that a=crypto SDP security may remain compatible with future algorithms that need to signal cryptographic context information outside of what is currently specified in {{RFC4568}}.
 
 To illustrate, imagine a new example SRTP algorithm and crypto suite is created named "FOO_CHACHA20_POLY1305_SHA256" and the application needs to signal "Foo, "Bar", and "Nonce" values to properly instantiate the SRTP context.
-Rather than modify SDES or create a new unique SDP attribute, one can simply utilize SRTP Context SDP's key=value pairs to convey the information.
+Rather than modify a=crypto SDP security or create a new unique SDP attribute, one can simply utilize SRTP Context SDP's key=value pairs to convey the information.
 
 ~~~~
 a=crypto:1 FOO_CHACHA20_POLY1305_SHA256 \

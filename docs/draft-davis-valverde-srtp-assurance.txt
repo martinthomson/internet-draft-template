@@ -6,7 +6,7 @@ Network Working Group                                        K. R. Davis
 Internet-Draft                                               E. Valverde
 Updates: 4568 (if approved)                                 G. Salgueiro
 Intended status: Standards Track                           Cisco Systems
-Expires: 28 December 2023                                   26 June 2023
+Expires: 29 December 2023                                   27 June 2023
 
 
  SDP Security Assurance for Secure Real-time Transport Protocol (SRTP)
@@ -39,7 +39,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 28 December 2023.
+   This Internet-Draft will expire on 29 December 2023.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Davis, et al.           Expires 28 December 2023                [Page 1]
+Davis, et al.           Expires 29 December 2023                [Page 1]
 
 Internet-Draft               SRTP Assurance                    June 2023
 
@@ -109,7 +109,7 @@ Table of Contents
 
 
 
-Davis, et al.           Expires 28 December 2023                [Page 2]
+Davis, et al.           Expires 29 December 2023                [Page 2]
 
 Internet-Draft               SRTP Assurance                    June 2023
 
@@ -165,7 +165,7 @@ Internet-Draft               SRTP Assurance                    June 2023
 
 
 
-Davis, et al.           Expires 28 December 2023                [Page 3]
+Davis, et al.           Expires 29 December 2023                [Page 3]
 
 Internet-Draft               SRTP Assurance                    June 2023
 
@@ -221,7 +221,7 @@ Internet-Draft               SRTP Assurance                    June 2023
 
 
 
-Davis, et al.           Expires 28 December 2023                [Page 4]
+Davis, et al.           Expires 29 December 2023                [Page 4]
 
 Internet-Draft               SRTP Assurance                    June 2023
 
@@ -277,7 +277,7 @@ Internet-Draft               SRTP Assurance                    June 2023
 
 
 
-Davis, et al.           Expires 28 December 2023                [Page 5]
+Davis, et al.           Expires 29 December 2023                [Page 5]
 
 Internet-Draft               SRTP Assurance                    June 2023
 
@@ -333,7 +333,7 @@ Internet-Draft               SRTP Assurance                    June 2023
 
 
 
-Davis, et al.           Expires 28 December 2023                [Page 6]
+Davis, et al.           Expires 29 December 2023                [Page 6]
 
 Internet-Draft               SRTP Assurance                    June 2023
 
@@ -389,7 +389,7 @@ Internet-Draft               SRTP Assurance                    June 2023
 
 
 
-Davis, et al.           Expires 28 December 2023                [Page 7]
+Davis, et al.           Expires 29 December 2023                [Page 7]
 
 Internet-Draft               SRTP Assurance                    June 2023
 
@@ -445,7 +445,7 @@ Internet-Draft               SRTP Assurance                    June 2023
 
 
 
-Davis, et al.           Expires 28 December 2023                [Page 8]
+Davis, et al.           Expires 29 December 2023                [Page 8]
 
 Internet-Draft               SRTP Assurance                    June 2023
 
@@ -501,7 +501,7 @@ Internet-Draft               SRTP Assurance                    June 2023
 
 
 
-Davis, et al.           Expires 28 December 2023                [Page 9]
+Davis, et al.           Expires 29 December 2023                [Page 9]
 
 Internet-Draft               SRTP Assurance                    June 2023
 
@@ -557,7 +557,7 @@ Internet-Draft               SRTP Assurance                    June 2023
 
 
 
-Davis, et al.           Expires 28 December 2023               [Page 10]
+Davis, et al.           Expires 29 December 2023               [Page 10]
 
 Internet-Draft               SRTP Assurance                    June 2023
 
@@ -588,20 +588,19 @@ Internet-Draft               SRTP Assurance                    June 2023
 
 3.5.  Extendability
 
-   As stated in Section 3.1, The SRTP Context SDP implementation's goal
-   is extendable allowing for additional vendor specific field=value
-   pairs alongside the ones defined in this document or room for future
-   specifications to add additional field=value pairs.  This ensures
-   that SDES may remain compatible with future algorithms that need to
-   signal cryptographic contect information outside of what is currently
-   specified in [RFC4568].
+   As stated in Section 3.1, the SRTP Context SDP implementation's goal
+   is extendability allowing for additional vendor specific field=value
+   pairs alongside the ones defined in this document.  This ensures that
+   a=crypto SDP security may remain compatible with future algorithms
+   that need to signal cryptographic context information outside of what
+   is currently specified in [RFC4568].
 
    To illustrate, imagine a new example SRTP algorithm and crypto suite
    is created named "FOO_CHACHA20_POLY1305_SHA256" and the application
    needs to signal "Foo, "Bar", and "Nonce" values to properly
-   instantiate the SRTP context.  Rather than modify SDES or create a
-   new unique SDP attribute, one can simply utilize SRTP Context SDP's
-   key=value pairs to convey the information.
+   instantiate the SRTP context.  Rather than modify a=crypto SDP
+   security or create a new unique SDP attribute, one can simply utilize
+   SRTP Context SDP's key=value pairs to convey the information.
 
 a=crypto:1 FOO_CHACHA20_POLY1305_SHA256 \
   inline:1ef9a49f1f68f75f95feca6898921db8c73bfa53e71e33726c4c983069dd7d44
@@ -610,15 +609,15 @@ a=srtpctx:1 foo=1;bar=abc123;nonce=8675309
    With this extendable method, all that is now required in the
    fictional RFC defining "FOO_CHACHA20_POLY1305_SHA256" is to include
    an "SDP parameters" section which details the expected "a=srtpctx"
+   values and their usages.  This approach is similar to how Media
 
 
 
-Davis, et al.           Expires 28 December 2023               [Page 11]
+Davis, et al.           Expires 29 December 2023               [Page 11]
 
 Internet-Draft               SRTP Assurance                    June 2023
 
 
-   values and their usages.  This approach is similar to how Media
    Format Parameter Capability ("a=fmtp") is utilized in modern SDP.  An
    example is [RFC6184], Section 8.2.1 for H.264 video Media Format
    Parameters.
@@ -669,7 +668,8 @@ Internet-Draft               SRTP Assurance                    June 2023
 
 
 
-Davis, et al.           Expires 28 December 2023               [Page 12]
+
+Davis, et al.           Expires 29 December 2023               [Page 12]
 
 Internet-Draft               SRTP Assurance                    June 2023
 
@@ -725,7 +725,7 @@ Internet-Draft               SRTP Assurance                    June 2023
 
 
 
-Davis, et al.           Expires 28 December 2023               [Page 13]
+Davis, et al.           Expires 29 December 2023               [Page 13]
 
 Internet-Draft               SRTP Assurance                    June 2023
 
@@ -781,7 +781,7 @@ Internet-Draft               SRTP Assurance                    June 2023
 
 
 
-Davis, et al.           Expires 28 December 2023               [Page 14]
+Davis, et al.           Expires 29 December 2023               [Page 14]
 
 Internet-Draft               SRTP Assurance                    June 2023
 
@@ -837,7 +837,7 @@ Internet-Draft               SRTP Assurance                    June 2023
 
 
 
-Davis, et al.           Expires 28 December 2023               [Page 15]
+Davis, et al.           Expires 29 December 2023               [Page 15]
 
 Internet-Draft               SRTP Assurance                    June 2023
 
@@ -893,7 +893,7 @@ Authors' Addresses
 
 
 
-Davis, et al.           Expires 28 December 2023               [Page 16]
+Davis, et al.           Expires 29 December 2023               [Page 16]
 
 Internet-Draft               SRTP Assurance                    June 2023
 
@@ -949,4 +949,4 @@ Internet-Draft               SRTP Assurance                    June 2023
 
 
 
-Davis, et al.           Expires 28 December 2023               [Page 17]
+Davis, et al.           Expires 29 December 2023               [Page 17]
