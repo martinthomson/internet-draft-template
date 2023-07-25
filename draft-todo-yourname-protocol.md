@@ -24,7 +24,7 @@ abbrev: "TODO - Abbreviation"
 category: info
 
 docname: draft-todo-yourname-protocol-latest
-submissiontype: IETF  # also: "independent", "IAB", or "IRTF"
+submissiontype: IETF  # also: "independent", "editorial", "IAB", or "IRTF"
 number:
 date:
 consensus: true
