@@ -79,6 +79,7 @@ draft-01
 - Change contact name from IESG to IETF in IANA Considerations #2
 - Discuss RFC4568 "Late Joiner" in problem statement: #3
 - Split Serial forking scenario into its own section #4
+- Add MIKEY considerations to Protocol Design section #6
 - Change doc title #7
 - Add SEQ abbreviation earlier #8
 
@@ -209,6 +210,9 @@ Key Management Extensions for Session Description Protocol (SDP) and Real Time S
 
 ZRTP: Media Path Key Agreement for Unicast Secure RTP:
 : This specifications makes no attempt to be compatible with the Key Management via SDP for ZRTP "a=zrtp-hash" defined by {{RFC6189}}. 
+
+MIKEY:
+: This specifications makes no attempt to be compatible with the SRTP Key Management via MIKEY {{RFC3830}}. 
 
 DTLS-SRTP, EKT-SRTP, Privacy Enhanced Conferencing items (PERC):
 : All DTLS-SRTP items including Privacy Enhanced Conferencing items (PERC) [ {{RFC8723}} and {{RFC8871}} ] are out of scope for the purposes of this specification.
