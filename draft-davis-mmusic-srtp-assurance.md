@@ -77,6 +77,7 @@ draft-01
 {: spacing="compact"}
 
 - Change contact name from IESG to IETF in IANA Considerations #2
+- Add SEQ abbreviation earlier #8
 
 ## Problem Statement {#Problem}
 
@@ -85,7 +86,7 @@ the state of a few crucial items in the SRTP cryptographic context are missing.
 One such item is the Rollover Counter (ROC) defined by Section 3.2.1 {{RFC3711}}
 which is not signaled in any packet across the wire and shared between applications.
 
-The ROC is one item that is used to create the SRTP Packet Index along with the the {{RFC3550}} transmitted sequence numbers for a given synchronization sources (SSRC).
+The ROC is one item that is used to create the SRTP Packet Index along with the the {{RFC3550}} transmitted sequence numbers (SEQ) for a given synchronization sources (SSRC).
 The Packet index is integral to the encryption, decryption and authentication process of SRTP key streams.
 Failure to synchronize the value properly at any point in the SRTP media exchange leads to encryption or decryption failures, degraded user experience 
 and at cross-vendor interoperability issues with many hours of engineering time spent debugging a value that is never negotiated on the wire 
@@ -344,7 +345,7 @@ See {{frequency}} for update frequency recommendations.
 ## Receiver Behavior {#receiver}
 Receivers SHOULD utilize the signaled information in application logic to instantiate the SRTP cryptographic context.
 In the even there is no SRTP Context attributes present in SDP receivers MUST fallback to {{RFC3711}} for guesting 
-the ROC and {{RFC4568}} logic for late binding to gleam the SSRC and sequence numbers.
+the ROC and {{RFC4568}} logic for late binding to gleam the SSRC and sequence numbers (SEQ).
 
 ## Update Frequency {#frequency}
 Senders SHOULD provide SRTP Context SDP when SDP Crypto attributes are negotiated.
