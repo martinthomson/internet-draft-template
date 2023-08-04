@@ -77,6 +77,7 @@ draft-01
 {: spacing="compact"}
 
 - Change contact name from IESG to IETF in IANA Considerations #2
+- Discuss RFC4568 "Late Joiner" in problem statement: #3
 - Split Serial forking scenario into its own section #4
 - Add SEQ abbreviation earlier #8
 
@@ -96,6 +97,7 @@ and at cross-vendor interoperability issues with many hours of engineering time 
 The current method of ROC handling is to instantiate a new media stream's cryptographic context at 0 as per Section 3.3.1 of {{RFC3711}}. 
 Then track the state ROC for a given cryptographic context as the time continues on and the stream progresses. 
 
+{{RFC4568}}, states 'there is no concept of a "late joiner" in SRTP security descriptions' as the main reason for not conveying the ROC, SSRC, or SEQ via the key management protocol but as one will see below; this argument is not true in practice.
 
 When joining ongoing streams, resuming held/transferred streams, or devices without embedded application logic for clustering/high availability where a given cryptographic context is resumed; 
 without any explicit signaling about the ROC state, devices must make an educated guess as defined by Section 3.3.1 of {{RFC3711}}.
