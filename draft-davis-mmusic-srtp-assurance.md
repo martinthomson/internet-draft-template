@@ -63,6 +63,21 @@ The mechanism also enhances SRTP operation in cases where there is a risk of los
 
 # Introduction
 
+## Discussion Venues {#changelog}
+{:removeinrfc}
+
+Source for this draft and an issue tracker can be found at https://github.com/kyzer-davis/srtp-assurance-rfc-draft.
+Issues and discussion may be directed to the GitHub Issue Tracker.
+
+## Changelog {#changelog}
+{:removeinrfc}
+
+draft-01
+
+{: spacing="compact"}
+
+- Change contact name from IESG to IETF in IANA Considerations #2
+
 ## Problem Statement {#Problem}
 
 While {{RFC4568}} provides most of the information required to instantiate an SRTP cryptographic context for RTP Packets, 
@@ -366,7 +381,7 @@ This document updates the "attribute-name (formerly "att-field")" sub-registry o
 Specifically, it adds the SDP "a=srtpctx" attribute for use at the media level.
 
 | Form                  | Value |
-| Contact name          | IESG |
+| Contact name          | IETF |
 | Contact email address | kydavis@cisco.com |
 | Attribute name        | srtpctx |
 | Attribute value       | srtpctx |
@@ -380,6 +395,6 @@ Specifically, it adds the SDP "a=srtpctx" attribute for use at the media level.
 {: #ianaForm title='IANA SDP Registration Form'}
 
 # Acknowledgements
-Thanks to Paul Jones for reviewing early draft material and providing valueable feedback.
+Thanks to Paul Jones for reviewing early draft material and providing valuable feedback.
 
 --- back
