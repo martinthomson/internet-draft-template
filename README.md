@@ -4,14 +4,14 @@
 
 # Latest
 ```
-Name:		draft-davis-valverde-srtp-assurance
+Name:		draft-davis-mmusic-srtp-assurance
 Revision:	00
 Title:		SDP Security Assurance for Secure Real-time Transport Protocol (SRTP)
-Document date:	2023-06-27
+Document date:	2023-08-04
 Group:		Individual Submission
 Pages:		17
-URL:            https://www.ietf.org/archive/id/draft-davis-valverde-srtp-assurance-00.txt
-Status:         https://datatracker.ietf.org/doc/draft-davis-valverde-srtp-assurance/
-Html:           https://www.ietf.org/archive/id/draft-davis-valverde-srtp-assurance-00.html
-Htmlized:       https://datatracker.ietf.org/doc/html/draft-davis-valverde-srtp-assurance
+URL:            https://www.ietf.org/archive/id/draft-davis-mmusic-srtp-assurance-00.txt
+Status:         https://datatracker.ietf.org/doc/draft-davis-mmusic-srtp-assurance/
+Html:           https://www.ietf.org/archive/id/draft-davis-mmusic-srtp-assurance-00.html
+Htmlized:       https://datatracker.ietf.org/doc/html/draft-davis-mmusic-srtp-assurance
 ```
