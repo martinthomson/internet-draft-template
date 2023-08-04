@@ -1,5 +1,5 @@
 ---
-title: "SDP Security Assurance for Secure Real-time Transport Protocol (SRTP)"
+title: "Signaling Additional SRTP Context information via SDP"
 abbrev: "SRTP Assurance"
 category: std
 updates: '4568'
@@ -79,6 +79,7 @@ draft-01
 - Change contact name from IESG to IETF in IANA Considerations #2
 - Discuss RFC4568 "Late Joiner" in problem statement: #3
 - Split Serial forking scenario into its own section #4
+- Change doc title #7
 - Add SEQ abbreviation earlier #8
 
 ## Problem Statement {#Problem}
@@ -252,7 +253,7 @@ Note that long lines in this document have been broken into multiple lines using
 The formal definition of the SRTP Context Attribute, including custom extension field=value pairs is provided by the following ABNF {{RFC5234}}:
 
 ~~~~ abnf
-srtp-assurance = srtp-attr
+srtp-context   = srtp-attr
                  srtp-tag
                  [srtp-ssrc";"]
                  [srtp-roc";"]
