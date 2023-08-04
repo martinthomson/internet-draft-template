@@ -77,6 +77,7 @@ draft-01
 {: spacing="compact"}
 
 - Change contact name from IESG to IETF in IANA Considerations #2
+- Split Serial forking scenario into its own section #4
 - Add SEQ abbreviation earlier #8
 
 ## Problem Statement {#Problem}
@@ -124,8 +125,13 @@ Hold/Resume, Transfer Scenarios:
 - The sender may re-assume the original cryptographic context rather rather than create one net new. 
 - Here if the sender starts the stream from the last observed sequence number the receiver observed the ROC will be in sync.
 - However there are scenarios where the sender may have been transmitting packets on the previous cryptographic context and if a ROC increment occurred; the receiver would never know. This can lead to problems when the streams are reconnected as the ROC is now out of sync between both parties.
-- A similar scenario was brought up in Appendix A of {{RFC4568}} "Scenario B" and "Problem 3" of the summary within this section.
 - Further, a sender may be transferred to some upstream device transparently to them. If the sender does not reset their cryptographic context that new receiver will now be out of sync with possible ROC values.
+
+Serial Forking Case:
+
+{: spacing="compact"}
+- {{RFC4568}} itself cites a problematic scenario in their own Appendix A, Scenario B, Problem 3 where a ROC out of sync scenario could occur.
+- The proposed solution for problem 3 involves a method to convey the ROC however known the problem; the authors still did not include this in the base SDP Security specification.
 
 Application Failover (without stateful syncs):
 
