@@ -4,7 +4,7 @@ abbrev: "SRTP Assurance"
 category: std
 updates: '4568'
 
-docname: draft-mmusic-srtp-assurance-00
+docname: draft-davis-mmusic-srtp-assurance-00
 submissiontype: IETF
 date: 2023
 consensus: true
