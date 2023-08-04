@@ -4,7 +4,7 @@ abbrev: "SRTP Assurance"
 category: std
 updates: '4568'
 
-docname: draft-davis-mmusic-srtp-assurance-00
+docname: draft-davis-mmusic-srtp-assurance-01
 submissiontype: IETF
 date: 2023
 consensus: true
@@ -63,11 +63,10 @@ The mechanism also enhances SRTP operation in cases where there is a risk of los
 
 # Introduction
 
-## Discussion Venues {#changelog}
+## Discussion Venues {#discussion}
 {:removeinrfc}
 
 Source for this draft and an issue tracker can be found at https://github.com/kyzer-davis/srtp-assurance-rfc-draft.
-Issues and discussion may be directed to the GitHub Issue Tracker.
 
 ## Changelog {#changelog}
 {:removeinrfc}
