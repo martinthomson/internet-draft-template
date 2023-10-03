@@ -81,6 +81,10 @@ draft-01
 - Add MIKEY considerations to Protocol Design section #6
 - Change doc title #7
 - Add SEQ abbreviation earlier #8
+- Discuss why this can't be a RTP Header Extension #11
+- Add Appendix further discussing why SDP Security Session Parameters extension not used #5
+- Method to Convey Multiple SSRCs for a given stream #1
+- Discuss why SEQ is signaled in the SDP #9
 
 ## Problem Statement {#Problem}
 
@@ -159,6 +163,18 @@ Improper SRTP context resets:
 {: spacing="compact"}
 - As defined by Section 3.3.1 of {{RFC3711}} an SRTP re-key MUST NOT reset the ROC within SRTP Cryptographic context.
 - However, some applications may incorrectly use the re-key event as a trigger to reset the ROC leading to out-of-sync encrypt/decrypt operations.
+
+Out of Sync Sliding Windows / Sequence Numbers:
+
+{: spacing="compact"}
+- There is corner case situation where two devices communicating via a Back to Back User Agent (B2BUA) which is performing RTP-SRTP inter-working.
+- In this scenario the B2BUA is also a session border controller (SBC) tasked with topology abstraction. That is, the signaling itself is abstracted from both parties.
+- In this scenario a hold/resume where a sequence rolls can not only cause problems with the ROC; but can also cause sliding window issues.
+- To be more specific, assume that both parties did have access to the cryptographic context and resumed the old ROC value after the hold thus ROC is not out of sync.
+- What should the sliding window and sequence be set to in this scenario?
+- The post-hold call could in theory have a problem where the sequence number of received packets is lower than what was originally observed before the hold.
+- Thus the sliding window would drop packets until the sequence number gets back to the last known sequence and the sliding window advances.
+- Advertising the Sequence in some capacity to reinitialize the sliding window (along with advertising the ROC) can ensure a remote application can properly re-instantiate the cryptographic context in this scenario.
 
 This is a problem that other SRTP Key Management protocols (MIKEY, DTLS-SRTP, EKT-SRTP) have solved but SDP Security has lagged behind in solution parity. 
 For a quick comparison of all SRTP Key Management negotiations refer to {{RFC7201}} and {{RFC5479}}.
@@ -342,7 +358,18 @@ a=srtpctx:1 ssrc=0xDD147C14;roc=0x0001;seq=0x3039
 It is unlikely a sender will send SRTP Context attributes for every crypto attribute since many will be fully unknown (such as the start of a session.)
 However it is theoretically possible for every a=crypto tag to have a similar a=srtpctx attribute for additional details. 
 
-For scenarios where RTP Multiplexing are concerned, EKT-SRTP ({{RFC8870}}) MUST be used in lieu of SDP Security as per {{RFC8872}} Section 4.3.2.
+For scenarios where RTP Multiplexing are concerned, EKT-SRTP ({{RFC8870}}) SHOULD be used in lieu of SDP Security as per {{RFC8872}} Section 4.3.2.
+If SRTP Context attributes are to be used, multiple SSRC/ROC/SEQ values can be "bundled" in a list using parenthesis as a delimter.
+This can be observed in {{ExampleMultiSSRC}} where three SSRC and the respective ROC/SEQ are provided as a list within the a=srtpctx attribute:
+
+~~~~
+a=crypto:1 AES_CM_128_HMAC_SHA1_80 \
+inline:d0RmdmcmVCspeEc3QGZiNWpVLFJhQX1cfHAwJSo
+a=srtpctx:1 (ssrc=0x01;roc=0x0;seq=0x1234), \
+(ssrc=0x02;roc=0x1;seq=0xABCD), \
+(ssrc=0x845fed;roc=0x0000;seq=unknown)
+~~~~
+{: #ExampleMultiSSRC title='Example SRTP Context with Multiple SSRC'}
 
 For scenarios where SDP Bundling are concerned, SRTP Context attributes follow the same bundling guidelines defined by {{RFC8859}}, section 5.7 for SDP Securities a=crypto attribute.
 
@@ -362,15 +389,14 @@ the ROC and {{RFC4568}} logic for late binding to gleam the SSRC and sequence nu
 ## Update Frequency {#frequency}
 Senders SHOULD provide SRTP Context SDP when SDP Crypto attributes are negotiated.
 There is no explicit time or total number of packets in which a new update is required from sender to receiver.
-By following natural session updates,  session changes and session liveliness checks this specification will not cause 
-overcrowding on the session establishment protocol's signaling channel.
+This specification will not cause overcrowding on the session establishment protocol's signaling channel if natural session updates, session changes, and session liveliness checks are followed.
 
 ## Extendability {#extendability}
 As stated in {{syntax}}, the SRTP Context SDP implementation's goal is extendability allowing for additional vendor specific field=value pairs alongside the ones defined in this document.
 This ensures that a=crypto SDP security may remain compatible with future algorithms that need to signal cryptographic context information outside of what is currently specified in {{RFC4568}}.
 
 To illustrate, imagine a new example SRTP algorithm and crypto suite is created named "FOO_CHACHA20_POLY1305_SHA256" and the application needs to signal "Foo, "Bar", and "Nonce" values to properly instantiate the SRTP context.
-Rather than modify a=crypto SDP security or create a new unique SDP attribute, one can simply utilize SRTP Context SDP's key=value pairs to convey the information.
+Rather than modify a=crypto SDP security or create a new unique SDP attribute, one can simply utilize SRTP Context SDP's key=value pairs to convey the information. Implementations MUST define how to handle default scenarios where the value is not present or set to "unknown".
 
 ~~~~
 a=crypto:1 FOO_CHACHA20_POLY1305_SHA256 \
@@ -411,3 +437,68 @@ Specifically, it adds the SDP "a=srtpctx" attribute for use at the media level.
 Thanks to Paul Jones for reviewing early draft material and providing valuable feedback.
 
 --- back
+
+# Protocol Design Overview
+This appendix section is included to details some important itmes integral to the decision process of creating this specification.
+This section may be removed by the editors or left for future generations to understand why specific things were done as they are.
+
+In general, the overall design for this protocol tends to follow the phrase found in RFC6709, Section 1.
+"Experience with many protocols has shown that protocols with few
+options tend towards ubiquity, whereas protocols with many options
+tend towards obscurity.
+
+Each and every extension, regardless of its benefits, must be
+carefully scrutinized with respect to its implementation,
+deployment, and interoperability costs."
+
+## Why not an RTP Header Extension?
+In order to be compatible with "a=cryptex", a protocol which extends the SRTP encryption over the RTP Extension Headers, the designed specification must ensure that information about the SRTP context is not within these RTP extension headers.
+Thus one has to provide this information in an out of band mechanism.
+
+## Why not an SDP Security Session Parameter?
+While analyzing SDP Security's Session Parameter feature number of interesting details were found.
+That is sections 6.3.7, 7.1.1, 9.2, and 10.3.2.2 of {{RFC4568}} specifically.
+
+A few illustrative examples below detail what this could look like are provided below, though these MUST NOT be used.
+
+~~~~
+a=crypto:1 [..omitted..] SSRC=0x00845FED ROC=0x00000000 SEQ=0x005D
+
+a=crypto:1 ..omitted.. -SSRC=0x00845FED -ROC=0x00000000 -SEQ=0x005D
+
+a=crypto:1 AEAD_AES_256_GCM \
+ inline:3/sxOxrbg3CVDrxeaNs91Vle+wW1RvT/zJWTCUNP1i6L45S9qcstjBv+eo0=\
+ |2^20|1:32 SSRC=0x00845FED ROC=0x0000 SEQ=0x0150
+
+a=crypto:1 AES_CM_128_HMAC_SHA1_80 \
+  inline:QUJjZGVmMTIzNDU2Nzg5QUJDREUwMTIzNDU2Nzg5|2:18\
+  ;inline:QUJjZGVmMTIzNDU2Nzg5QUJDREUwMTIzNDU2Nzg5|21|3:4 \
+  KDR=23 FEC_ORDER=SRTP_FEC UNENCRYPTED_SRTP \
+  SSRC=0xDD148F16 ROC=0x0 SEQ=0x5A53
+a=crypto:2 AES_CM_128_HMAC_SHA1_32 \
+  inline:QUJjZGVmMTIzNDU2Nzg5QUJDREUwMTIzNDU2Nzg5|2^20 \
+  FEC_KEY=inline:QUJjZGVmMTIzNDU2Nzg5QUJDREUwMTIzNDU2Nzg5|2^20|2:4 \
+  WSH=60 SSRC=0xD903 ROC=0x0002 SEQ=0xB043
+a=crypto:3 AEAD_AES_256_GCM \
+  inline:HGAPy4Cedy/qumbZvpuCZSVT7rNDk8vG4TdUXp5hkyWqJCqiLRGab0KJy1g= \
+  UNAUTHENTICATED_SRTP SSRC=0x05 ROC=0x02 SEQ=unknown
+a=crypto:4 AEAD_AES_128_GCM \
+  inline:bQJXGzEPXJPClrd78xwALdaZDs/dLttBLfLE5Q== \
+  UNENCRYPTED_SRTCP SSRC=0x6500
+~~~~
+
+To analyze the faults of this method:
+First, a unknown and/or unsupported SDP Security Session Parameter is destructive.
+If one side where to advertise the ROC value as an SDP Security Session Parameter and the remote party does not understand that specific SDP Security Session Parameter, that entire crypto line is to be considered invalid. If this is the only a=crypto entry then the entire session may fail.
+The solution in this document allows for a graceful fallback to known methods to determine these value.
+Implementations could get around this by duplicating the a=crypto SDP attribute into two values: one with the postfix and one without to create to potential offers; but at this point we have a second SDP attribute. Instead this specification decided to cut to the chase and format the second attribute in a standardized way and avoid endless duplication (and potentially other harmful issues, see the final item in this document.)
+
+Second, there is a method to advertise "optional" SDP Security Session Parameters. However, upon further scrutiny, the document contradicts itself in many sections.
+To be specific, Section 6.3.7 states that an SDP Security Session Parameter prefixed with a dash character "-" MAY be ignored.
+Subsequent sections (9.2 and 10.3.2.2) state that a dash character is illegal and MUST NOT be used.
+It is not very well defined as such pursuit of this method has been dropped.
+
+Further, we know how applications will handle unknown SDP attributes; we do not know how applications will handle new mandatory (or optional) SDP Security Session Parameter values as none have ever been created. See IANA registry which only details those from the original RFC. (https://www.iana.org/assignments/sdp-security-descriptions/sdp-security-descriptions.xhtml#sdp-security-descriptions-4)
+Including these could cause larger application issues and are the reason modern protocols use logic like Generate Random Extensions And Sustain Extensibility (GREASE) to catch bad implementation behavior and correct it before it leads to problems like those described in this section.
+
+In closing, this method has too many challenges but a lot has been learned. These items have influenced the protocol design and sections like {{extendability}} which aim to avoid making the same mistakes.
