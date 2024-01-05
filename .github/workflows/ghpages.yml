@@ -2,6 +2,7 @@ name: "Update Editor's Copy"
 
 on:
   push:
+    branches: ["main"]
     paths-ignore:
     - README.md
     - CONTRIBUTING.md
