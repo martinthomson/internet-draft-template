@@ -2,14 +2,12 @@ name: "Update Editor's Copy"
 
 on:
   push:
-    branches: ["main"]
     paths-ignore:
     - README.md
     - CONTRIBUTING.md
     - LICENSE.md
     - .gitignore
   pull_request:
-    branches: ["main"]
     paths-ignore:
     - README.md
     - CONTRIBUTING.md
