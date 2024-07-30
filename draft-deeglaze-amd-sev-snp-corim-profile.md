@@ -185,13 +185,13 @@ The fields of an attestation report that have no direct analog in the base CoRIM
 The `GUEST_POLICY` field's least significant 16 bits represent a Major.Minor minimum version number:
 
 ~~~ cddl
-{:include cddl/sevsnpvm-policy-record.cddl}
+{::include cddl/sevsnpvm-policy-record.cddl}
 ~~~
 
 The policy's minimum ABI version is assigned codepoint -1:
 
 ~~~ cddl
-{:include cddl/sevsnpvm-policy-abi-ext.cddl}
+{::include cddl/sevsnpvm-policy-abi-ext.cddl}
 ~~~
 
 The attestation report's `FAMILY_ID` and `IMAGE_ID` are indirectly represented through an extension to `$version-scheme` as described in {{sec-version-scheme}}.
@@ -199,32 +199,32 @@ The attestation report's `FAMILY_ID` and `IMAGE_ID` are indirectly represented t
 The attestation report's `VMPL` field is assigned codepoint -2:
 
 ~~~ cddl
-{:include cddl/sevsnpvm-vmpl-ext.cddl}
+{::include cddl/sevsnpvm-vmpl-ext.cddl}
 ~~~
 
 The attestation report's `HOST_DATA` is assigned codepoint -3:
 
 ~~~ cddl
-{:include cddl/sevsnpvm-hostdata-ext.cddl}
+{::include cddl/sevsnpvm-hostdata-ext.cddl}
 ~~~
 
 The SEV-SNP firmware build number and Minor.Minor version numbers are provided for both the installed and committed versions of the firmware to account for firmware hotloading.
 The three values are captured in a record type `sevsnphost-sp-fw-version-record`:
 
 ~~~ cddl
-{:include cddl/sevsnphost-sp-fw-version-record.cddl}
+{::include cddl/sevsnphost-sp-fw-version-record.cddl}
 ~~~
 
 The current build/major/minor of the SP firmware is assigned codepoint -4:
 
 ~~~ cddl
-{:include cddl/sevsnphost-spfw-current-ext.cddl}
+{::include cddl/sevsnphost-spfw-current-ext.cddl}
 ~~~
 
 The committed build/major/minor of the SP firmware is assigned codepoint -5:
 
 ~~~ cddl
-{:include cddl/sevsnphost-spfw-committed-ext.cddl}
+{::include cddl/sevsnphost-spfw-committed-ext.cddl}
 ~~~
 
 The host components other than AMD SP firmware are relevant to VM security posture, so a combination of host components' security patch levels are included as TCB versions.
@@ -235,38 +235,38 @@ Tools for human readability MAY present the TCB version a component-wise manner,
 The `CURRENT_TCB` version of the host is assigned codepoint -6:
 
 ~~~ cddl
-{:include cddl/sevsnphost-current-tcb-ext.cddl}
+{::include cddl/sevsnphost-current-tcb-ext.cddl}
 ~~~
 
 The `COMMITTED_TCB` version of the host is assigned codepoint -7:
 
 ~~~ cddl
-{:include cddl/sevsnphost-committed-tcb-ext.cddl}
+{::include cddl/sevsnphost-committed-tcb-ext.cddl}
 ~~~
 
 The `LAUNCH_TCB` version of the host is assigned codepoint -8:
 
 ~~~ cddl
-{:include cddl/sevsnphost-launch-tcb-ext.cddl}
+{::include cddl/sevsnphost-launch-tcb-ext.cddl}
 ~~~
 
 The `REPORTED_TCB` version of the host is assigned codepoint -9:
 
 ~~~ cddl
-{:include cddl/sevsnphost-launch-tcb-ext.cddl}
+{::include cddl/sevsnphost-launch-tcb-ext.cddl}
 ~~~
 
 The `GUEST_POLICY` boolean flags are added as extensions to `$$flags-map-extension`, starting from coedpoint -1.
 
 ~~~ cddl
-{:include cddl/sevsnpvm-guest-policy-flags-ext.cddl}
+{::include cddl/sevsnpvm-guest-policy-flags-ext.cddl}
 ~~~
 
 There are 47 available bits for selection when the mandatory 1 in position 17 and the ABI Major.Minor values are excluded from the 64-bit `GUEST_POLICY`.
 The `PLATFORM_INFO` bits are host configuration that are added as extensions to `$$flags-map-extension` starting at `-49`.
 
 ~~~ cddl
-{:include cddl/sevsnphost-platform-info-flags-ext.cddl}
+{::include cddl/sevsnphost-platform-info-flags-ext.cddl}
 ~~~
 
 #### Version scheme extension {#sec-version-scheme}
@@ -274,7 +274,7 @@ The `PLATFORM_INFO` bits are host configuration that are added as extensions to 
 Extend the `$version-scheme` type with as follows
 
 ~~~ cddl
-{:include cddl/sevsnpvm-version-scheme-ext.cddl}
+{::include cddl/sevsnpvm-version-scheme-ext.cddl}
 ~~~
 
 The `-1` scheme is a string representation of the two 128-bit identifiers in hexadecimal encoding as separated by `/`.
@@ -288,7 +288,7 @@ A CoRIM instance identifier is universally unique, but there are different notio
 A notional instance identifier is a tagged CBOR map from integer codepoint to opaque bytes.
 
 ~~~ cddl
-{:include cddl/int-bytes-map.cddl}
+{::include cddl/int-bytes-map.cddl}
 ~~~
 
 Profiles may restrict which integers are valid codepoints, and may restrict the respective byte string sizes.
@@ -297,7 +297,7 @@ The expected byte string sizes are 32 bytes.
 For the `int-bytes-map` to be an interpretable extension of `$instance-id-type-choice`, there is `tagged-int-bytes-map`:
 
 ~~~ cddl
-{:include cddl/tagged-int-bytes-map.cddl}
+{::include cddl/tagged-int-bytes-map.cddl}
 ~~~
 
 ### AMD SEV-SNP Evidence Translation
