@@ -1,4 +1,4 @@
-sev-snp-launch-update-data-map = non-empty<{
+sevsnp-launch-update-data-map = non-empty<{
   ? &(page-type: 0) => 0..5
   ? &(content: 1) => digest
   ? &(gpa: 2) => uint

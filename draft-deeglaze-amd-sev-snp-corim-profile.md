@@ -410,7 +410,70 @@ The content media type shall be `application/vnd.amd.sevsnp.launch-updates+cbor`
 
 *  The `fms` field if included SHALL contain the CPUID[1]_EAX value masked with `0x0fff3fff` to provide chip family, model, stepping information.
   If not included, the Verifier may reference the VEK certificate's extension for `productName`.
-*  The `sevsnpvm-launch-baseline` field if not included is 
+*  The `sevsnpvm-launch-baseline` field if not included is SHALL be interpreted as an all zero SHA-384 digest.
+The calculation of the launch measurement SHALL use the value is the initial `PAGE_INFO`'s `DIGEST_CUR` value.
+*  The `sevsnpvm-launch-updates` field contains an ordered list of inputs to the `SNP_LAUNCH_UPDATE` command:
+
+~~~ cddl
+{::include cddl/sevsnp-launch-update-sequence-map.cddl}
+~~~
+
+The `sevsnp-launch-update-data-map` contains all fields of the `PAGE_INFO` structure that are needed for reconstructing a measurement.
+If an update repeats many times, such as an application processor VMSA, then that can be compressed with the `repeat` field.
+
+The bits 1..3 encode the PAGE_TYPE as documented in the [SEV-SNP.API].
+The content codepoint MUST NOT be present if the page type is neither `PAGE_TYPE_NORMAL` (01h) nor `PAGE_TYPE_VMSA` (02h).
+
+If `page2m` is not set, and content is present, it must not exceed size `0x1000B`.
+If `page2m` is set and content is present, it must not exceed size 0x100000B.
+The content is appended with zeros to reach the expected size.
+
+For the VMM, there are some updates it does on behalf of a different principal than the firmware vendor, so it may choose to pass through some of the information about the launch measurement circumstances for separate appraisal.
+
+The encoded `sevsnp-launch-configuration-map` may be found in the extended guest report data table for UUID `8dd67209-971c-4c7f-8be6-4efcb7e24027`.
+
+The VMM is expected to provide all fields unless their default corresponds to the value used.
+
+## AMD SEV-SNP Launch Event Log Appraisal
+
+The `sevsnp-launch-configuration-map` is translated into a full sequence of `SNP_LAUNCH_UPDATE` commands on top of a baseline digest value to calculate following [SEV-SNP.API]'s documentation of digest calculation from `PAGE_INFO` structures.
+
+The first `PAGE_INFO` structure uses the baseline digest as its `DIGEST_CUR`.
+The following pseudocode for the function measurement computes the expected measurement of the endorsement format.
+If this measurement equals the digests value with VCEK authority, then add the baseline and updates measurement values to the same ECT as the attestation report.
+
+Since the VMM only has to provide the page type and digest of the contents, the rest of the fields of a `sevsnp-launch-update-data-map` have default values when translated to a `PAGE_INFO` without the `DIGEST_CUR` field.
+If the baseline is not provided, it is assumed to be all zeros.
+
+```
+measurement({fms, baseline, updates}) = iterate(baseline, appendmap(mk_page_info(fms), updates))
+
+PAGE_SHIFT = 12
+bitWidth(fms) = 48 if (fms >> 4) == 0xA00F0 ; Milan
+bitWidth(fms) = 52 if (fms >> 4) == 0xA10F0 ; Genoa
+
+top_gpfn(fms) = ((1 << bitWidth(fms)) - 1) >> PAGE_SHIFT
+default_gpa(fms): uint64 = top_gpfn(fms) << PAGE_SHIFT
+
+mk_page_info(fms)({page-type or PAGE_TYPE_NORMAL,  content, gpa or default_gpa(fms), page-data or 0, vmpl-perms or 0, repeat or 1}):list[bytes] =
+ [contents || {0x70, 0, page-type, page-data} || leuint64(vmpl-data) || leuint64(gpa)]*repeat
+
+appendmap(f, []) = []
+appendmap(f, x:xs) = append(f(x), appendmap(f, xs))
+
+iterate(digest_cur, []) = digest_cur
+iterate(digest_cur, info:infos) = iterate(sha384(digest_cur || info), infos)
+```
+
+The `leuint64` metafunction translates a 64-bit unsigned integer into its little endian byte string representation.
+
+### Comparisons for reference values
+
+An "any" sequence number matches any sequence number.
+The uint sequence number must be equal to the sequence number in the ACS.
+The `sevsnp-launch-update-data-map` reference value must match all present codepoints with encoding equality.
+The evidence ECT for the matching values are then split into a separate ECT to account for the added authority.
+
 
 # IANA Considerations
 

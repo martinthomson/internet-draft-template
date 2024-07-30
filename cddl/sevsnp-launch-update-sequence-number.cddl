@@ -1,1 +1,1 @@
-sev-snp-launch-update-sequence-number = uint / "any"
+sevsnp-launch-update-sequence-number = uint / "any"
