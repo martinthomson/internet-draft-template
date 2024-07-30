@@ -3,7 +3,7 @@ v: 3
 
 title: CoRIM profile for AMD SEV-SNP attestation report
 abbrev: CoRIM-SEV
-docname: draft-ietf-rats-amd-sev-snp-corim-profile-latest
+docname: draft-deeglaze-amd-sev-snp-corim-profile-latest
 category: std
 consensus: true
 submissiontype: IETF
@@ -83,7 +83,8 @@ informative:
     date: October 2023
     target: https://www.amd.com/content/dam/amd/en/documents/epyc-technical-docs/user-guides/58369-010-versioned-loaded-endorsement-key-certificate-definition.pdf
   SEC1:
-    title: Standards for Efficient Cryptography Group (SECG), "SEC1: Elliptic Curve Cryptography"
+    title: >
+      Standards for Efficient Cryptography Group (SECG), "SEC1: Elliptic Curve Cryptography"
     author:
       org: Certicom Corp.
     seriesinfo: Version 1.0
@@ -397,6 +398,8 @@ The `ECPoint` conversion routines in section 2 of [SEC1] provide guidance on how
 The composition of a SEV-SNP VM may be comprised of measurements from multiple principals, such that no one principal has absolute authority to endorse the overall measurement value represented in the attestation report.
 If one principal does have that authority, the `ID_BLOCK` mechanism provides a convenient launch configuration endorsement mechanism without need for distributing a CoRIM.
 This section documents an event log format the Virtual Machine Monitor may construct at launch time and provide in the data pages of an extended guest request, as documented in [GHCB].
+
+The content media type shall be `application/vnd.amd.sevsnp.launch-updates+cbor`.
 
 # IANA Considerations
 
