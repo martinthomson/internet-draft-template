@@ -1,0 +1,5 @@
+sevsnphost-sp-fw-version-record = [
+  build-number: uint .size 1,
+  major: uint .size 1,
+  minor: uint .size 1
+]

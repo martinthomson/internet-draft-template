@@ -1,0 +1,76 @@
+$crypto-key-type-choice /= #6.32780(bytes .size 48)
+
+int-bytes-map = { * int => bytes }
+
+$$flags-map-extension //= &(
+  sevsnpvm-policy-smt-allowed: -1,
+  sevsnpvm-policy-migration-agent-allowed: -2,
+  sevsnpvm-policy-debug-allowed: -3,
+  sevsnpvm-policy-single-socket-only: -4,
+  sevsnpvm-policy-cxl-allowed: -5,
+  sevsnpvm-policy-mem-aes-256-xts-required: -6,
+  sevsnpvm-policy-rapl-must-be-disabled: -7,
+  sevsnpvm-policy-ciphertext-hiding-must-be-enabled: -8,
+)
+
+$$measurement-values-map-extension //= &(sevsnpvm-host-data: -3) => bstr .size 32
+
+$$measurement-values-map-extension //= &(sevsnpvm-policy-abi: -1) => sevsnpvm-policy-record
+
+sevsnpvm-policy-record = [
+  abi-major: byte,
+  abi-minor: byte
+]
+
+$version-scheme /= &(sevsnpvm-familyimageid-hex: -1)
+
+$$measurement-values-map-extension //= &(sevsnpvm-vmpl: -2) => 0..3
+
+$$measurement-values-map-extension //= &(sevsnphost-committed-tcb: -7) => svn-type-choice
+
+$$measurement-values-map-extension //= &(sevsnphost-current-tcb: -6) => svn-type-choice
+
+$$measurement-values-map-extension //= &(sevsnphost-launch-tcb: -8) => svn-type-choice
+
+$$flags-map-extension //= &(
+  sevsnphost-smt-enabled: -49,
+  sevsnphost-tsme-enabled: -50,
+  sevsnphost-ecc-mem-reported-enabled:-51,
+  sevsnphost-rapl-disabled: -52,
+  sevsnphost-ciphertext-hiding-enabled: -53
+)
+
+$$measurement-values-map-extension //= &(sevsnphost-reported-tcb: -9) => svn-type-choice
+
+sevsnphost-sp-fw-version-record = [
+  build-number: uint .size 1,
+  major: uint .size 1,
+  minor: uint .size 1
+]
+
+$$measurement-values-map-extension //= &(sevsnphost-sp-fw-current: -4) => sevsnphost-sp-fw-version-record
+
+$$measurement-values-map-extension //= &(sevsnphost-sp-fw-committed: -5) => sevsnphost-sp-fw-version-record
+
+sevsnp-tcb-version-type-choice = sevsnphost-tcb-map / svn-type-choice
+
+sevsnphost-tcb-map = {
+  &(blspl: 0) => uint
+  &(teespl: 1) => svn-type
+  ? &(spl4: 2) => svn-type
+  ? &(spl5: 3) => svn-type
+  ? &(spl6: 4) => svn-type
+  ? &(spl7: 5) => svn-type
+  &(snpspl: 6) => svn-type
+  &(ucodespl: 7) => svn-type
+}
+
+svn-type = uint
+svn = svn-type
+min-svn = svn-type
+tagged-svn = #6.552(svn)
+tagged-min-svn = #6.553(min-svn)
+svn-type-choice = tagged-svn / tagged-min-svn
+
+tagged-int-bytes-map = #6.563(int-bytes-map)
+

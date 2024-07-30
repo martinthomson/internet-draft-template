@@ -1,0 +1,7 @@
+$$flags-map-extension //= &(
+  sevsnphost-smt-enabled: -49,
+  sevsnphost-tsme-enabled: -50,
+  sevsnphost-ecc-mem-reported-enabled:-51,
+  sevsnphost-rapl-disabled: -52,
+  sevsnphost-ciphertext-hiding-enabled: -53
+)

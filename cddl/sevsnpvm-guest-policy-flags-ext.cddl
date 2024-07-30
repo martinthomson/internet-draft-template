@@ -1,0 +1,10 @@
+$$flags-map-extension //= &(
+  sevsnpvm-policy-smt-allowed: -1,
+  sevsnpvm-policy-migration-agent-allowed: -2,
+  sevsnpvm-policy-debug-allowed: -3,
+  sevsnpvm-policy-single-socket-only: -4,
+  sevsnpvm-policy-cxl-allowed: -5,
+  sevsnpvm-policy-mem-aes-256-xts-required: -6,
+  sevsnpvm-policy-rapl-must-be-disabled: -7,
+  sevsnpvm-policy-ciphertext-hiding-must-be-enabled: -8,
+)

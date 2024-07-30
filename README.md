@@ -1,18 +1,28 @@
-# Internet-Draft Template Repository
+# CoRIM profile for AMD SEV-SNP Attestation Reports
 
-Use this repository as a template if you want to start working on
-[IETF](https://www.ietf.org/) documents. [Click here to create a new repository using the
-template](https://github.com/martinthomson/internet-draft-template/generate).
-Make sure to check "Include all branches", or you will need to enable GitHub Pages manually.
+This is the working area for the IETF RATS Working Group's and AMD collaborators' Internet Draft, "CoRIM profile for AMD SEV-SNP attestation report".
 
-[Read the
-instructions](https://github.com/martinthomson/i-d-template/blob/main/doc/TEMPLATE.md)
-for more information.
+*  [Editor's Copy (404)](https://deeglaze.github.io/draft-deeglaze-amd-sev-snp-corim-profile/draft-deeglaze-amd-sev-snp-corim-profile.html
+*  [Datatracker Page (404)](https://datatracker.ietf.org/doc/draft-deeglaze-amd-sev-snp-corim-profile)
+*  [Working Group Draft (404)](https://datatracker.ietf.org/doc/html/draft-deeglaze-amd-sev-snp-corim-profile)
+*  [Compare Editor's Copy to Working Group Draft (404)](https://deeglaze.github.io/draft-deeglaze-amd-sev-snp-corim-profile.diff)
 
-Once you have created your own repository, start work by:
+## Contributing
 
-1. Set "Workflow permissions" to "Read and write permissions"
-   [in the repository settings](../../settings/actions#actions_default_workflow_permissions_write).
+See the
+[guidelines for contributions](https://github.com/deeglaze/draft-deeglaze-amd-sev-snp-corim-profile/blob/main/CONTRIBUTING.md)
 
-2. Rename the `draft-todo-yourname-protocol.md` file
-   [here](../../edit/main/draft-todo-yourname-protocol.md).
+Contributions can be made by creating pull requests.
+The GitHub interface supports creating pull requests using the Edit (✏) button.
+
+
+## Command Line Usage
+
+Formatted text and HTML versions of the draft can be built using `make`.
+
+```sh
+$ make
+```
+
+Command line usage requires that you have the necessary software installed.  See
+[the instructions](https://github.com/martinthomson/i-d-template/blob/main/doc/SETUP.md).

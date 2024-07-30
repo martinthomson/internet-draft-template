@@ -1,0 +1,6 @@
+svn-type = uint
+svn = svn-type
+min-svn = svn-type
+tagged-svn = #6.552(svn)
+tagged-min-svn = #6.553(min-svn)
+svn-type-choice = tagged-svn / tagged-min-svn
