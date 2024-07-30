@@ -1,1 +1,3 @@
-$$measurement-values-map-extension //= &(sevsnphost-launch-tcb: -8) => svn-type-choice
+$$measurement-values-map-extension //= (
+  &(sevsnphost-launch-tcb: -8) => svn-type-choice
+)

@@ -1,1 +1,3 @@
-$$measurement-values-map-extension //= &(sevsnpvm-policy-abi: -1) => sevsnpvm-policy-record
+$$measurement-values-map-extension //= (
+  &(sevsnpvm-policy-abi: -1) => sevsnpvm-policy-record
+)

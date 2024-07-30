@@ -1,1 +1,3 @@
-$$measurement-values-map-extension //= &(sevsnphost-sp-fw-committed: -5) => sevsnphost-sp-fw-version-record
+$$measurement-values-map-extension //= (
+  &(sevsnphost-sp-fw-committed: -5) => sevsnphost-sp-fw-version-record
+)

@@ -1,1 +1,3 @@
-$$measurement-values-map-extension //= &(sevsnphost-committed-tcb: -7) => svn-type-choice
+$$measurement-values-map-extension //= (
+  &(sevsnphost-committed-tcb: -7) => svn-type-choice
+)

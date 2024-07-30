@@ -13,7 +13,8 @@ $$flags-map-extension //= &(
   sevsnpvm-policy-ciphertext-hiding-must-be-enabled: -8,
 )
 
-$$measurement-values-map-extension //= &(sevsnpvm-host-data: -3) => bstr .size 32
+$$measurement-values-map-extension //= &(sevsnpvm-host-data: -3) => sevsnpvm-host-data
+sevsnpvm-host-data = bstr .size 32
 
 $$measurement-values-map-extension //= &(sevsnpvm-policy-abi: -1) => sevsnpvm-policy-record
 
