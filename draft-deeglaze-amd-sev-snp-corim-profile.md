@@ -405,7 +405,7 @@ This section documents an event log format the Virtual Machine Monitor may const
 The content media type shall be `application/vnd.amd.sevsnp.launch-updates+cbor` for the encoding of a `sevsnp-launch-configuration-map`:
 
 ~~~ cddl
-{::include cddl/sevsnp-launch-configuration.cddl}
+{::include cddl/sevsnp-launch-configuration-map.cddl}
 ~~~
 
 *  The `fms` field if included SHALL contain the CPUID[1]_EAX value masked with `0x0fff3fff` to provide chip family, model, stepping information.
