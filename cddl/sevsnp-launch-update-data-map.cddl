@@ -1,0 +1,8 @@
+sev-snp-launch-update-data-map = non-empty<{
+  ? &(page-type: 0) => 0..5
+  ? &(content: 1) => digest
+  ? &(gpa: 2) => uint
+  ? &(page-data: 3) => byte .bits sev-snp-page-data
+  ? &(vmpl-perms: 4) => uint .size 8
+  ? &(repeat: 5) => uint
+}>

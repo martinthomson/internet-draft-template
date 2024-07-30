@@ -1,5 +1,11 @@
 CORIM_FRAGS += crypto-key-type-choice-ext.cddl
 CORIM_FRAGS += int-bytes-map.cddl
+CORIM_FRAGS += non-empty.cddl
+CORIM_FRAGS += sevsnp-launch-configuration-map.cddl
+CORIM_FRAGS += sevsnp-launch-update-data-map.cddl
+CORIM_FRAGS += sevsnp-launch-update-sequence-number.cddl
+CORIM_FRAGS += sevsnp-launch-update-sequence-number.cddl
+CORIM_FRAGS += sevsnp-page-data.cddl
 CORIM_FRAGS += sevsnpvm-guest-policy-flags-ext.cddl
 CORIM_FRAGS += sevsnpvm-hostdata-ext.cddl
 CORIM_FRAGS += sevsnpvm-policy-abi-ext.cddl

@@ -1,0 +1,5 @@
+sevsnp-launch-configuration-map = {
+  ? (fms: 0) => uint
+  ? (sevsnpvm-launch-baseline: 1) => bytes .size 48
+  ? (sevsnpvm-launch-updates: 2) => [ + sevsnp-launch-update-data-map ]
+}

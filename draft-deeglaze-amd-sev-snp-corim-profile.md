@@ -132,6 +132,9 @@ VLEK:
   An alternative SEV-SNP Attestation Report signing key that is derived from a secret shared between AMD and a Cloud Service Provider.
   The key is encrypted with a per-device per-version wrapping key that is then decrypted and stored by the AMD-SP.
 
+VEK:
+  Either a VCEK or VLEK.
+
 ## AMD SEV-SNP CoRIM Profile
 
 AMD SEV-SNP launch endorsements are carried in one or more CoMIDs inside a CoRIM.
@@ -318,7 +321,7 @@ If the `ATTESTATION_REPORT` contains `ID_BLOCK` information, the relevant fields
 #### `measurement-map`
 
 The `mkey` is left unset.
-The `authorized-by` key SHALL be set to a representation of the V(CL)EK key that signed the `ATTESTATION_REPORT`, or a key along the certificate path to a self-signed root, i.e., the ASK, ASVK, or ARK for the product line.
+The `authorized-by` key SHALL be set to a representation of the VEK that signed the `ATTESTATION_REPORT`, or a key along the certificate path to a self-signed root, i.e., the ASK, ASVK, or ARK for the product line.
 The `measurement-values-map` is set as described in the following section.
 
 #### `measurement-values-map`
@@ -399,7 +402,15 @@ The composition of a SEV-SNP VM may be comprised of measurements from multiple p
 If one principal does have that authority, the `ID_BLOCK` mechanism provides a convenient launch configuration endorsement mechanism without need for distributing a CoRIM.
 This section documents an event log format the Virtual Machine Monitor may construct at launch time and provide in the data pages of an extended guest request, as documented in [GHCB].
 
-The content media type shall be `application/vnd.amd.sevsnp.launch-updates+cbor`.
+The content media type shall be `application/vnd.amd.sevsnp.launch-updates+cbor` for the encoding of a `sevsnp-launch-configuration-map`:
+
+~~~ cddl
+{::include cddl/sevsnp-launch-configuration.cddl}
+~~~
+
+*  The `fms` field if included SHALL contain the CPUID[1]_EAX value masked with `0x0fff3fff` to provide chip family, model, stepping information.
+  If not included, the Verifier may reference the VEK certificate's extension for `productName`.
+*  The `sevsnpvm-launch-baseline` field if not included is 
 
 # IANA Considerations
 

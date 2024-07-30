@@ -1,0 +1,4 @@
+sev-snp-page-data = &(
+  imi-page: 4
+  page2m: 0
+) / 1..3
