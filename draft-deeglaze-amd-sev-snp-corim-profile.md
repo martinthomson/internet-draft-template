@@ -139,10 +139,8 @@ VEK:
 
 AMD SEV-SNP launch endorsements are carried in one or more CoMIDs inside a CoRIM.
 
-The profile attribute in the CoRIM MUST be present and MUST have a single entry set to the uri http://amd.com/please-permalink-me as shown in {#figure-profile}.
+The profile attribute in the CoRIM MUST be present and MUST have a single entry set to the uri http://amd.com/please-permalink-me as shown in {{figure-profile}}.
 
-
-{% figure caption:"SEV-SNP attestation profile version 1, CoRIM profile" %}
 
 ~~~ cbor-diag
 / corim-map / {
@@ -152,7 +150,7 @@ The profile attribute in the CoRIM MUST be present and MUST have a single entry 
   / ... /
 }
 ~~~
-{% endfigure %}
+{: #figure-profile title="SEV-SNP attestation profile version 1, CoRIM profile" }
 
 ### AMD SEV-SNP Target Environment
 
