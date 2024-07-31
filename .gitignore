@@ -1,5 +1,6 @@
 cddl/corim-autogen.cddl
-*.xml
+draft-*.xml
 *~
 *.html
 draft-*.txt
+Gemfile.lock
