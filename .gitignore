@@ -1,3 +1,5 @@
 cddl/corim-autogen.cddl
 *.xml
 *~
+*.html
+draft-*.txt
