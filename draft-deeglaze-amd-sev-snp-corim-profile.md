@@ -176,15 +176,15 @@ If the `SIGNING_KEY` bit of the attestation report is 1, then the `group` MUST b
 
 ~~~ cbor-diag
 / environment-map / {
-/ class-map / {
-   / class-id: / 0 => #6.111(1.3.6.1.4.1.3704.2.1)
- }
-/ instance: / 1 => #6.563({
-  / report-id: / 0 => REPORT_ID,
-  / report-id-ma: / 1 => REPORT_ID_MA
-  })
-/ group: / 2 => #6.560(CHIP_ID)
- }
+  / class-map / {
+    / class-id: / 0 => #6.111(1.3.6.1.4.1.3704.2.1)
+  }
+  / instance: / 1 => #6.563({
+    / report-id: / 0 => REPORT_ID,
+    / report-id-ma: / 1 => REPORT_ID_MA
+    })
+  / group: / 2 => #6.560(CHIP_ID)
+}
 ~~~
 
 ### AMD SEV-SNP Attestation Report measurement values extensions
@@ -436,7 +436,7 @@ The encoded `sevsnp-launch-configuration-map` may be found in the extended guest
 
 The VMM is expected to provide all fields unless their default corresponds to the value used.
 
-### VMSA evidence
+### VMSA evidence {#vmsa-evidence}
 
 The VMM that assembles the initial VM state is also responsible for providing initial state for the vCPUs.
 The vCPU secure save area is called the VMSA on SEV-ES.
@@ -448,6 +448,8 @@ The digest alone for the VMSA launch update command is insufficient to represent
 The bootstrap processor (BSP) and application processors (APs) typically have different initial values.
 The APs typically all have the same initial value, so the `ap-vmsa` codepoint MAY be a single `sevsnp-vmsa-type-choice` to represent its replication.
 Alternatively, each AP's initial VMSA may be individually specified with a list of `sevsnp-vmsa-type-choice`.
+
+{::include cddl/sevsnp-repeated-vmsa.cddl}
 
 All VMSA fields are optional.
 A missing VMSA field in evidence is treated as its default value.
@@ -568,14 +570,12 @@ The GUID table at the end of the ROM is terminated by the GUID `96b582de-1fb2-45
 At offset `ROM_end - 0x32` there is a length in a 16-bit little endian unsigned integer.
 At offset `ROM_end - 0x32 - length` there is a table with format
 
-```
 | Type | Name |
 | ---- | ---- |
 | UINT8[Length] | Data |
 | LE_UINT16 | Length |
 | EFI_GUID | Name |
 | * | * |
-```
 
 `LE_UINT16` is the type of a little endian 16-bit unsigned integer.
 `EFI_GUID` is the UUID format specified in section 4 of [RFC4122].
@@ -583,15 +583,15 @@ The footer GUID and length specifies the length of the table of entries itself, 
 
 Within this table there is an entry that specifies the guest physical address that contains the `SevMetadata`.
 
-```
+| Type | Name |
+| ---- | ---- |
 | LE_UINT32 | Address |
 | LE_UINT16 | Length |
 | EFI_GUID | dc886566-984a-4798-A75e-5585a7bf67cc |
-```
+
 
 At this address when loaded, or at offset `ROM_end - (4GiB - Address)`, the `SevMetadata`,
 
-```
 | Type | Name |
 | ---- | ---- |
 | LE_UINT32 | Signature |
@@ -599,29 +599,25 @@ At this address when loaded, or at offset `ROM_end - (4GiB - Address)`, the `Sev
 | LE_UINT32 | Version |
 | LE_UINT32 | NumSections |
 | SevMetadataSection[Sections] | Sections |
-```
 
 The `Signature` value should be `'A', 'S', 'E', 'V'` or "VESA" in big-endian order: `0x56455341`.
 Where `SevMetadataSection` is
 
-```
 | Type | Name |
 | ---- | ---- |
 | LE_UINT32 | Address |
 | LE_UINT32 | Length |
 | LE_UINT32 | Kind |
-```
 
 A section references some slice of guest physical memory that has a certain purpose as labeled by `Kind`:
 
-```
 | Value | Name | PAGE_TYPE |
+| ----- | ---- | --------- |
 | 1 | OVMF_SECTION_TYPE_SNP_SEC_MEM | PAGE_TYPE_UNMEASURED |
 | 2 | OVMF_SECTION_TYPE_SNP_SECRETS | PAGE_TYPE_SECRETS |
 | 3 | OVMF_SECTION_TYPE_CPUID | PAGE_TYPE_CPUID |
 | 4 | OVMF_SECTION_TYPE_SNP_SVSM_CAA | PAGE_TYPE_ZERO |
 | 16 | OVMF_SECTION_TYPE_KERNEL_HASHES | PAGE_TYPE_NORMAL |
-```
 
 The memory allocated to the initial UEFI boot phase, `SEC`, is unmeasured but must be marked for encryption without needing the `GHCB` or `MSR` protocol.
 The `SEC_MEM` sections contain the initial `GHCB` pages, page tables, and temporary memory for stack and heap.
@@ -650,16 +646,13 @@ The location of the final unmeasured pages are for the APIC page tables and PEI 
 The final section after the svsm calling area and kernel hashes up to the PEI firmware volume base, so `0x811000` up to `0x820000` for another 15 pages.
 
 A more compact representation can take advantage of the fact that several of the first update commands are driven entirely by the firmware.
+The firmware author may then decide to reorder the section processing to ensure the kernel hashes are last, as there is no requirement for sequential GPAs.
 The baseline contains the initial ROM plus all the sections that don't have a dependency on external measured information.
-The first update after the baseline is the `PAGE_TYPE_NORMAL` command without a digest to account for partial information for `SEV_KERNEL_HASHES`.
-The other update is just what appears afterwards.
+Thanks to the section reordering, only the `SEV_KERNEL_HASHES` need to be called out in the signed configuration.
 
 ~~~ cbor-diag
 {::include cddl/examples/ovmf-compact.diag}
 ~~~
-
-The firmware author may then decide to reorder the section processing to ensure the kernel hashes are last, as there is no requirement for sequential GPAs.
-The result becomes a signed baseline and a single update for the `PAGE_TYPE_NORMAL` kernel hashes' address.
 
 #### Kernel data
 
@@ -686,3 +679,6 @@ The choice of the CoRIM-earmarked value is intentional.
 | ---   | --------- | ---------                                                                             | --------- |
 | 563   | `map`     | Keys are always int, values are opaque bytes, see {{sec-id-tag}}                      | {{&SELF}} |
 | 32780 | `bytes`   | A digest of an AMD public key format that compares with other keys {{sec-key-digest}} | {{&SELF}} |
+| 32781 | `map`   | A map of virtual machine vCPU registers (VMSA) to initial values {{vmsa-evidence}} | {{&SELF}} |
+| 32782 | `array`   | A record of a single VMSA and a count of how many times it repeats {{vmsa-evidence}} | {{&SELF}} |
+{: #cbor-tags title="Added CBOR tags"}

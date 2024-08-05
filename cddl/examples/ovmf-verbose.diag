@@ -84,77 +84,77 @@
     },
     / sevsnp-launch-update-data-map / {
       / page-type: / 0 => 4
-      / gpa: / 2 => 0x811000`
+      / gpa: / 2 => 0x811000
       / seq-no: / 5 => 17
     },
     / sevsnp-launch-update-data-map / {
       / page-type: / 0 => 4
-      / gpa: / 2 => 0x812000`
+      / gpa: / 2 => 0x812000
       / seq-no: / 5 => 18
     },
     / sevsnp-launch-update-data-map / {
       / page-type: / 0 => 4
-      / gpa: / 2 => 0x813000`
+      / gpa: / 2 => 0x813000
       / seq-no: / 5 => 19
     },
     / sevsnp-launch-update-data-map / {
       / page-type: / 0 => 4
-      / gpa: / 2 => 0x814000`
+      / gpa: / 2 => 0x814000
       / seq-no: / 5 => 20
     },
     / sevsnp-launch-update-data-map / {
       / page-type: / 0 => 4
-      / gpa: / 2 => 0x815000`
+      / gpa: / 2 => 0x815000
       / seq-no: / 5 => 21
     },
     / sevsnp-launch-update-data-map / {
       / page-type: / 0 => 4
-      / gpa: / 2 => 0x816000`
+      / gpa: / 2 => 0x816000
       / seq-no: / 5 => 22
     },
     / sevsnp-launch-update-data-map / {
       / page-type: / 0 => 4
-      / gpa: / 2 => 0x817000`
+      / gpa: / 2 => 0x817000
       / seq-no: / 5 => 23
     },
     / sevsnp-launch-update-data-map / {
       / page-type: / 0 => 4
-      / gpa: / 2 => 0x818000`
+      / gpa: / 2 => 0x818000
       / seq-no: / 5 => 24
     },
     / sevsnp-launch-update-data-map / {
       / page-type: / 0 => 4
-      / gpa: / 2 => 0x819000`
+      / gpa: / 2 => 0x819000
       / seq-no: / 5 => 25
     },
     / sevsnp-launch-update-data-map / {
       / page-type: / 0 => 4
-      / gpa: / 2 => 0x81A000`
+      / gpa: / 2 => 0x81A000
       / seq-no: / 5 => 26
     },
     / sevsnp-launch-update-data-map / {
       / page-type: / 0 => 4
-      / gpa: / 2 => 0x81B000`
+      / gpa: / 2 => 0x81B000
       / seq-no: / 5 => 27
     },
     / sevsnp-launch-update-data-map / {
       / page-type: / 0 => 4
-      / gpa: / 2 => 0x81C000`
+      / gpa: / 2 => 0x81C000
       / seq-no: / 5 => 28
     },
     / sevsnp-launch-update-data-map / {
       / page-type: / 0 => 4
-      / gpa: / 2 => 0x81D000`
+      / gpa: / 2 => 0x81D000
       / seq-no: / 5 => 29
     },
     / sevsnp-launch-update-data-map / {
       / page-type: / 0 => 4
-      / gpa: / 2 => 0x81E000`
+      / gpa: / 2 => 0x81E000
       / seq-no: / 5 => 30
     },
     / sevsnp-launch-update-data-map / {
       / page-type: / 0 => 4
-      / gpa: / 2 => 0x81F000`
+      / gpa: / 2 => 0x81F000
       / seq-no: / 5 => 31
     },
   ]
