@@ -513,7 +513,7 @@ If this measurement equals the digests value with VCEK authority, then add the b
 Since the VMM only has to provide the page type and digest of the contents, the rest of the fields of a `sevsnp-launch-update-data-map` have default values when translated to a `PAGE_INFO` without the `DIGEST_CUR` field.
 If the baseline is not provided, it is assumed to be all zeros.
 
-```
+~~~
 measurement({fms, baseline, updates}) = iterate(baseline, appendmap(mk_page_info(fms), updates))
 
 PAGE_SHIFT = 12
@@ -523,15 +523,21 @@ bitWidth(fms) = 52 if (fms >> 4) == 0xA10F0 ; Genoa
 top_gpfn(fms) = ((1 << bitWidth(fms)) - 1) >> PAGE_SHIFT
 default_gpa(fms): uint64 = top_gpfn(fms) << PAGE_SHIFT
 
-mk_page_info(fms)({page-type or PAGE_TYPE_NORMAL,  content, gpa or default_gpa(fms), page-data or 0, vmpl-perms or 0}):list[bytes] =
- [contents || {0x70, 0, page-type, page-data} || leuint64(vmpl-data) || leuint64(gpa)]
+mk_page_info(fms)({page-type or PAGE_TYPE_NORMAL,
+                   contents,
+                   gpa or default_gpa(fms),
+                   page-data or 0,
+                   vmpl-perms or 0}):list[bytes] = [
+  contents || {0x70, 0, page-type,
+  page-data} || leuint64(vmpl-data) || leuint64(gpa),
+]
 
 appendmap(f, []) = []
 appendmap(f, x:xs) = append(f(x), appendmap(f, xs))
 
 iterate(digest_cur, []) = digest_cur
 iterate(digest_cur, info:infos) = iterate(sha384(digest_cur || info), infos)
-```
+~~~
 
 The `leuint64` metafunction translates a 64-bit unsigned integer into its little endian byte string representation.
 
