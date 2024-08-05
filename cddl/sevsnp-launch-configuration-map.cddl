@@ -2,4 +2,6 @@ sevsnp-launch-configuration-map = {
   ? (fms: 0) => uint
   ? (sevsnpvm-launch-baseline: 1) => bytes .size 48
   ? (sevsnpvm-launch-updates: 2) => [ + sevsnp-launch-update-data-map ]
+  ? (bsp-vmsa: 3) => sevsnp-vmsa-type-choice
+  ? (ap-vmsa: 4) => sevsnp-ap-vmsa-type-choice
 }

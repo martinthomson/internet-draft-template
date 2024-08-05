@@ -90,6 +90,14 @@ informative:
     seriesinfo: Version 1.0
     date: September 2000
     target: https://www.secg.org/SEC1-Ver-1.0.pdf
+  AMD.SPM:
+    title: >
+      AMD64 Architecture Programmer’s Manual, Volume 2: System Programming
+    author:
+      org: Advanced Micro Devices Inc.
+    seriesinfo: Revision 3.42
+    date: March 2024
+    target: https://www.amd.com/content/dam/amd/en/documents/processor-tech-docs/programmer-references/24593.pdf
 
 entity:
   SELF: "RFCthis"
@@ -398,7 +406,7 @@ The `ECPoint` conversion routines in section 2 of [SEC1] provide guidance on how
 
 The composition of a SEV-SNP VM may be comprised of measurements from multiple principals, such that no one principal has absolute authority to endorse the overall measurement value represented in the attestation report.
 If one principal does have that authority, the `ID_BLOCK` mechanism provides a convenient launch configuration endorsement mechanism without need for distributing a CoRIM.
-This section documents an event log format the Virtual Machine Monitor may construct at launch time and provide in the data pages of an extended guest request, as documented in [GHCB].
+This section documents an event log format the Virtual Machine Monitor (VMM) may construct at launch time and provide in the data pages of an extended guest request, as documented in [GHCB].
 
 The content media type shall be `application/vnd.amd.sevsnp.launch-updates+cbor` for the encoding of a `sevsnp-launch-configuration-map`:
 
@@ -413,7 +421,7 @@ The calculation of the launch measurement SHALL use the value is the initial `PA
 *  The `sevsnpvm-launch-updates` field contains an ordered list of inputs to the `SNP_LAUNCH_UPDATE` command:
 
 ~~~ cddl
-{::include cddl/sevsnp-launch-update-sequence-map.cddl}
+{::include cddl/sevsnp-launch-update-sequence.cddl}
 ~~~
 
 The `sevsnp-launch-update-data-map` contains all fields of the `PAGE_INFO` structure that are needed for reconstructing a measurement.
@@ -422,15 +430,77 @@ If an update repeats many times, such as an application processor VMSA, then tha
 The bits 1..3 encode the PAGE_TYPE as documented in the [SEV-SNP.API].
 The content codepoint MUST NOT be present if the page type is neither `PAGE_TYPE_NORMAL` (01h) nor `PAGE_TYPE_VMSA` (02h).
 
-If `page2m` is not set, and content is present, it must not exceed size `0x1000B`.
-If `page2m` is set and content is present, it must not exceed size 0x100000B.
-The content is appended with zeros to reach the expected size.
-
 For the VMM, there are some updates it does on behalf of a different principal than the firmware vendor, so it may choose to pass through some of the information about the launch measurement circumstances for separate appraisal.
 
 The encoded `sevsnp-launch-configuration-map` may be found in the extended guest report data table for UUID `8dd67209-971c-4c7f-8be6-4efcb7e24027`.
 
 The VMM is expected to provide all fields unless their default corresponds to the value used.
+
+### VMSA evidence
+
+The VMM that assembles the initial VM state is also responsible for providing initial state for the vCPUs.
+The vCPU secure save area is called the VMSA on SEV-ES.
+The VMSA initial values can vary across VMMs, so it's the VMM provider's responsibility to sign their reference values.
+
+The reset vector from the firmware also influences the VMSAs for application processors' `RIP` and `CS_BASE`, so the VMSA is not entirely determined by the VMM.
+The digest alone for the VMSA launch update command is insufficient to represent the separately specifiable reference values when the GHCB AP boot protocol is not in use.
+
+The bootstrap processor (BSP) and application processors (APs) typically have different initial values.
+The APs typically all have the same initial value, so the `ap-vmsa` codepoint MAY be a single `sevsnp-vmsa-type-choice` to represent its replication.
+Alternatively, each AP's initial VMSA may be individually specified with a list of `sevsnp-vmsa-type-choice`.
+
+All VMSA fields are optional.
+A missing VMSA field in evidence is treated as its default value.
+A missing VMSA field in a reference value is one less matching condition.
+
+### VMSA default values
+
+Unless otherwise stated, each field's default value is 0.
+The [AMD.SPM] is the definitive source of initial state for CPU registers.
+Figure {{figure-vmsa-defaults}} is a CBOR representation of the nonzero default values that correspond to initial CPU register values as of the cited revision's Table 14-1.
+
+~~~ cbor-diag
+  / es: / 0 => / svm-vmcb-seg-map / { / attrib: / 1 => 0x92 / limit: / 2 => 0xffff }
+  / cs: / 1 => / svm-vmcb-seg-map / {
+    / selector: / 0 => 0xf000
+    / attrib: / 1 => 0x9b
+    / limit: / 2 => 0xffff
+    / base: / 3 =# 0xffff0000
+  }
+  / ss: / 2 => / svm-vmcb-seg-map / { / attrib: / 1 => 0x92 / limit: / 2 => 0xffff }
+  / ds: / 3 => / svm-vmcb-seg-map / { / attrib: / 1 => 0x92 / limit: / 2 => 0xffff }
+  / fs: / 4 => / svm-vmcb-seg-map / { / attrib: / 1 => 0x92 / limit: / 2 => 0xffff }
+  / gs: / 5 => / svm-vmcb-seg-map / { / attrib: / 1 => 0x92 / limit: / 2 => 0xffff }
+  / gdtr: / 6 => / svm-vmcb-seg-map / { / limit: / 2 => 0xffff }
+  / ldtr: / 7 => / svm-vmcb-seg-map / { / attrib: / 1 => 0x82 / limit: / 2 => 0xffff }
+  / idtr: / 8 => / svm-vmcb-seg-map / { / limit: / 2 => 0xffff }
+  / tr: / 9 => / svm-vmcb-seg-map / { / attrib: / 1 => 0x83 / limit: / 2 => 0xffff }
+  / cr0: / 33 => 0x10
+  / dr7: / 34 => 0x400
+  / dr6: / 35 => 0xffff0ff0
+  / rflags: / 36 => 0x2
+  / rip: / 37 => 0xfff0
+  / g_pat: / 63 => 0x7040600070406
+  / xcr0: / 97 => 0x1
+~~~
+{: #figure-vmsa-defaults title="SEV-SNP default VMSA values" }
+
+The `ds`, `es`, `fs`, `gs`, and `ss` attributes are all meant to be data segment attributes `0x92`
+The `rdx` is expected to be the FMS of the chip, but VMMs commonly disregard this, so it's left to a different configuration field.
+A VMM provider may therefore sign reference values for a `sevsnp-launch-configuration-map` to specify non-default values for the BSP and AP state.
+
+#### Example VMM reference values for VMSA
+
+Qemu, AWS Elastic Compute Cloud (EC2), and Google Compute Engine (GCE), all use KVM, which initializes `cr4` and `efer` to non-default values.
+The values for `cr4` and `efer` are different from the SPM to allow for `PSE` (page size extension) `SVME` (secure virtual machine enable).
+
+Only Qemu follows the [AMD.SPM] specification for `rdx`, which is to match the family/model/stepping of the chip used.
+GCE provides an `rdx` of `0x600` regardless, and EC2 provides `0` regardless.
+GCE sets the `G_PAT` (guest page attribute table) register to `0x70406` to disable PA4-PA7.
+Both Qemu and GCE set the `tr` attrib to `0x8b`, so it starts as a busy 32-bit TSS instead of the default 16-bit.
+GCE sets `ds`, `es`, `fs`, `gs`, and `ss` attributes to `0x93`.
+
+Qemu provides the RESET values on INIT for the `mxcsr`, `x87_ftw`, `x87_fcw` registers.
 
 ## AMD SEV-SNP Launch Event Log Appraisal
 
@@ -453,8 +523,8 @@ bitWidth(fms) = 52 if (fms >> 4) == 0xA10F0 ; Genoa
 top_gpfn(fms) = ((1 << bitWidth(fms)) - 1) >> PAGE_SHIFT
 default_gpa(fms): uint64 = top_gpfn(fms) << PAGE_SHIFT
 
-mk_page_info(fms)({page-type or PAGE_TYPE_NORMAL,  content, gpa or default_gpa(fms), page-data or 0, vmpl-perms or 0, repeat or 1}):list[bytes] =
- [contents || {0x70, 0, page-type, page-data} || leuint64(vmpl-data) || leuint64(gpa)]*repeat
+mk_page_info(fms)({page-type or PAGE_TYPE_NORMAL,  content, gpa or default_gpa(fms), page-data or 0, vmpl-perms or 0}):list[bytes] =
+ [contents || {0x70, 0, page-type, page-data} || leuint64(vmpl-data) || leuint64(gpa)]
 
 appendmap(f, []) = []
 appendmap(f, x:xs) = append(f(x), appendmap(f, xs))
@@ -468,10 +538,136 @@ The `leuint64` metafunction translates a 64-bit unsigned integer into its little
 ### Comparisons for reference values
 
 An "any" sequence number matches any sequence number.
-The uint sequence number must be equal to the sequence number in the ACS.
-The `sevsnp-launch-update-data-map` reference value must match all present codepoints with encoding equality.
+The uint sequence number starts counting after the baseline matches.
+If there is no reference baseline, the sequence numbers start at 0.
+If there is a reference baseline, the VMM's provided baseline gets hash-combined with the provided updates until the digest equals the signed baseline, and the sequence numbers s
+tart from the following update as if they are 1.
+If there is no update that leads to a matching baseline value, no updates match.
+
+The other `sevsnp-launch-update-data-map` codepoints must match all present codepoints with encoding equality.
 The evidence ECT for the matching values are then split into a separate ECT to account for the added authority.
 
+Note: the VMM may split its baseline and updates at any point, which will drop the specificity of individual updates.
+The individual updates of a reference value MUST match individual updates from the VMM.
+It is therefore advantageous to combine as many updates in the reference value into the baseline as is feasible.
+
+### Example: OVMF with `SevMetadata`
+
+The Open Virtual Machine Firmware project directs the VMM to not just load the UEFI at the top of the 4GiB memory range, but also measure referenced addresses with particular `SNP_LAUNCH_UPDATE` inputs.
+Given that the firmware may be built by one party, the VMM another, and `SEV_KERNEL_HASHES` data yet another, the different data spread across the `SNP_LAUNCH_UPDATE` commands should be signed by the respective parties.
+
+#### OVMF data
+
+The GUID table at the end of the ROM is terminated by the GUID `96b582de-1fb2-45f7-baea-a366c55a082d` starting at offset `ROM_end - 0x30`.
+At offset `ROM_end - 0x32` there is a length in a 16-bit little endian unsigned integer.
+At offset `ROM_end - 0x32 - length` there is a table with format
+
+```
+| Type | Name |
+| ---- | ---- |
+| UINT8[Length] | Data |
+| LE_UINT16 | Length |
+| EFI_GUID | Name |
+| * | * |
+```
+
+`LE_UINT16` is the type of a little endian 16-bit unsigned integer.
+`EFI_GUID` is the UUID format specified in section 4 of [RFC4122].
+The footer GUID and length specifies the length of the table of entries itself, which does not include the footer.
+
+Within this table there is an entry that specifies the guest physical address that contains the `SevMetadata`.
+
+```
+| LE_UINT32 | Address |
+| LE_UINT16 | Length |
+| EFI_GUID | dc886566-984a-4798-A75e-5585a7bf67cc |
+```
+
+At this address when loaded, or at offset `ROM_end - (4GiB - Address)`, the `SevMetadata`,
+
+```
+| Type | Name |
+| ---- | ---- |
+| LE_UINT32 | Signature |
+| LE_UINT32 | Length |
+| LE_UINT32 | Version |
+| LE_UINT32 | NumSections |
+| SevMetadataSection[Sections] | Sections |
+```
+
+The `Signature` value should be `'A', 'S', 'E', 'V'` or "VESA" in big-endian order: `0x56455341`.
+Where `SevMetadataSection` is
+
+```
+| Type | Name |
+| ---- | ---- |
+| LE_UINT32 | Address |
+| LE_UINT32 | Length |
+| LE_UINT32 | Kind |
+```
+
+A section references some slice of guest physical memory that has a certain purpose as labeled by `Kind`:
+
+```
+| Value | Name | PAGE_TYPE |
+| 1 | OVMF_SECTION_TYPE_SNP_SEC_MEM | PAGE_TYPE_UNMEASURED |
+| 2 | OVMF_SECTION_TYPE_SNP_SECRETS | PAGE_TYPE_SECRETS |
+| 3 | OVMF_SECTION_TYPE_CPUID | PAGE_TYPE_CPUID |
+| 4 | OVMF_SECTION_TYPE_SNP_SVSM_CAA | PAGE_TYPE_ZERO |
+| 16 | OVMF_SECTION_TYPE_KERNEL_HASHES | PAGE_TYPE_NORMAL |
+```
+
+The memory allocated to the initial UEFI boot phase, `SEC`, is unmeasured but must be marked for encryption without needing the `GHCB` or `MSR` protocol.
+The `SEC_MEM` sections contain the initial `GHCB` pages, page tables, and temporary memory for stack and heap.
+The secrets section is memory allocated specifically for holding secrets that the AMD-SP populates at launch.
+The cpuid section is memory allocated to the CPUID source of truth, which shouldn't be measured for portability and host security, but should be verified by AMD-SP for validity.
+The SVSM calling area address section is to enable the firmware to communicate with a secure VM services module running at VMPL0.
+The kernel hashes section is populated with expected measurements when boot advances to load Linux directly and must fail if the disk contents' digests disagree with the measured hashes.
+
+The producer of the OVMF binary may therefore decide to sign a verbose representation or a compact representation.
+A verbose representation would have hundreds of updates given that every 4KiB page must be represented.
+For an initial example, consider the 2MiB OVMF ROM's 512 4KiB updates as the baseline, and the metadata as individual measurements afterwards.
+
+~~~ cbor-diag
+{::include cddl/examples/ovmf-verbose.diag}
+~~~
+
+In this example the SEV-ES reset vector is located at `0x80b004`.
+The AP RIP is the lower word and the CS_BASE is the upper word.
+The first unmeasured section is for the SEC stage page tables up to GHCB at address `0x800000`, which has 9 pages accounted for in sequence.
+The second unmeasured section is for the GHCB page up to secrets at address `0x80A000`, which has 3 pages accounted for in sequence.
+The secrets page is at address `0x80D000`.
+The CPUID page is at address `rx80E000`.
+The svsm calling area page address is `0x80F000`.
+The launch secrets and kernel hashes are at address `0x810000` and fit in 1 page.
+The location of the final unmeasured pages are for the APIC page tables and PEI temporary memory.
+The final section after the svsm calling area and kernel hashes up to the PEI firmware volume base, so `0x811000` up to `0x820000` for another 15 pages.
+
+A more compact representation can take advantage of the fact that several of the first update commands are driven entirely by the firmware.
+The baseline contains the initial ROM plus all the sections that don't have a dependency on external measured information.
+The first update after the baseline is the `PAGE_TYPE_NORMAL` command without a digest to account for partial information for `SEV_KERNEL_HASHES`.
+The other update is just what appears afterwards.
+
+~~~ cbor-diag
+{::include cddl/examples/ovmf-compact.diag}
+~~~
+
+The firmware author may then decide to reorder the section processing to ensure the kernel hashes are last, as there is no requirement for sequential GPAs.
+The result becomes a signed baseline and a single update for the `PAGE_TYPE_NORMAL` kernel hashes' address.
+
+#### Kernel data
+
+The OVMF image may be provided by a different vendor than the OS disk image.
+The user of the VM platform may not have direct access to reference values ahead of time to countersign their combination.
+The kernel hashes become an input to the control plane that are then fed to the construction of the VM launch.
+The provider of the OS disk image then is responsible for signing the reference values for kernel hashes.
+The order in which kernel hashes are loaded, and at which address is irrelevant provided the attestation policy requires some signed value in the end, so the signer does not provide either the `gpa` or `seq-no` values.
+
+~~~ cbor-diag
+{::include cddl/examples/kernel-hashes.diag}
+~~~
+
+The digest is of a Qemu data structure that contains different digests of content from the command line.
 
 # IANA Considerations
 

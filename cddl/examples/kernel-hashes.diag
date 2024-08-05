@@ -1,0 +1,8 @@
+/ sevsnp-launch-configuration-map / {
+  / sevsnpvm-launch-updates: / 2 => [
+    / sevsnp-launch-update-data-map / {
+      / page-type: / 0 => 1
+      / content: / 2 => / digest / [ 7, h'111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111' ]
+    }
+  ]
+}

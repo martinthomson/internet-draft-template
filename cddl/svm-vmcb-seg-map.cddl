@@ -1,0 +1,6 @@
+svm-vmcb-seg-map = {
+  ? &(selector: 0) => uint16
+  ? &(attrib: 1) => uint16
+  ? &(limit: 2) => uint32
+  ? &(base: 3) => uint64
+}

@@ -1,0 +1,4 @@
+digest = [
+  alg: (int / text),
+  val: bytes
+]

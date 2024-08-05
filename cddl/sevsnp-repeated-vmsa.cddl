@@ -1,0 +1,4 @@
+sevsnp-repeated-vmsa = [
+  vmsa: sevsnp-vmsa-type-choice
+  repeat: uint
+}

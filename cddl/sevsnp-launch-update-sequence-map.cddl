@@ -1,2 +1,0 @@
-sevsnp-launch-update-sequence-map =
-  { * sevsnp-launch-update-sequence-number => sevsnp-launch-update-data-map }
