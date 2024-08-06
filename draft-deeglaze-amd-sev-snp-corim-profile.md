@@ -262,7 +262,7 @@ The `LAUNCH_TCB` version of the host is assigned codepoint -8:
 The `REPORTED_TCB` version of the host is assigned codepoint -9:
 
 ~~~ cddl
-{::include cddl/sevsnphost-launch-tcb-ext.cddl}
+{::include cddl/sevsnphost-reported-tcb-ext.cddl}
 ~~~
 
 The `GUEST_POLICY` boolean flags are added as extensions to `$$flags-map-extension`, starting from coedpoint -1.
