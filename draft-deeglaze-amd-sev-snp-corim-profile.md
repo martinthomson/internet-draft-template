@@ -35,6 +35,10 @@ contributor:
       Yogesh Deshpande contributed to the data model by providing advice about CoRIM founding principles.
 
 normative:
+  RFC3280:
+  RFC4122:
+  RFC5480:
+  RFC5758:
   RFC8174:
   RFC8610: cddl
   RFC9334: rats-arch
@@ -334,7 +338,7 @@ The `measurement-values-map` is set as described in the following section.
 
 The function `is-set(x, b)` represents whether the bit at position `b` is set in the number `x`.
 
-*  The `digests: 2` codepoint SHALL be set to either `[ / digest / { alg: 7 val: MEASUREMENT } ]` or `[ / digest / { alg: "sha-384" val: MEASUREMENT } ]` as assigned in [named-info].
+*  The `digests: 2` codepoint SHALL be set to either `[ / digest / { alg: 7 val: MEASUREMENT } ]` or `[ / digest / { alg: "sha-384" val: MEASUREMENT } ]` as assigned in {{-named-info}}.
 
 *  The `&(flags: 3) / flags-map / sevsnpvm-policy-smt-allowed` codepoint SHALL be set to `is-set(GUEST_POLICY, 16`.
 *  The `&(flags: 3) / flags-map / sevsnpvm-policy-migration-agent-allowed` codepoint SHALL be set to `is-set(GUEST_POLICY, 18)`.
@@ -461,13 +465,15 @@ Unless otherwise stated, each field's default value is 0.
 The [AMD.SPM] is the definitive source of initial state for CPU registers.
 Figure {{figure-vmsa-defaults}} is a CBOR representation of the nonzero default values that correspond to initial CPU register values as of the cited revision's Table 14-1.
 
+
 ~~~ cbor-diag
+/ sevsnp-vmsa-map-r1-55 / {
   / es: / 0 => / svm-vmcb-seg-map / { / attrib: / 1 => 0x92 / limit: / 2 => 0xffff }
   / cs: / 1 => / svm-vmcb-seg-map / {
     / selector: / 0 => 0xf000
     / attrib: / 1 => 0x9b
     / limit: / 2 => 0xffff
-    / base: / 3 =# 0xffff0000
+    / base: / 3 => 0xffff0000
   }
   / ss: / 2 => / svm-vmcb-seg-map / { / attrib: / 1 => 0x92 / limit: / 2 => 0xffff }
   / ds: / 3 => / svm-vmcb-seg-map / { / attrib: / 1 => 0x92 / limit: / 2 => 0xffff }
@@ -484,10 +490,10 @@ Figure {{figure-vmsa-defaults}} is a CBOR representation of the nonzero default 
   / rip: / 37 => 0xfff0
   / g_pat: / 63 => 0x7040600070406
   / xcr0: / 97 => 0x1
+}
 ~~~
 {: #figure-vmsa-defaults title="SEV-SNP default VMSA values" }
 
-The `ds`, `es`, `fs`, `gs`, and `ss` attributes are all meant to be data segment attributes `0x92`
 The `rdx` is expected to be the FMS of the chip, but VMMs commonly disregard this, so it's left to a different configuration field.
 A VMM provider may therefore sign reference values for a `sevsnp-launch-configuration-map` to specify non-default values for the BSP and AP state.
 
@@ -572,10 +578,11 @@ At offset `ROM_end - 0x32 - length` there is a table with format
 
 | Type | Name |
 | ---- | ---- |
+| * | * |
 | UINT8[Length] | Data |
 | LE_UINT16 | Length |
 | EFI_GUID | Name |
-| * | * |
+{: title="OVMF footer GUID table type description"}
 
 `LE_UINT16` is the type of a little endian 16-bit unsigned integer.
 `EFI_GUID` is the UUID format specified in section 4 of [RFC4122].
@@ -588,7 +595,7 @@ Within this table there is an entry that specifies the guest physical address th
 | LE_UINT32 | Address |
 | LE_UINT16 | Length |
 | EFI_GUID | dc886566-984a-4798-A75e-5585a7bf67cc |
-
+{: title="SevMetadataOffset GUID table entry description"}
 
 At this address when loaded, or at offset `ROM_end - (4GiB - Address)`, the `SevMetadata`,
 
@@ -599,6 +606,7 @@ At this address when loaded, or at offset `ROM_end - (4GiB - Address)`, the `Sev
 | LE_UINT32 | Version |
 | LE_UINT32 | NumSections |
 | SevMetadataSection[Sections] | Sections |
+{: title="SevMetadata type description" }
 
 The `Signature` value should be `'A', 'S', 'E', 'V'` or "VESA" in big-endian order: `0x56455341`.
 Where `SevMetadataSection` is
@@ -608,6 +616,7 @@ Where `SevMetadataSection` is
 | LE_UINT32 | Address |
 | LE_UINT32 | Length |
 | LE_UINT32 | Kind |
+{: title="SevMetadataSection type description"}
 
 A section references some slice of guest physical memory that has a certain purpose as labeled by `Kind`:
 
@@ -618,6 +627,7 @@ A section references some slice of guest physical memory that has a certain purp
 | 3 | OVMF_SECTION_TYPE_CPUID | PAGE_TYPE_CPUID |
 | 4 | OVMF_SECTION_TYPE_SNP_SVSM_CAA | PAGE_TYPE_ZERO |
 | 16 | OVMF_SECTION_TYPE_KERNEL_HASHES | PAGE_TYPE_NORMAL |
+{: title="OVMF section kind to SEV-SNP page type mapping"}
 
 The memory allocated to the initial UEFI boot phase, `SEC`, is unmeasured but must be marked for encryption without needing the `GHCB` or `MSR` protocol.
 The `SEC_MEM` sections contain the initial `GHCB` pages, page tables, and temporary memory for stack and heap.
