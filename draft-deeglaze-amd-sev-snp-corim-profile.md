@@ -512,7 +512,7 @@ The first `PAGE_INFO` structure uses the baseline digest as its `DIGEST_CUR`.
 The following pseudocode for the function measurement computes the expected measurement of the endorsement format.
 If this measurement equals the digests value with VCEK authority, then add the baseline and updates measurement values to the same ECT as the attestation report.
 
-Since the VMM only has to provide the page type and digest of the contents, the rest of the fields of a `sevsnp-launch-update-data-map` have default values when translated to a `PAGE_INFO` without the `DIGEST_CUR` field.
+Since the VMM only has to provide the gpa, page type, and digest of the contents, the rest of the fields of a `sevsnp-launch-update-data-map` have default values when translated to a `PAGE_INFO` without the `DIGEST_CUR` field.
 If the baseline is not provided, it is assumed to be all zeros.
 
 ~~~
