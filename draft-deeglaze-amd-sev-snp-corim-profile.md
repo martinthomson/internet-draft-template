@@ -692,3 +692,11 @@ The choice of the CoRIM-earmarked value is intentional.
 | 32781 | `map`   | A map of virtual machine vCPU registers (VMSA) to initial values {{vmsa-evidence}} | {{&SELF}} |
 | 32782 | `array`   | A record of a single VMSA and a count of how many times it repeats {{vmsa-evidence}} | {{&SELF}} |
 {: #cbor-tags title="Added CBOR tags"}
+
+--- back
+
+# CoRIM Extensions CDDL {#sec-corim-cddl}
+
+~~~ cddl
+{::include cddl/corim-autogen.cddl}
+~~~
