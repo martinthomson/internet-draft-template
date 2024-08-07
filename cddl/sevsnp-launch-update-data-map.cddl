@@ -3,6 +3,6 @@ sevsnp-launch-update-data-map = non-empty<{
   ? &(content: 1) => digest
   ? &(gpa: 2) => uint
   ? &(page-data: 3) => byte .bits sev-snp-page-data
-  ? &(vmpl-perms: 4) => uint .size 8
+  ? &(vmpl-perms: 4) => uint64
   ? &(seq-no: 5) => uint
 }>

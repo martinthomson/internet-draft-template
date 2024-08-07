@@ -431,7 +431,6 @@ The calculation of the launch measurement SHALL use the value is the initial `PA
 The `sevsnp-launch-update-data-map` contains all fields of the `PAGE_INFO` structure that are needed for reconstructing a measurement.
 If an update repeats many times, such as an application processor VMSA, then that can be compressed with the `repeat` field.
 
-The bits 1..3 encode the PAGE_TYPE as documented in the [SEV-SNP.API].
 The content codepoint MUST NOT be present if the page type is neither `PAGE_TYPE_NORMAL` (01h) nor `PAGE_TYPE_VMSA` (02h).
 
 For the VMM, there are some updates it does on behalf of a different principal than the firmware vendor, so it may choose to pass through some of the information about the launch measurement circumstances for separate appraisal.
@@ -461,8 +460,9 @@ A missing VMSA field in a reference value is one less matching condition.
 
 ### VMSA default values
 
+
 Unless otherwise stated, each field's default value is 0.
-The [AMD.SPM] is the definitive source of initial state for CPU registers.
+The [AMD.SPM] is the definitive source of initial state for CPU registers, so any default value in this specification that diverges is a flaw but still MUST be considered the default for a missing value.
 Figure {{figure-vmsa-defaults}} is a CBOR representation of the nonzero default values that correspond to initial CPU register values as of the cited revision's Table 14-1.
 
 
@@ -489,13 +489,21 @@ Figure {{figure-vmsa-defaults}} is a CBOR representation of the nonzero default 
   / rflags: / 36 => 0x2
   / rip: / 37 => 0xfff0
   / g_pat: / 63 => 0x7040600070406
+  / sev_features: / 91 => 0x1
   / xcr0: / 97 => 0x1
+  / mxcsr: / 99 => 0x1f80
+  / x87_ftw: / 100 => 0x5555
+  / x87_fcw: / 102 => 0x40
 }
 ~~~
 {: #figure-vmsa-defaults title="SEV-SNP default VMSA values" }
 
-The `rdx` is expected to be the FMS of the chip, but VMMs commonly disregard this, so it's left to a different configuration field.
-A VMM provider may therefore sign reference values for a `sevsnp-launch-configuration-map` to specify non-default values for the BSP and AP state.
+The `rdx` is expected to be the FMS of the chip and SHOULD match the `fms` field of the `sevsnp-launch-configuration-map`.
+A VMM provider may sign reference values for a `sevsnp-launch-configuration-map` to specify just the non-default values for the BSP and AP state.
+
+Note: This is the RESET state, not the INIT state.
+
+The `sev_features` codepoint is not a typical AMD64 INIT state, but specifies that SEV-SNP is in use for the virtual CPU.
 
 #### Example VMM reference values for VMSA
 
@@ -503,12 +511,12 @@ Qemu, AWS Elastic Compute Cloud (EC2), and Google Compute Engine (GCE), all use 
 The values for `cr4` and `efer` are different from the SPM to allow for `PSE` (page size extension) `SVME` (secure virtual machine enable).
 
 Only Qemu follows the [AMD.SPM] specification for `rdx`, which is to match the family/model/stepping of the chip used.
-GCE provides an `rdx` of `0x600` regardless, and EC2 provides `0` regardless.
+GCE provides an `rdx` of `0x600` regardless (following the Intel spec), and EC2 provides `0` regardless.
 GCE sets the `G_PAT` (guest page attribute table) register to `0x70406` to disable PA4-PA7.
 Both Qemu and GCE set the `tr` attrib to `0x8b`, so it starts as a busy 32-bit TSS instead of the default 16-bit.
-GCE sets `ds`, `es`, `fs`, `gs`, and `ss` attributes to `0x93`.
+GCE sets `ds`, `es`, `fs`, `gs`, and `ss` attributes to `0x93` since that's the initial state on Intel processors and that works fine too.
 
-Qemu provides the RESET values on INIT for the `mxcsr`, `x87_ftw`, `x87_fcw` registers.
+Qemu uses the Intel INIT state for the x87 floating point control word (0x37f), but 0 for the x87 floating point tag word.
 
 ## AMD SEV-SNP Launch Event Log Appraisal
 
@@ -522,32 +530,89 @@ Since the VMM only has to provide the gpa, page type, and digest of the contents
 If the baseline is not provided, it is assumed to be all zeros.
 
 ~~~
-measurement({fms, baseline, updates}) = iterate(baseline, appendmap(mk_page_info(fms), updates))
-
-PAGE_SHIFT = 12
-bitWidth(fms) = 48 if (fms >> 4) == 0xA00F0 ; Milan
-bitWidth(fms) = 52 if (fms >> 4) == 0xA10F0 ; Genoa
-
-top_gpfn(fms) = ((1 << bitWidth(fms)) - 1) >> PAGE_SHIFT
-default_gpa(fms): uint64 = top_gpfn(fms) << PAGE_SHIFT
-
-mk_page_info(fms)({page-type or PAGE_TYPE_NORMAL,
-                   contents,
-                   gpa or default_gpa(fms),
-                   page-data or 0,
-                   vmpl-perms or 0}):list[bytes] = [
-  contents || {0x70, 0, page-type,
-  page-data} || leuint64(vmpl-data) || leuint64(gpa),
-]
-
-appendmap(f, []) = []
-appendmap(f, x:xs) = append(f(x), appendmap(f, xs))
-
-iterate(digest_cur, []) = digest_cur
-iterate(digest_cur, info:infos) = iterate(sha384(digest_cur || info), infos)
+measurement({fms, baseline, updates, bsp, aps}) = iterate(baseline, infos)
+  where infos = update-info ++ [bsp-info] ++ ap-info
+        update-info = appendmap(mk_page_info(fms), updates)
+        bsp-info = mk_vmsa_info(fms)(bsp)
+        ap-info = mk_ap_vmsa_info(fms, aps)
 ~~~
 
-The `leuint64` metafunction translates a 64-bit unsigned integer into its little endian byte string representation.
+The `iterate` function is applies a `sha384` digest update operation on all given `PAGE_INFO` byte strings:
+
+~~~
+iterate(digest_cur, []) = digest_cur
+iterate(digest_cur, info:infos) = iterate(digest_next , infos)
+  where digest_next = sha384(digest_cur || sha384(info))
+~~~
+
+The `appendmap` function combines the list results of mapping a function over a list by appending them:
+
+~~~
+appendmap(f, []) = []
+appendmap(f, x:xs) = append(f(x), appendmap(f, xs))
+~~~
+
+### Updates as `PAGE_INFO` without `DIGEST_CUR`.
+
+The `mk_page_info` function translates update components into a singleton list of their `PAGE_INFO` byte string form:
+
+~~~
+mk_page_info(fms)({page-type or PAGE_TYPE_NORMAL,
+                   contents,
+                   gpa,
+                   page-data or 0,
+                   vmpl-perms or 0}):list[bytes] = [
+  contents || {0x70, 0, page-type, page-data} ||
+  leuint64(vmpl-data) || leuint64(gpa),
+]
+~~~
+
+The `leuint64` function translates a 64-bit unsigned integer into its little endian byte string representation.
+
+### VMSAs as `PAGE_INFO` without `DIGEST_CUR`.
+
+The `bsp-vmsa` will always be measured.
+If the VMM does not provide it, the default values will be used.
+If the `$sevsnp-vmsa-type-choice` is a `uuid-type` or `oid-type`, the `PAGE_INFO` fields are "well-known" as published by an entity claiming the identifier.
+The well-known values are expected to be provided by the Verifier in accordance with the associated published values.
+
+If the `$sevsnp-vmsa-type-choice` is a `tagged-sevsnp-vmsa-map-r1-55`, then its `PAGE_INFO` byte string is to be defined as follows:
+
+~~~
+mk_vmsa_info(fms)(#6.32781(sevsnp-vmsa-map-r1-55)) =
+  sha384(to_vmsa_page(sevsnp-vmsa-map-r1-55)) ||
+  {0x70, 0, 0x2, sevsnp-vmsa-map-r1-55 / page-data} ||
+  leuint64(sevsnp-vmsa-map-r1-55 / vmpl-perms) ||
+  leuint64(top_gpa(fms))
+~~~
+
+The `top_gpa` function provides the top-most representable page-aligned address for the chip model:
+
+~~~
+top_gpa(fms) = ((1UL << bitWidth(fms)) - 1) & PAGE_MASK
+
+PAGE_MASK = 0xfffffffffffff000
+bitWidth(fms) = 48 if (fms >> 4) == 0xA00F0 ; Milan
+bitWidth(fms) = 52 if (fms >> 4) == 0xA10F0 ; Genoa
+~~~
+
+The `to_vmsa_page` function constructs a VMSA 4KiB page with fields written to their respective locations as specified by the [AMD.SPM].
+Fields not represented in the map are taken to be their default value from figure {{figure-vmsa-defaults}}.
+
+The `ap-vmsa` will be measured only if present.
+The list of VMSA type choices is translated to a list of `PAGE_INFO` with the same operation:
+
+~~~
+mk_ap_vmsa_info(fms, [ + sevsnp-vmsa-type-choice ]) =
+  map(mk_vmsa_info(fms)([ sevsnp-vmsa-type-choice ... ])
+~~~
+
+The repeated vmsas expand into a list of the same `PAGE_INFO` byte string repeated:
+
+~~~
+mk_ap_vmsa_info(fms, #6.32872([vmsa, repeat])) =
+  [mk_vmsa_info(fms)(vmsa)]*repeat
+~~~
 
 ### Comparisons for reference values
 

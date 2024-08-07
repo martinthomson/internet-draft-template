@@ -31,6 +31,7 @@ CORIM_FRAGS += svm-vmcb-seg-map.cddl
 CORIM_FRAGS += svn-type-choice.cddl
 CORIM_FRAGS += tagged-int-bytes-map.cddl
 CORIM_FRAGS += tagged-sevsnp-repeated-vmsa.cddl
+CORIM_FRAGS += tagged-sevsnp-vmsa-map-r1-55.cddl
 CORIM_FRAGS += uint16.cddl
 CORIM_FRAGS += uint32.cddl
 CORIM_FRAGS += uint64.cddl
