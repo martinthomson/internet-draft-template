@@ -22,16 +22,15 @@ sevsnp-launch-update-data-map = non-empty<{
   ? &(content: 1) => digest
   ? &(gpa: 2) => uint
   ? &(page-data: 3) => byte .bits sev-snp-page-data
-  ? &(vmpl-perms: 4) => uint .size 8
+  ? &(vmpl-perms: 4) => uint64
   ? &(seq-no: 5) => uint
 }>
 
 sevsnp-launch-update-sequence-map = [ sevsnp-launch-update-data-map ]
 
 sev-snp-page-data = &(
-  imi-page: 4
-  page2m: 0
-) / 1..3
+  imi-page: 0
+)
 
 sevsnp-repeated-vmsa = [
   vmsa: sevsnp-vmsa-type-choice
@@ -125,6 +124,8 @@ sevsnphost-tcb-map = {
 sevsnp-vmsa-map-r1-55 = { sevsnp-vmsa-r1-55 }
 
 sevsnp-vmsa-r1-55 = &(
+  ? &(page-data: -2) => byte .bits sev-snp-page-data
+  ? &(vmpl-perms: -1) => uint64
   ? &(es: 0) => svm-vmcb-seg-map
   ? &(cs: 1) => svm-vmcb-seg-map
   ? &(ss: 2) => svm-vmcb-seg-map
@@ -140,7 +141,7 @@ sevsnp-vmsa-r1-55 = &(
   ? &(pl2_ssp: 12) => uint64
   ? &(pl3_ssp: 13) => uint64
   ? &(u_cet: 14) => uint64
-  ? ?(vmpl: 15) => byte
+  ? &(vmpl: 15) => byte
   ? &(cpl: 16) => byte
   ? &(efer: 17) => uint64
   ? &(perf_ctl0: 18) => uint64
@@ -248,7 +249,7 @@ sevsnp-vmsa-r1-55 = &(
   ? &(ic_ibs_extd_ctl: 120) => uint64
 )
 
-$sevsnp-vmsa-type-choice = #6.32781(sevsnp-vmsa-map-r1-55) / uuid-type / oid-type
+$sevsnp-vmsa-type-choice = tagged-sevsnp-vmsa-map-r1-55 / uuid-type / oid-type
 
 svm-vmcb-seg-map = {
   ? &(selector: 0) => uint16
@@ -267,6 +268,8 @@ svn-type-choice = tagged-svn / tagged-min-svn
 tagged-int-bytes-map = #6.563(int-bytes-map)
 
 tagged-sevsnp-repeated-vmsa = #6.32872(sevsnp-repeated-vmsa)
+
+tagged-sevsnp-vmsa-map-r1-55 = #6.32781(sevsnp-vmsa-map-r1-55)
 
 uint16 = 0..65535
 

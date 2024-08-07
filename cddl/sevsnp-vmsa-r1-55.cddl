@@ -1,6 +1,6 @@
 sevsnp-vmsa-r1-55 = &(
   ? &(page-data: -2) => byte .bits sev-snp-page-data
-  ? &(vmpl-perms: -1) => uint .size 8
+  ? &(vmpl-perms: -1) => uint64
   ? &(es: 0) => svm-vmcb-seg-map
   ? &(cs: 1) => svm-vmcb-seg-map
   ? &(ss: 2) => svm-vmcb-seg-map
