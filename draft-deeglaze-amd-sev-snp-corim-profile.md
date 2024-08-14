@@ -583,18 +583,10 @@ mk_vmsa_info(fms)(#6.32781(sevsnp-vmsa-map-r1-55)) =
   sha384(to_vmsa_page(sevsnp-vmsa-map-r1-55)) ||
   {0x70, 0, 0x2, sevsnp-vmsa-map-r1-55 / page-data} ||
   leuint64(sevsnp-vmsa-map-r1-55 / vmpl-perms) ||
-  leuint64(top_gpa(fms))
+  initial_vmsa_gpa
 ~~~
 
-The `top_gpa` function provides the top-most representable page-aligned address for the chip model:
-
-~~~
-top_gpa(fms) = ((1UL << bitWidth(fms)) - 1) & PAGE_MASK
-
-PAGE_MASK = 0xfffffffffffff000
-bitWidth(fms) = 48 if (fms >> 4) == 0xA00F0 ; Milan
-bitWidth(fms) = 52 if (fms >> 4) == 0xA10F0 ; Genoa
-~~~
+The `initial_vmsa_gpa` is the little-endian representation of a high memory address that is last page on an architecture with 48-bit width addresses: `{0x00, 0xF0, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00}`
 
 The `to_vmsa_page` function constructs a VMSA 4KiB page with fields written to their respective locations as specified by the [AMD.SPM].
 Fields not represented in the map are taken to be their default value from figure {{figure-vmsa-defaults}}.
