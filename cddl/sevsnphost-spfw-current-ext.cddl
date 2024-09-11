@@ -1,3 +1,0 @@
-$$measurement-values-map-extension //= (
-  &(sevsnphost-sp-fw-current: -4) => sevsnphost-sp-fw-version-record
-)

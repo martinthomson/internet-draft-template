@@ -1,4 +1,0 @@
-sevsnpvm-policy-record = [
-  abi-major: byte,
-  abi-minor: byte
-]

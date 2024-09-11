@@ -7,4 +7,5 @@ $$flags-map-extension //= &(
   sevsnpvm-policy-mem-aes-256-xts-required: -6,
   sevsnpvm-policy-rapl-must-be-disabled: -7,
   sevsnpvm-policy-ciphertext-hiding-must-be-enabled: -8,
+  sevsnpvm-policy-reserved: -47..-9,
 )

@@ -4,4 +4,5 @@ $$flags-map-extension //= &(
   sevsnphost-ecc-mem-reported-enabled:-51,
   sevsnphost-rapl-disabled: -52,
   sevsnphost-ciphertext-hiding-enabled: -53
+  sevsnphost-reserved: -112..-49
 )
