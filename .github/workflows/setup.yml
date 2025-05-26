@@ -98,7 +98,7 @@ jobs:
     - name: "Update Venue Information"
       uses: martinthomson/i-d-template@v1
       with:
-        make: update-venue
+        make: fix-lint update-venue
 
     - name: "Update GitHub Pages"
       uses: martinthomson/i-d-template@v1
