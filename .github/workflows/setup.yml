@@ -95,10 +95,15 @@ jobs:
       with:
         make: setup
 
+    - name: "Fix Lint"
+      uses: martinthomson/i-d-template@v1
+      with:
+        make: fix-lint
+
     - name: "Update Venue Information"
       uses: martinthomson/i-d-template@v1
       with:
-        make: fix-lint update-venue
+        make: update-venue
 
     - name: "Update GitHub Pages"
       uses: martinthomson/i-d-template@v1
